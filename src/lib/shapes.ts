@@ -386,50 +386,88 @@ export function getMissionEcoPositions(count: number, scale: number): Float32Arr
 }
 
 // ============================================================
-// 10: TRACKING — Path with status nodes + floating box
+// 10: TRACKING — Location Pin (Map Marker)
 // ============================================================
 export function getTrackingPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
-  const nodePos = [
-    { x: -2.5, y: 0 },
-    { x: -0.8, y: 0.6 },
-    { x: 0.8, y: -0.3 },
-    { x: 2.5, y: 0.3 }
-  ];
+  const R = 1.0 * scale;
+  const L = 2.0 * scale;
 
   for (let i = 0; i < count; i++) {
-    const r = Math.random();
-    if (r < 0.35) {
-      // Status nodes (dense spheres)
-      const node = nodePos[Math.floor(Math.random() * nodePos.length)];
-      const pt = randomSpherePoint(0.3 * scale);
-      positions[i * 3] = node.x * scale + pt.x;
-      positions[i * 3 + 1] = node.y * scale + pt.y;
-      positions[i * 3 + 2] = pt.z;
-    } else if (r < 0.65) {
-      // Connecting paths
-      const segIdx = Math.floor(Math.random() * (nodePos.length - 1));
-      const t = Math.random();
-      const n1 = nodePos[segIdx];
-      const n2 = nodePos[segIdx + 1];
-      const x = n1.x + (n2.x - n1.x) * t;
-      const y = n1.y + (n2.y - n1.y) * t + Math.sin(t * Math.PI) * 0.25;
-      positions[i * 3] = x * scale + (Math.random() - 0.5) * 0.04 * scale;
-      positions[i * 3 + 1] = y * scale + (Math.random() - 0.5) * 0.04 * scale;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 0.04 * scale;
+    const rType = Math.random();
+    let x = 0, y = 0, z = 0;
+
+    if (rType < 0.45) {
+      // Border and Hole
+      const p = Math.random();
+      if (p < 0.41) {
+        // Top Arc
+        const t = -Math.PI / 6 + Math.random() * (4 * Math.PI / 3);
+        x = R * Math.cos(t);
+        y = R * Math.sin(t);
+      } else if (p < 0.58) {
+        // Left line
+        const t = Math.random();
+        const startX = R * Math.cos(7 * Math.PI / 6);
+        const startY = R * Math.sin(7 * Math.PI / 6);
+        x = startX + t * (0 - startX);
+        y = startY + t * (-L - startY);
+      } else if (p < 0.75) {
+        // Right line
+        const t = Math.random();
+        const startX = 0;
+        const startY = -L;
+        const endX = R * Math.cos(-Math.PI / 6);
+        const endY = R * Math.sin(-Math.PI / 6);
+        x = startX + t * (endX - startX);
+        y = startY + t * (endY - startY);
+      } else {
+        // Inner hole
+        const t = Math.random() * Math.PI * 2;
+        x = 0.35 * R * Math.cos(t);
+        y = 0.35 * R * Math.sin(t);
+      }
+      // Thick border
+      x += (Math.random() - 0.5) * 0.08 * scale;
+      y += (Math.random() - 0.5) * 0.08 * scale;
+      z += (Math.random() - 0.5) * 0.08 * scale;
     } else {
-      // Floating box (package) near middle-top
-      const hw = 0.35 * scale;
-      const edge = Math.floor(Math.random() * 12);
-      const t = Math.random();
-      let px = 0, py = 0, pz = 0;
-      if (edge < 4) { px = (edge % 2 === 0 ? hw : -hw); py = (edge < 2 ? hw : -hw); pz = (t * 2 - 1) * hw; }
-      else if (edge < 8) { px = (edge % 2 === 0 ? hw : -hw); py = (t * 2 - 1) * hw; pz = (edge < 6 ? hw : -hw); }
-      else { px = (t * 2 - 1) * hw; py = (edge % 2 === 0 ? hw : -hw); pz = (edge < 10 ? hw : -hw); }
-      positions[i * 3] = px;
-      positions[i * 3 + 1] = py + 1.0 * scale;
-      positions[i * 3 + 2] = pz;
+      // Fill: rejection sampling for the pin body
+      while (true) {
+        const testX = (Math.random() - 0.5) * 2 * R;
+        const testY = -L + Math.random() * (R + L);
+        
+        // Reject if inside inner hole
+        if (testX * testX + testY * testY < (0.35 * R) * (0.35 * R)) {
+          continue;
+        }
+        
+        // Accept if inside top circle
+        if (testX * testX + testY * testY <= R * R) {
+          x = testX;
+          y = testY;
+          break;
+        }
+        
+        // Accept if inside the bottom cone
+        if (testY < -0.5 * R && testY >= -L) {
+          const widthAtY = (testY + L) / Math.sqrt(3);
+          if (Math.abs(testX) <= widthAtY) {
+            x = testX;
+            y = testY;
+            break;
+          }
+        }
+      }
+      z = (Math.random() - 0.5) * 0.3 * scale; // some 3D thickness
     }
+
+    // Center the pin vertically
+    y += 0.5 * R;
+
+    positions[i * 3] = x;
+    positions[i * 3 + 1] = y;
+    positions[i * 3 + 2] = z;
   }
   return positions;
 }

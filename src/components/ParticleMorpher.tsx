@@ -16,6 +16,55 @@ import {
   getNekiLogoPositions
 } from "@/lib/shapes";
 
+function AmbientBackground() {
+  const pointsRef = useRef<THREE.Points>(null);
+  const scroll = useScroll();
+  
+  const bgPositions = useMemo(() => getChaosPositions(3000, 40), []);
+
+  useFrame((state, delta) => {
+    if (!pointsRef.current) return;
+    const p = scroll.offset;
+    
+    // Slow rotation
+    pointsRef.current.rotation.y += 0.05 * delta;
+    pointsRef.current.rotation.x += 0.02 * delta;
+
+    // Change background colors based on scene vibe
+    const mat = pointsRef.current.material as THREE.PointsMaterial;
+    if (p < 0.1) mat.color.lerp(new THREE.Color("#222222"), 0.05); // Fog
+    else if (p < 0.2) mat.color.lerp(new THREE.Color("#4ADE80"), 0.05); // Food green
+    else if (p < 0.3) mat.color.lerp(new THREE.Color("#60A5FA"), 0.05); // Clothes blue
+    else if (p < 0.4) mat.color.lerp(new THREE.Color("#FCD34D"), 0.05); // Books yellow
+    else if (p < 0.5) mat.color.lerp(new THREE.Color("#F87171"), 0.05); // Med red
+    else mat.color.lerp(new THREE.Color("#FFC247"), 0.05); // Neki orange/yellow for rest
+
+    // Adjust opacity
+    if (p < 0.05 || p > 0.95) mat.opacity = 0; // Hide at start/end
+    else mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0.3, 0.05);
+  });
+
+  return (
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute 
+          attach="attributes-position" 
+          count={3000} 
+          args={[bgPositions, 3]} 
+        />
+      </bufferGeometry>
+      <pointsMaterial 
+        size={0.03} 
+        color="#222222"
+        transparent 
+        opacity={0}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </points>
+  );
+}
+
 export function ParticleMorpher() {
   const pointsRef = useRef<THREE.Points>(null);
   const geometryRef = useRef<THREE.BufferGeometry>(null);
@@ -137,23 +186,26 @@ export function ParticleMorpher() {
   });
 
   return (
-    <points ref={pointsRef}>
-      <bufferGeometry ref={geometryRef}>
-        <bufferAttribute 
-          attach="attributes-position" 
-          count={PARTICLE_COUNT} 
-          args={[currentPositions, 3]} 
+    <>
+      <AmbientBackground />
+      <points ref={pointsRef}>
+        <bufferGeometry ref={geometryRef}>
+          <bufferAttribute 
+            attach="attributes-position" 
+            count={PARTICLE_COUNT} 
+            args={[currentPositions, 3]} 
+          />
+        </bufferGeometry>
+        <pointsMaterial 
+          ref={materialRef}
+          size={0.05} 
+          color="#FFC247"
+          transparent 
+          opacity={0.8}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
         />
-      </bufferGeometry>
-      <pointsMaterial 
-        ref={materialRef}
-        size={0.05} 
-        color="#FFC247"
-        transparent 
-        opacity={0.8}
-        blending={THREE.AdditiveBlending}
-        depthWrite={false}
-      />
-    </points>
+      </points>
+    </>
   );
 }

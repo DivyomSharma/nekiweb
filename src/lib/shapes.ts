@@ -161,6 +161,134 @@ export function getIndiaMapPositions(count: number, scale: number): Float32Array
   return positions;
 }
 
+export function getBowlPositions(count: number, radius: number): Float32Array {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const r = Math.random() > 0.8 ? radius * 0.9 : radius;
+    let pt;
+    while (true) {
+      pt = randomSpherePoint(r);
+      if (pt.y < 0) break;
+    }
+    positions[i * 3] = pt.x;
+    positions[i * 3 + 1] = pt.y;
+    positions[i * 3 + 2] = pt.z;
+  }
+  return positions;
+}
+
+export function getHandPositions(count: number, scale: number): Float32Array {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const part = Math.random();
+    if (part < 0.4) {
+      positions[i*3] = (Math.random() - 0.5) * 1.5 * scale;
+      positions[i*3+1] = (Math.random() - 0.5) * 1.5 * scale - 0.5 * scale;
+      positions[i*3+2] = (Math.random() - 0.5) * 0.2 * scale;
+    } else {
+      const f = Math.floor(Math.random() * 5);
+      const heights = [1.2, 1.5, 1.6, 1.4, 1.0];
+      const xs = [-0.6, -0.2, 0.2, 0.6, 0.9];
+      const yOffset = f === 4 ? -0.5 : 0.25;
+      
+      positions[i*3] = xs[f] * scale + (Math.random() - 0.5) * 0.2 * scale;
+      positions[i*3+1] = Math.random() * heights[f] * scale + yOffset * scale;
+      positions[i*3+2] = (Math.random() - 0.5) * 0.2 * scale;
+    }
+  }
+  return positions;
+}
+
+export function getGearPositions(count: number, radius: number): Float32Array {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const isTooth = Math.random() > 0.6;
+    const angle = Math.random() * Math.PI * 2;
+    let r = radius + (Math.random() - 0.5) * 0.4;
+    if (isTooth) {
+      const teethAngle = (angle % (Math.PI / 4)) / (Math.PI / 4);
+      if (teethAngle > 0.3 && teethAngle < 0.7) {
+        r += 0.5;
+      }
+    }
+    positions[i*3] = Math.cos(angle) * r;
+    positions[i*3+1] = Math.sin(angle) * r;
+    positions[i*3+2] = (Math.random() - 0.5) * 0.5;
+  }
+  return positions;
+}
+
+export function getNetworkPositions(count: number, scale: number): Float32Array {
+  const positions = new Float32Array(count * 3);
+  const nodes: {x: number, y: number, z: number}[] = [];
+  for(let j=0; j<15; j++) {
+    nodes.push({
+      x: (Math.random() - 0.5) * 5 * scale,
+      y: (Math.random() - 0.5) * 5 * scale,
+      z: (Math.random() - 0.5) * 2 * scale
+    });
+  }
+  for (let i = 0; i < count; i++) {
+    const isLine = Math.random() > 0.3;
+    if (isLine) {
+      const n1 = nodes[Math.floor(Math.random() * nodes.length)];
+      const n2 = nodes[Math.floor(Math.random() * nodes.length)];
+      const t = Math.random();
+      positions[i*3] = n1.x + (n2.x - n1.x) * t;
+      positions[i*3+1] = n1.y + (n2.y - n1.y) * t;
+      positions[i*3+2] = n1.z + (n2.z - n1.z) * t;
+    } else {
+      const n = nodes[Math.floor(Math.random() * nodes.length)];
+      const pt = randomSpherePoint(Math.random() * 0.5 * scale);
+      positions[i*3] = n.x + pt.x;
+      positions[i*3+1] = n.y + pt.y;
+      positions[i*3+2] = n.z + pt.z;
+    }
+  }
+  return positions;
+}
+
+export function getPinPositions(count: number, scale: number): Float32Array {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const isSphere = Math.random() > 0.4;
+    if (isSphere) {
+      const pt = randomSpherePoint(Math.random() > 0.5 ? scale : scale*0.8);
+      positions[i*3] = pt.x;
+      positions[i*3+1] = pt.y + scale;
+      positions[i*3+2] = pt.z;
+    } else {
+      const h = Math.random();
+      const angle = Math.random() * Math.PI * 2;
+      const r = h * scale;
+      positions[i*3] = Math.cos(angle) * r;
+      positions[i*3+1] = h * scale * 2 - scale;
+      positions[i*3+2] = Math.sin(angle) * r;
+    }
+  }
+  return positions;
+}
+
+export function getCameraFramePositions(count: number, scale: number): Float32Array {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const edge = Math.floor(Math.random() * 4);
+    let x, y;
+    if (edge === 0) { x = (Math.random() - 0.5)*2; y = 1; }
+    else if (edge === 1) { x = (Math.random() - 0.5)*2; y = -1; }
+    else if (edge === 2) { x = 1; y = (Math.random() - 0.5)*2; }
+    else { x = -1; y = (Math.random() - 0.5)*2; }
+    
+    x += (Math.random() - 0.5) * 0.1;
+    y += (Math.random() - 0.5) * 0.1;
+
+    positions[i*3] = x * scale;
+    positions[i*3+1] = y * scale;
+    positions[i*3+2] = (Math.random() - 0.5) * 0.1 * scale;
+  }
+  return positions;
+}
+
 export function getNekiLogoPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {

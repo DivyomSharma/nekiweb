@@ -5,7 +5,7 @@ import { Canvas } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { ParticleMorpher } from "./ParticleMorpher";
-import { ShieldCheck, MapPin, Package } from "lucide-react";
+import { ShieldCheck, MapPin, Package, Image as ImageIcon } from "lucide-react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import Lenis from "lenis";
 
@@ -39,7 +39,7 @@ export function JourneyCanvas() {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative w-full bg-background" style={{ height: "1700vh" }}>
+    <section ref={containerRef} className="relative w-full bg-background" style={{ height: "1600vh" }}>
       
       {/* 3D CANVAS - FIXED TO BACKGROUND */}
       <div className="fixed inset-0 z-0 pointer-events-none">
@@ -50,7 +50,6 @@ export function JourneyCanvas() {
           
           <ParticleMorpher progressRef={progressRef} />
           
-          {/* Subtle Bloom for the Gold Highlights */}
           <EffectComposer>
             <Bloom luminanceThreshold={0.8} mipmapBlur intensity={0.5} radius={0.4} />
           </EffectComposer>
@@ -62,168 +61,181 @@ export function JourneyCanvas() {
         
         {/* PAGE 0: HERO */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h1 className="text-6xl md:text-8xl font-heading font-extrabold text-foreground tracking-tight mb-6">
+          <h1 className="text-6xl md:text-9xl font-heading font-extrabold text-foreground tracking-tight mb-6">
             Humanity, <br/><span className="text-neki-gold">Delivered.</span>
           </h1>
           <p className="text-xl md:text-2xl text-text-secondary max-w-2xl font-light">
-            NEKI makes helping people as easy, trackable and trustworthy as modern commerce.
+            NEKI makes helping people as easy, trackable, and trustworthy as modern commerce.
           </p>
-          <p className="text-text-muted text-sm mt-12 tracking-widest uppercase font-medium">Scroll to begin</p>
+          <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center pointer-events-auto">
+            <button className="bg-foreground text-background px-8 py-4 rounded-full font-medium text-lg hover:bg-[#222222] transition-colors">
+              Start Contributing
+            </button>
+            <button className="bg-transparent border border-[#D8D4CE] text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-black/5 transition-colors">
+              Become a Volunteer
+            </button>
+            <button className="bg-transparent border border-[#D8D4CE] text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-black/5 transition-colors">
+              Partner with NEKI
+            </button>
+          </div>
         </div>
 
         {/* PAGE 1: PROBLEM */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
           <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-6">
-            People want to help.
+            Good intentions deserve better infrastructure.
           </h2>
-          <h3 className="text-4xl md:text-5xl font-heading font-medium text-text-muted mb-6">
-            They just stopped trusting the system.
-          </h3>
-          <p className="text-lg text-text-secondary max-w-xl font-light">
-            Donation boxes appear. Resources fade into uncertainty. Where did it actually go?
+          <p className="text-xl md:text-3xl text-text-muted max-w-3xl font-light leading-relaxed">
+            People don't stop helping because they stop caring.<br/>
+            They stop helping because they stop seeing where help goes.
           </p>
         </div>
 
         {/* PAGE 2: FOOD */}
         <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[10%]">
           <h2 className="text-5xl md:text-7xl font-heading font-bold text-neki-green tracking-tight mb-4">
-            Some contribute food.
+            A meal can change a day.
           </h2>
-          <p className="text-xl text-text-secondary font-light">Grocery kits, grain bags, hot meals.</p>
+          <p className="text-2xl text-text-secondary font-light">Food. Community kitchens. Animal shelters.</p>
         </div>
 
-        {/* PAGE 3: CLOTHES */}
+        {/* PAGE 3: BOOKS */}
         <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[10%] text-right">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-blue-400 tracking-tight mb-4">
-            Some contribute essentials.
+          <h2 className="text-5xl md:text-7xl font-heading font-bold text-neki-gold tracking-tight mb-4">
+            Knowledge travels farther than books.
           </h2>
-          <p className="text-xl text-text-secondary font-light">Blankets, winter wear, daily necessities.</p>
+          <p className="text-2xl text-text-secondary font-light">Education. Learning. Opportunity.</p>
         </div>
 
-        {/* PAGE 4: BOOKS */}
+        {/* PAGE 4: MEDICAL */}
         <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[10%]">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-neki-gold tracking-tight mb-4">
-            Some contribute knowledge.
-          </h2>
-          <p className="text-xl text-text-secondary font-light">Books, notebooks, education kits.</p>
-        </div>
-
-        {/* PAGE 5: MEDICAL */}
-        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[10%] text-right">
           <h2 className="text-5xl md:text-7xl font-heading font-bold text-red-400 tracking-tight mb-4">
-            Some contribute care.
+            Care should never be out of reach.
           </h2>
-          <p className="text-xl text-text-secondary font-light">First aid, medicines, healthcare support.</p>
+          <p className="text-2xl text-text-secondary font-light">Healthcare. Medicine. Relief.</p>
         </div>
 
-        {/* PAGE 6: VOLUNTEERS */}
-        <div className="h-screen w-full flex flex-col items-center justify-end pb-[20vh] p-6 text-center">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-neki-gold tracking-tight mb-4">
-            Some contribute time.
+        {/* PAGE 5: TIME */}
+        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[10%] text-right">
+          <h2 className="text-5xl md:text-7xl font-heading font-bold text-blue-400 tracking-tight mb-4 max-w-4xl">
+            Some contributions can't be measured in money.
           </h2>
-          <p className="text-xl text-text-secondary font-light">The backbone of real impact.</p>
+          <p className="text-2xl text-text-secondary font-light">Time. Presence. Effort.</p>
         </div>
 
-        {/* PAGE 7: SKILLS */}
-        <div className="h-screen w-full flex flex-col items-center justify-start pt-[20vh] p-6 text-center">
+        {/* PAGE 6: SKILLS */}
+        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[10%]">
           <h2 className="text-5xl md:text-7xl font-heading font-bold text-purple-400 tracking-tight mb-4">
-            Some contribute skills.
+            Expertise can be a form of service.
           </h2>
-          <p className="text-xl text-text-secondary font-light">Teachers, doctors, engineers, mentors.</p>
+          <p className="text-2xl text-text-secondary font-light">Teaching. Mentoring. Building. Healing.</p>
         </div>
 
-        {/* PAGE 8: COMMUNITIES */}
+        {/* PAGE 7: NETWORK EFFECT */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-6">
-            Together, contribution becomes <span className="text-neki-gold">impact.</span>
+          <h2 className="text-6xl md:text-8xl font-heading font-bold text-foreground tracking-tight mb-6">
+            Goodness scales through connection.
           </h2>
+          <p className="text-2xl text-text-secondary font-light">The strongest force is people, connected.</p>
         </div>
 
-        {/* PAGE 9: NEKI NETWORK */}
+        {/* PAGE 8: NEKI NETWORK */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
           <h2 className="text-6xl md:text-8xl font-heading font-extrabold text-foreground tracking-tight mb-4">
-            NEKI coordinates the journey.
+            Humanity works better as a network.
           </h2>
-          <p className="text-2xl text-text-secondary font-light">Maps active. Volunteers online. NGOs connected.</p>
         </div>
 
-        {/* PAGE 10: MISSION CREATION */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6">
+        {/* PAGE 9: MISSION CREATION */}
+        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
+          <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-12">
+            Every mission starts with a simple decision.
+          </h2>
           <div className="bg-white/60 backdrop-blur-2xl border border-black/5 p-8 rounded-3xl text-center max-w-sm w-full shadow-2xl shadow-black/5">
             <div className="w-12 h-12 bg-neki-gold/10 text-neki-gold rounded-full flex items-center justify-center mx-auto mb-4">
               <Package strokeWidth={1.5} />
             </div>
             <h3 className="text-2xl font-bold text-foreground tracking-tight mb-2">Feed 200 Cows</h3>
-            <div className="bg-surface text-text-secondary py-1 px-4 rounded-full text-sm inline-block font-medium border border-black/5">Status: Mission Created</div>
+            <div className="bg-surface text-text-secondary py-1 px-4 rounded-full text-sm font-medium border border-black/5">Mission Status: Created</div>
           </div>
         </div>
 
-        {/* PAGE 11: TRACKING */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6">
-          <div className="bg-white/60 backdrop-blur-2xl border border-black/5 p-8 rounded-3xl max-w-sm w-full relative overflow-hidden shadow-2xl shadow-black/5">
+        {/* PAGE 10: TRACKING */}
+        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
+          <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-4">
+            Follow every step.
+          </h2>
+          <p className="text-xl text-text-secondary mb-12 font-light">From contribution to completion. Nothing disappears.</p>
+          <div className="bg-white/60 backdrop-blur-2xl border border-black/5 p-8 rounded-3xl max-w-sm w-full relative overflow-hidden shadow-2xl shadow-black/5 text-left">
             <div className="flex justify-between items-center mb-6">
-              <span className="text-neki-green text-sm font-bold tracking-widest uppercase">Live Tracking</span>
-              <MapPin className="text-neki-green w-5 h-5" />
+              <span className="text-foreground text-sm font-bold tracking-widest uppercase">Live Tracking</span>
+              <MapPin className="text-neki-gold w-5 h-5" />
             </div>
-            <div className="space-y-4 font-medium">
-              <div className="flex items-center gap-4 text-text-muted"><div className="w-4 h-4 rounded-full bg-black/10" /> Picked Up</div>
-              <div className="flex items-center gap-4 text-foreground"><div className="w-4 h-4 rounded-full bg-neki-gold shadow-[0_0_10px_rgba(212,175,106,0.4)]" /> En Route</div>
-              <div className="flex items-center gap-4 text-text-muted/50"><div className="w-4 h-4 rounded-full border border-black/10" /> Delivered</div>
+            <div className="space-y-4 font-medium text-sm">
+              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-black/10" /> Mission Created</div>
+              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-black/10" /> Volunteer Assigned</div>
+              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-black/10" /> Pickup Complete</div>
+              <div className="flex items-center gap-4 text-foreground"><div className="w-3 h-3 rounded-full bg-neki-gold shadow-[0_0_10px_rgba(212,175,106,0.4)]" /> En Route</div>
+              <div className="flex items-center gap-4 text-text-muted/50"><div className="w-3 h-3 rounded-full border border-black/10" /> Delivered</div>
+              <div className="flex items-center gap-4 text-text-muted/50"><div className="w-3 h-3 rounded-full border border-black/10" /> Verified</div>
             </div>
           </div>
         </div>
 
-        {/* PAGE 12: TRUST */}
+        {/* PAGE 11: TRUST */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
           <ShieldCheck className="w-20 h-20 text-neki-green mx-auto mb-6" strokeWidth={1.5} />
           <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-4">
-            Trust is built through <span className="text-neki-green">visibility.</span>
+            Trust begins where uncertainty ends.
           </h2>
         </div>
 
-        {/* PAGE 13: PROOF OF IMPACT */}
+        {/* PAGE 12: PROOF OF IMPACT */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
+          <ImageIcon className="w-20 h-20 text-neki-gold mx-auto mb-6" strokeWidth={1.5} />
           <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-6">
-            Every completed mission inspires another.
+            Impact should be seen. <br/><span className="text-text-muted">Not assumed.</span>
           </h2>
-          <p className="text-xl text-text-secondary font-light">Photos, videos, and verified social proof.</p>
+          <p className="text-2xl text-text-secondary font-light max-w-2xl">
+            Every completed mission becomes proof.<br/>
+            Every proof inspires another mission.
+          </p>
         </div>
 
-        {/* PAGE 14: MULTIPLIER */}
+        {/* PAGE 13: MULTIPLIER */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
           <h2 className="text-6xl md:text-9xl font-heading font-extrabold text-foreground tracking-tighter mb-4">
             1 → 1000
           </h2>
-          <p className="text-2xl text-text-secondary font-light">The network effect of human goodness.</p>
+          <p className="text-3xl text-text-secondary font-light">One act inspires another. And another. And another.</p>
         </div>
 
-        {/* PAGE 15: LIVE IMPACT */}
+        {/* PAGE 14: INDIA NETWORK */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-6xl md:text-8xl font-heading font-extrabold text-foreground tracking-tight mb-4">
-            Humanity, coordinated.
+          <h2 className="text-5xl md:text-7xl font-heading font-extrabold text-foreground tracking-tight mb-4 max-w-5xl">
+            When millions move together, impossible becomes routine.
           </h2>
-          <p className="text-xl text-text-secondary max-w-xl mx-auto font-light">
-            Thousands of live missions. Live routes. Live organizations.
-          </p>
         </div>
 
-        {/* PAGE 16: FINAL */}
+        {/* PAGE 15: FINAL */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center pointer-events-auto">
           <h1 className="text-6xl md:text-9xl font-heading font-extrabold text-foreground tracking-tight mb-6">
             Humanity, <br/><span className="text-neki-gold">Delivered.</span>
           </h1>
           <p className="text-xl md:text-2xl text-text-secondary max-w-2xl mx-auto mb-12 font-light">
-            Track every contribution. Verify every mission. See every impact.
+            Track every contribution.<br/>
+            Verify every mission.<br/>
+            See every impact.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-foreground text-background px-8 py-4 rounded-full font-medium text-lg hover:bg-[#222222] transition-colors pointer-events-auto">
-              Join NEKI
+              Start a Mission
             </button>
             <button className="bg-transparent border border-[#D8D4CE] text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-black/5 transition-colors pointer-events-auto">
               Become a Volunteer
             </button>
             <button className="bg-transparent border border-[#D8D4CE] text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-black/5 transition-colors pointer-events-auto">
-              Onboard Organization
+              Partner with NEKI
             </button>
           </div>
         </div>

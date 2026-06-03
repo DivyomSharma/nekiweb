@@ -226,38 +226,117 @@ export function getBowlPositions(count: number, radius: number): Float32Array {
 }
 
 // ============================================================
-// 3: BOOK — Open book V-shape + knowledge particles
+// 3: BOOK — Front-facing closed book with bookmark
 // ============================================================
 export function getBookPositions(count: number): Float32Array {
   const positions = new Float32Array(count * 3);
-  for (let i = 0; i < count; i++) {
-    const r = Math.random();
-    if (r < 0.45) {
-      // Left page
-      const x = Math.random() * 2.2;
-      const z = (Math.random() - 0.5) * 3;
-      const y = -Math.exp(-x * 2) * 0.4 + Math.sin(x * 1.5) * 0.25;
-      positions[i * 3] = -x;
-      positions[i * 3 + 1] = y - Math.random() * 0.08;
-      positions[i * 3 + 2] = z;
-    } else if (r < 0.9) {
-      // Right page
-      const x = Math.random() * 2.2;
-      const z = (Math.random() - 0.5) * 3;
-      const y = -Math.exp(-x * 2) * 0.4 + Math.sin(x * 1.5) * 0.25;
-      positions[i * 3] = x;
-      positions[i * 3 + 1] = y - Math.random() * 0.08;
-      positions[i * 3 + 2] = z;
-    } else {
-      // Knowledge particles rising from pages
-      const x = (Math.random() - 0.5) * 1.5;
-      const y = 0.4 + Math.random() * 2.5;
-      const z = (Math.random() - 0.5) * 1.5;
-      positions[i * 3] = x;
-      positions[i * 3 + 1] = y;
-      positions[i * 3 + 2] = z;
+  
+  const primitives: any[] = [];
+  
+  const addLine = (x1: number, y1: number, x2: number, y2: number) => {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    primitives.push({
+      type: 'line',
+      len: Math.sqrt(dx * dx + dy * dy),
+      x1, y1, x2, y2,
+      nx: -dy, ny: dx 
+    });
+  };
+  
+  const addArc = (cx: number, cy: number, r: number, a1: number, a2: number) => {
+    let diff = Math.abs(a2 - a1);
+    if (diff > Math.PI * 2) diff = Math.PI * 2;
+    primitives.push({
+      type: 'arc',
+      len: r * diff,
+      cx, cy, r, a1, a2
+    });
+  };
+
+  // Outer Book Shape
+  addLine(-0.4, 0.8, 0.6, 0.8);          // Top horizontal
+  addLine(0.6, 0.8, 0.6, -0.8);          // Right vertical
+  addLine(-0.6, 0.6, -0.6, -0.6);        // Left vertical
+  addLine(-0.4, 0.8, -0.4, -0.4);        // Inner spine vertical
+  addLine(-0.4, -0.4, 0.6, -0.4);        // Front cover bottom
+  
+  // Broken horizontal lines (obscured by bookmark)
+  addLine(-0.4, -0.6, 0.0, -0.6);        // Middle horizontal left
+  addLine(0.2, -0.6, 0.6, -0.6);         // Middle horizontal right
+  addLine(-0.4, -0.8, 0.0, -0.8);        // Bottom horizontal left
+  addLine(0.2, -0.8, 0.6, -0.8);         // Bottom horizontal right
+  
+  // Bookmark
+  addLine(0.0, -0.4, 0.0, -1.1);
+  addLine(0.2, -0.4, 0.2, -1.1);
+  addLine(0.0, -1.1, 0.1, -0.9);
+  addLine(0.2, -1.1, 0.1, -0.9);
+  
+  // Label (Inner Rectangle)
+  addLine(-0.1, 0.1, 0.3, 0.1);
+  addLine(-0.1, 0.4, 0.3, 0.4);
+  addLine(-0.1, 0.1, -0.1, 0.4);
+  addLine(0.3, 0.1, 0.3, 0.4);
+  
+  // Arcs
+  addArc(-0.4, 0.6, 0.2, Math.PI / 2, Math.PI);      // Top-left outer
+  addArc(-0.4, -0.6, 0.2, Math.PI, Math.PI * 1.5);   // Bottom-left outer
+  addArc(-0.4, -0.4, 0.2, Math.PI, Math.PI * 1.5);   // Inner spine bottom
+
+  let totalLen = 0;
+  for (const p of primitives) {
+    if (p.type === 'line') {
+      const l = p.len;
+      if (l > 0) {
+        p.nx /= l;
+        p.ny /= l;
+      }
     }
+    totalLen += p.len;
   }
+  
+  const thickness = 0.08; 
+  
+  for (let i = 0; i < count; i++) {
+    let target = Math.random() * totalLen;
+    let chosen = primitives[0];
+    for (const p of primitives) {
+      target -= p.len;
+      if (target <= 0) {
+        chosen = p;
+        break;
+      }
+    }
+    
+    let x = 0, y = 0, z = 0;
+    
+    // Gaussian-like random for denser center and fuzzy edges
+    const rnd = (Math.random() + Math.random() + Math.random() - 1.5) * 0.66;
+    const offset = rnd * thickness;
+    
+    if (chosen.type === 'line') {
+      const t = Math.random();
+      const px = chosen.x1 + t * (chosen.x2 - chosen.x1);
+      const py = chosen.y1 + t * (chosen.y2 - chosen.y1);
+      x = px + chosen.nx * offset;
+      y = py + chosen.ny * offset;
+    } else {
+      const t = Math.random();
+      const angle = chosen.a1 + t * (chosen.a2 - chosen.a1);
+      const rOffset = chosen.r + offset;
+      x = chosen.cx + Math.cos(angle) * rOffset;
+      y = chosen.cy + Math.sin(angle) * rOffset;
+    }
+    
+    z = (Math.random() - 0.5) * 0.05; // mostly flat 3D
+    
+    const scale = 2.0;
+    positions[i * 3] = x * scale;
+    positions[i * 3 + 1] = (y + 0.15) * scale; // shifted slightly up to center visually
+    positions[i * 3 + 2] = z * scale;
+  }
+  
   return positions;
 }
 

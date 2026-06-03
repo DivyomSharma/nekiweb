@@ -29,11 +29,11 @@ import {
 // SECTION COLOR PALETTE (matches each section's theme)
 // ============================================================
 const SECTION_COLORS = [
-  "#D4AF6A", // 0  Hero / Butterfly — Champagne Gold
-  "#EF4444", // 1  Trust Problem / Cash Note — Red
-  "#C68B3E", // 2  Food / Bowl — Warm Amber
+  "#D4AF6A", // 0  Hero Logo — Champagne Gold
+  "#EF4444", // 1  Problem / Cash Note — Red
+  "#22C55E", // 2  Food / Bowl — Vibrant Green
   "#D4AF6A", // 3  Education / Book — Champagne Gold
-  "#3F5A4A", // 4  Healthcare / Cross — Green
+  "#EF4444", // 4  Healthcare / Cross — Vibrant Red
   "#60A5FA", // 5  Time / Heart — Soft Blue
   "#9B7FDB", // 6  Skills / Cogwheel — Purple
   "#D4AF6A", // 7  Connection / Two Nodes — Gold
@@ -142,8 +142,8 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   const [dynamicShapes, setDynamicShapes] = useState(initialShapes);
 
   useEffect(() => {
-    // Load the logo from image
-    getImagePositions("/logo.png", PARTICLE_COUNT, 1.4).then((imgPositions) => {
+    // Load the logo from image (increased scale to 2.4 for larger size)
+    getImagePositions("/logo.png", PARTICLE_COUNT, 2.4).then((imgPositions) => {
       const newShapes = [...initialShapes];
       newShapes[0] = imgPositions; // Replace Hero Logo with Image
       setDynamicShapes(newShapes);
@@ -169,7 +169,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     // Set target color
     targetColor.set(SECTION_COLORS[sectionIndex]);
     currentColor.lerp(targetColor, lerpFactor);
-    (meshRef.current.material as THREE.MeshStandardMaterial).color.copy(currentColor);
+    (meshRef.current.material as THREE.MeshPhysicalMaterial).color.copy(currentColor);
 
     // --- POSITION: push to the opposite side of text ---
     const targetX = SECTION_X_OFFSET[sectionIndex];
@@ -215,11 +215,16 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     <>
       <AmbientBackground progressRef={progressRef} />
       <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]}>
-        <sphereGeometry args={[0.012, 6, 6]} />
-        <meshStandardMaterial 
+        <sphereGeometry args={[0.015, 8, 8]} />
+        <meshPhysicalMaterial 
           color="#D4AF6A" 
-          metalness={0.9} 
-          roughness={0.2} 
+          metalness={0.1} 
+          roughness={0.15} 
+          transmission={0.9} 
+          ior={1.5}
+          thickness={0.5}
+          transparent={true}
+          opacity={1}
           envMapIntensity={1.5}
         />
       </instancedMesh>

@@ -1070,17 +1070,17 @@ export async function getImagePositions(imageUrl: string, count: number, scale: 
         // Randomly pick a valid pixel
         const px = validPixels[Math.floor(Math.random() * validPixels.length)];
         
-        // Add pixel-level sub-jitter for smoothness
-        const jx = px.x + Math.random() - 0.5;
-        const jy = px.y + Math.random() - 0.5;
+        // Add larger pixel-level sub-jitter to make it sparser and more organic
+        const jx = px.x + (Math.random() - 0.5) * 4.0;
+        const jy = px.y + (Math.random() - 0.5) * 4.0;
 
         // Map from [0, size] to standard coordinate space [-1, 1]
         // In Canvas, Y goes down, so we flip it
         const nx = (jx / size) * 2.0 - 1.0;
         const ny = -((jy / size) * 2.0 - 1.0);
         
-        // Add slight Z noise for 3D metallic volume
-        const nz = (Math.random() - 0.5) * 0.1;
+        // Add more Z noise for 3D metallic volume (makes it sparser in 3D)
+        const nz = (Math.random() - 0.5) * 0.4;
 
         positions[i * 3] = nx * scale * 1.5;
         positions[i * 3 + 1] = ny * scale * 1.5;

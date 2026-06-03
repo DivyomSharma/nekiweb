@@ -21,8 +21,7 @@ import {
   getMultiplierPositions,
   getIndiaNetworkPositions,
   getNekiLogoPositions,
-  getChaosPositions,
-  getImagePositions
+  getChaosPositions
 } from "@/lib/shapes";
 
 // ============================================================
@@ -118,9 +117,9 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   const meshRef = useRef<THREE.InstancedMesh>(null);
   
   // Pre-compute procedural shapes
-  const initialShapes = useMemo(() => {
+  const shapes = useMemo(() => {
     return [
-      getHeroLogoPositions(PARTICLE_COUNT, 1.4),      // 0  Hero Logo (fallback)
+      getHeroLogoPositions(PARTICLE_COUNT, 2.0),      // 0  Hero Logo (procedural, larger scale)
       getPhonePositions(PARTICLE_COUNT, 1.2),         // 1  Phone
       getBowlPositions(PARTICLE_COUNT, 1.2),          // 2  Bowl
       getBookPositions(PARTICLE_COUNT),               // 3  Book
@@ -135,24 +134,10 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
       getCameraFramePositions(PARTICLE_COUNT, 1.2),   // 12 Camera
       getMultiplierPositions(PARTICLE_COUNT, 0.6),    // 13 Multiplier
       getIndiaNetworkPositions(PARTICLE_COUNT, 1.8),  // 14 India Network
-      getNekiLogoPositions(PARTICLE_COUNT, 2.0),      // 15 Logo
     ];
   }, []);
 
-  const [dynamicShapes, setDynamicShapes] = useState(initialShapes);
-
-  useEffect(() => {
-    // Load the logo from image (increased scale to 2.4 for larger size)
-    getImagePositions("/logo.png", PARTICLE_COUNT, 2.4).then((imgPositions) => {
-      const newShapes = [...initialShapes];
-      newShapes[0] = imgPositions; // Replace Hero Logo with Image
-      setDynamicShapes(newShapes);
-    }).catch(err => {
-      console.warn("Failed to load logo.png, using procedural fallback:", err);
-    });
-  }, [initialShapes]);
-
-  const currentPositions = useMemo(() => new Float32Array(dynamicShapes[0]), [dynamicShapes]);
+  const currentPositions = useMemo(() => new Float32Array(shapes[0]), [shapes]);
   const targetColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
   const currentColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
 
@@ -164,7 +149,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
 
     // Current section (0 to 15)
     const sectionIndex = Math.min(Math.floor(p * 16), 15);
-    const targetShape = dynamicShapes[sectionIndex];
+    const targetShape = shapes[sectionIndex];
 
     // Set target color
     targetColor.set(SECTION_COLORS[sectionIndex]);

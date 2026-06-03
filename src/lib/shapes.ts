@@ -97,9 +97,12 @@ export function getHeroLogoPositions(count: number, scale: number): Float32Array
       const width = wStart * (1 - t) + wEnd * t + Math.sin(t * Math.PI) * swell;
       
       const offset = (Math.random() - 0.5) * width;
-      x = pt.x + norm.nx * offset;
-      y = pt.y + norm.ny * offset;
-      z = (Math.random() - 0.5) * 0.1; // flat 3D
+      // Add slight organic noise to make the stroke a bit sparser/more particle-like
+      const noiseX = (Math.random() - 0.5) * 0.04;
+      const noiseY = (Math.random() - 0.5) * 0.04;
+      x = pt.x + norm.nx * offset + noiseX;
+      y = pt.y + norm.ny * offset + noiseY;
+      z = (Math.random() - 0.5) * 0.15; // increased Z depth for sparse 3D look
     }
 
     const finalScale = scale * 1.6;

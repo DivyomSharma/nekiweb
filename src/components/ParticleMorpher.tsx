@@ -121,22 +121,22 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   // Pre-compute all 16 target shapes
   const shapes = useMemo(() => {
     return [
-      getButterflyPositions(PARTICLE_COUNT, 3.0),     // 0  Butterfly
-      getRoutePositions(PARTICLE_COUNT, 1.5),          // 1  Route
-      getBowlPositions(PARTICLE_COUNT, 2.5),           // 2  Bowl
-      getBookPositions(PARTICLE_COUNT),                // 3  Book
-      getCrossPositions(PARTICLE_COUNT, 4.0),          // 4  Cross
-      getHeartPositions(PARTICLE_COUNT, 3.0),          // 5  Heart
-      getGearPositions(PARTICLE_COUNT, 2.5),           // 6  Cogwheel
-      getConnectionPositions(PARTICLE_COUNT, 1.5),     // 7  Two Nodes
-      getNetworkPositions(PARTICLE_COUNT, 1.2),        // 8  Network
-      getMissionEcoPositions(PARTICLE_COUNT, 2.0),     // 9  Mission Eco
-      getTrackingPositions(PARTICLE_COUNT, 1.5),       // 10 Tracking
-      getShieldPositions(PARTICLE_COUNT, 2.5),         // 11 Shield
-      getCameraFramePositions(PARTICLE_COUNT, 2.5),    // 12 Camera
-      getMultiplierPositions(PARTICLE_COUNT, 1.2),     // 13 Multiplier
-      getIndiaNetworkPositions(PARTICLE_COUNT, 3.5),   // 14 India Network
-      getNekiLogoPositions(PARTICLE_COUNT, 3.5),       // 15 Logo
+      getButterflyPositions(PARTICLE_COUNT, 1.4),     // 0  Butterfly
+      getRoutePositions(PARTICLE_COUNT, 0.7),         // 1  Route
+      getBowlPositions(PARTICLE_COUNT, 1.2),          // 2  Bowl
+      getBookPositions(PARTICLE_COUNT),               // 3  Book
+      getCrossPositions(PARTICLE_COUNT, 2.0),         // 4  Cross
+      getHeartPositions(PARTICLE_COUNT, 1.5),         // 5  Heart
+      getGearPositions(PARTICLE_COUNT, 1.2),          // 6  Cogwheel
+      getConnectionPositions(PARTICLE_COUNT, 0.8),    // 7  Two Nodes
+      getNetworkPositions(PARTICLE_COUNT, 0.6),       // 8  Network
+      getMissionEcoPositions(PARTICLE_COUNT, 1.0),    // 9  Mission Eco
+      getTrackingPositions(PARTICLE_COUNT, 0.7),      // 10 Tracking
+      getShieldPositions(PARTICLE_COUNT, 1.2),        // 11 Shield
+      getCameraFramePositions(PARTICLE_COUNT, 1.2),   // 12 Camera
+      getMultiplierPositions(PARTICLE_COUNT, 0.6),    // 13 Multiplier
+      getIndiaNetworkPositions(PARTICLE_COUNT, 1.8),  // 14 India Network
+      getNekiLogoPositions(PARTICLE_COUNT, 2.0),      // 15 Logo
     ];
   }, []);
 
@@ -193,10 +193,10 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
         </bufferGeometry>
         <pointsMaterial
           ref={materialRef}
-          size={0.035}
+          size={0.02}
           color="#D4AF6A"
           transparent
-          opacity={0.95}
+          opacity={0.85}
           depthWrite={false}
           blending={THREE.NormalBlending}
         />

@@ -29,13 +29,15 @@ export function getButterflyPositions(count: number, scale: number): Float32Arra
   const positions = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
     const t = Math.random() * Math.PI * 2;
-    const r = Math.exp(Math.cos(t)) - 2 * Math.cos(4 * t) - Math.pow(Math.sin(t / 12), 5);
-    const fill = Math.pow(Math.random(), 0.3); // bias toward the boundary
-    const x = Math.sin(t) * r * fill * scale * 0.5;
-    const y = Math.cos(t) * r * fill * scale * 0.5;
-    positions[i * 3] = x + (Math.random() - 0.5) * 0.03 * scale;
-    positions[i * 3 + 1] = y + (Math.random() - 0.5) * 0.03 * scale;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.06 * scale;
+    // Simple polar butterfly: r = e^sin(t) - 2cos(4t)
+    // This gives a clean 4-wing shape
+    const r = (Math.exp(Math.sin(t)) - 2 * Math.cos(4 * t)) * 0.35;
+    const fill = 0.6 + Math.random() * 0.4; // mostly near boundary
+    const x = Math.sin(t) * r * fill * scale;
+    const y = Math.cos(t) * r * fill * scale;
+    positions[i * 3] = x;
+    positions[i * 3 + 1] = y;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.04 * scale;
   }
   return positions;
 }
@@ -379,47 +381,34 @@ export function getTrackingPositions(count: number, scale: number): Float32Array
 export function getShieldPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
-    let x: number, y: number;
-
-    if (Math.random() < 0.15) {
-      // Checkmark inside
-      const ct = Math.random();
-      if (ct < 0.5) {
-        x = (-0.3 + ct * 0.6) * scale;
-        y = (0.1 - ct * 0.4) * scale;
-      } else {
-        x = (ct * 0.6) * scale;
-        y = (-0.1 + (ct - 0.5) * 0.8) * scale;
-      }
+    // Simple shield: flat top, straight sides tapering to a point at bottom
+    // Generate random y from -1 to 0.6
+    const ny = -1 + Math.random() * 1.6; // -1 to 0.6
+    // Width narrows linearly from top to bottom
+    let maxW: number;
+    if (ny > 0) {
+      maxW = 1.0; // flat top
     } else {
-      // Shield body — top is flat/rounded, bottom tapers to point
-      const t = Math.random() * Math.PI * 2;
-      if (Math.random() < 0.4) {
-        // Boundary
-        if (t < Math.PI) {
-          // Top half (wide)
-          x = Math.cos(t) * scale;
-          y = Math.abs(Math.sin(t)) * scale * 0.5 + scale * 0.3;
-        } else {
-          // Bottom half (tapers)
-          const bt = (t - Math.PI) / Math.PI;
-          const side = bt < 0.5 ? -1 : 1;
-          const prog = bt < 0.5 ? bt * 2 : (1 - bt) * 2;
-          x = side * (1 - prog) * scale;
-          y = -prog * scale * 0.8;
-        }
-      } else {
-        // Fill interior
-        x = (Math.random() - 0.5) * 1.6 * scale;
-        y = -0.6 * scale + Math.random() * 1.4 * scale;
-        const maxW = y > 0 ? scale * 0.95 : Math.max(0.05, scale * (1 - Math.abs(y) / (scale * 0.8)));
-        if (Math.abs(x) > maxW) x = Math.sign(x) * maxW * Math.random();
-      }
+      maxW = 1.0 + ny; // tapers: at ny=-1 width=0, at ny=0 width=1
+    }
+    maxW = Math.max(maxW, 0);
+
+    const r = Math.random();
+    let x: number, y: number;
+    if (r < 0.35) {
+      // Boundary outline
+      const side = Math.random() > 0.5 ? 1 : -1;
+      x = side * maxW * scale;
+      y = ny * scale;
+    } else {
+      // Fill interior
+      x = (Math.random() - 0.5) * 2 * maxW * scale;
+      y = ny * scale;
     }
 
-    positions[i * 3] = x + (Math.random() - 0.5) * 0.03 * scale;
-    positions[i * 3 + 1] = y + (Math.random() - 0.5) * 0.03 * scale;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.15 * scale;
+    positions[i * 3] = x + (Math.random() - 0.5) * 0.02 * scale;
+    positions[i * 3 + 1] = y + (Math.random() - 0.5) * 0.02 * scale;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.1 * scale;
   }
   return positions;
 }
@@ -538,26 +527,29 @@ export function getIndiaNetworkPositions(count: number, scale: number): Float32A
 // ============================================================
 export function getNekiLogoPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
+  const thickness = 0.12 * scale; // thick strokes for clear N
   for (let i = 0; i < count; i++) {
     const stroke = Math.random();
     const t = Math.random();
-    const noise = 0.04 * scale;
-    let x = 0, y = 0, z = (Math.random() - 0.5) * noise;
+    let x = 0, y = 0;
 
-    if (stroke < 0.33) {
-      x = -0.5 * scale + (Math.random() - 0.5) * noise;
-      y = -0.5 * scale + t * 1.0 * scale;
-    } else if (stroke < 0.66) {
-      x = -0.5 * scale + t * 1.0 * scale;
-      y = 0.5 * scale - t * 1.0 * scale;
+    if (stroke < 0.3) {
+      // Left vertical bar of N
+      x = -0.6 * scale + (Math.random() - 0.5) * thickness;
+      y = (-0.8 + t * 1.6) * scale;
+    } else if (stroke < 0.6) {
+      // Right vertical bar of N
+      x = 0.6 * scale + (Math.random() - 0.5) * thickness;
+      y = (-0.8 + t * 1.6) * scale;
     } else {
-      x = 0.5 * scale + (Math.random() - 0.5) * noise;
-      y = -0.5 * scale + t * 1.0 * scale;
+      // Diagonal connecting bar (top-left to bottom-right)
+      x = -0.6 * scale + t * 1.2 * scale + (Math.random() - 0.5) * thickness;
+      y = 0.8 * scale - t * 1.6 * scale + (Math.random() - 0.5) * thickness;
     }
 
     positions[i * 3] = x;
     positions[i * 3 + 1] = y;
-    positions[i * 3 + 2] = z;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.03 * scale;
   }
   return positions;
 }

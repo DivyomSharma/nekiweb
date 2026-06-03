@@ -16,15 +16,14 @@ import {
   getNekiLogoPositions
 } from "@/lib/shapes";
 
-function AmbientBackground() {
+function AmbientBackground({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
   const pointsRef = useRef<THREE.Points>(null);
-  const scroll = useScroll();
   
   const bgPositions = useMemo(() => getChaosPositions(3000, 40), []);
 
   useFrame((state, delta) => {
     if (!pointsRef.current) return;
-    const p = scroll.offset;
+    const p = progressRef.current;
     
     // Slow rotation
     pointsRef.current.rotation.y += 0.05 * delta;
@@ -65,11 +64,10 @@ function AmbientBackground() {
   );
 }
 
-export function ParticleMorpher() {
+export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
   const pointsRef = useRef<THREE.Points>(null);
   const geometryRef = useRef<THREE.BufferGeometry>(null);
   const materialRef = useRef<THREE.PointsMaterial>(null);
-  const scroll = useScroll();
 
   // Generate all target shapes once
   const shapes = useMemo(() => {
@@ -92,7 +90,7 @@ export function ParticleMorpher() {
   useFrame((state, delta) => {
     if (!geometryRef.current || !pointsRef.current || !materialRef.current) return;
 
-    const p = scroll.offset; // 0 to 1 across 17 pages (each page is ~0.0588)
+    const p = progressRef.current; // 0 to 1 across 17 pages (each page is ~0.0588)
     let targetShape = shapes.orb;
     let targetColor = new THREE.Color("#FFC247");
     let targetSize = 0.05;
@@ -187,7 +185,7 @@ export function ParticleMorpher() {
 
   return (
     <>
-      <AmbientBackground />
+      <AmbientBackground progressRef={progressRef} />
       <points ref={pointsRef}>
         <bufferGeometry ref={geometryRef}>
           <bufferAttribute 

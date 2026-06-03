@@ -47,89 +47,90 @@ export function getButterflyPositions(count: number, scale: number): Float32Arra
 // ============================================================
 export function getCashNotePositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
-  const width = 2.2 * scale;
-  const height = 1.0 * scale;
+  const width = 2.4 * scale;
+  const height = 1.1 * scale;
 
   for (let i = 0; i < count; i++) {
     const r = Math.random();
     let x = 0, y = 0, z = 0;
 
-    if (r < 0.4) {
-      // Border outline
+    if (r < 0.3) {
+      // Outer border (crisp)
       const edge = Math.floor(Math.random() * 4);
-      if (edge === 0) { x = (Math.random() - 0.5) * width; y = height / 2; }
-      else if (edge === 1) { x = (Math.random() - 0.5) * width; y = -height / 2; }
-      else if (edge === 2) { x = width / 2; y = (Math.random() - 0.5) * height; }
-      else { x = -width / 2; y = (Math.random() - 0.5) * height; }
-      
-      // slightly thicken the border
-      x += (Math.random() - 0.5) * 0.05 * scale;
-      y += (Math.random() - 0.5) * 0.05 * scale;
-    } else if (r < 0.6) {
-      // Central circle (portrait/seal)
+      const t = (Math.random() - 0.5);
+      if (edge === 0) { x = t * width; y = height / 2; }
+      else if (edge === 1) { x = t * width; y = -height / 2; }
+      else if (edge === 2) { x = width / 2; y = t * height; }
+      else { x = -width / 2; y = t * height; }
+      x += (Math.random() - 0.5) * 0.02 * scale;
+      y += (Math.random() - 0.5) * 0.02 * scale;
+    } else if (r < 0.5) {
+      // Inner border
+      const innerW = width * 0.85;
+      const innerH = height * 0.75;
+      const edge = Math.floor(Math.random() * 4);
+      const t = (Math.random() - 0.5);
+      if (edge === 0) { x = t * innerW; y = innerH / 2; }
+      else if (edge === 1) { x = t * innerW; y = -innerH / 2; }
+      else if (edge === 2) { x = innerW / 2; y = t * innerH; }
+      else { x = -innerW / 2; y = t * innerH; }
+      x += (Math.random() - 0.5) * 0.02 * scale;
+      y += (Math.random() - 0.5) * 0.02 * scale;
+    } else if (r < 0.65) {
+      // Central portrait circle
       const angle = Math.random() * Math.PI * 2;
-      const radius = 0.25 * scale + (Math.random() - 0.5) * 0.04 * scale;
+      const radius = 0.25 * scale;
       x = Math.cos(angle) * radius;
       y = Math.sin(angle) * radius;
-    } else if (r < 0.7) {
-      // Corner circles / decorations
-      const cornerX = (Math.random() > 0.5 ? 1 : -1) * (width / 2 - 0.15 * scale);
-      const cornerY = (Math.random() > 0.5 ? 1 : -1) * (height / 2 - 0.15 * scale);
+      x += (Math.random() - 0.5) * 0.02 * scale;
+      y += (Math.random() - 0.5) * 0.02 * scale;
+    } else if (r < 0.75) {
+      // Small side circles (seals/numbers)
+      const sideX = (Math.random() > 0.5 ? 1 : -1) * (width * 0.3);
       const angle = Math.random() * Math.PI * 2;
-      const radius = 0.08 * scale + (Math.random() - 0.5) * 0.02 * scale;
-      x = cornerX + Math.cos(angle) * radius;
-      y = cornerY + Math.sin(angle) * radius;
+      const radius = 0.1 * scale;
+      x = sideX + Math.cos(angle) * radius;
+      y = Math.sin(angle) * radius;
+      x += (Math.random() - 0.5) * 0.02 * scale;
+      y += (Math.random() - 0.5) * 0.02 * scale;
     } else {
       // Fill / paper texture
       x = (Math.random() - 0.5) * width;
       y = (Math.random() - 0.5) * height;
     }
 
-    // Add a slight wave to make it look like a physical note
-    z = Math.sin(x * 2.0 / scale) * 0.1 * scale + Math.cos(y * 2.0 / scale) * 0.05 * scale;
+    // Add a slight wave to make it look like a physical paper note
+    z = Math.sin(x * 2.0 / scale) * 0.08 * scale;
     
     positions[i * 3] = x;
     positions[i * 3 + 1] = y;
-    positions[i * 3 + 2] = z + (Math.random() - 0.5) * 0.02 * scale;
+    positions[i * 3 + 2] = z + (Math.random() - 0.5) * 0.01 * scale;
   }
   return positions;
 }
 
 // ============================================================
-// 2: BOWL — Lower hemisphere shell + food contents + utensils
+// 2: BOWL — Lower hemisphere shell + food contents
 // ============================================================
 export function getBowlPositions(count: number, radius: number): Float32Array {
   const positions = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
     const r = Math.random();
-    if (r < 0.55) {
+    if (r < 0.65) {
       // Bowl shell (lower hemisphere, tight surface)
-      const shell = radius + (Math.random() - 0.5) * 0.04 * radius;
+      const shell = radius + (Math.random() - 0.5) * 0.02 * radius;
       let pt;
       do { pt = randomSpherePoint(shell); } while (pt.y > 0.05 * radius);
       positions[i * 3] = pt.x;
       positions[i * 3 + 1] = pt.y;
       positions[i * 3 + 2] = pt.z;
-    } else if (r < 0.85) {
-      // Contents (fill the top opening densely)
-      const angle = Math.random() * Math.PI * 2;
-      const ir = Math.sqrt(Math.random()) * radius * 0.8;
-      positions[i * 3] = Math.cos(angle) * ir;
-      positions[i * 3 + 1] = (Math.random()) * 0.15 * radius;
-      positions[i * 3 + 2] = Math.sin(angle) * ir;
-    } else if (r < 0.92) {
-      // Fork (vertical line offset right)
-      const t = Math.random();
-      positions[i * 3] = radius * 1.2 + (Math.random() - 0.5) * 0.03 * radius;
-      positions[i * 3 + 1] = -radius * 0.4 + t * radius * 1.4;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 0.03 * radius;
     } else {
-      // Spoon (small oval offset left)
+      // Contents (fill the top opening densely, looks like mounded food)
       const angle = Math.random() * Math.PI * 2;
-      const sr = Math.random() * 0.18 * radius;
-      positions[i * 3] = -radius * 1.2 + Math.cos(angle) * sr;
-      positions[i * 3 + 1] = radius * 0.3 + Math.sin(angle) * sr * 0.5;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 0.03 * radius;
+      const ir = Math.sqrt(Math.random()) * radius * 0.95; // fills to the edge
+      positions[i * 3] = Math.cos(angle) * ir;
+      positions[i * 3 + 1] = 0.05 * radius + Math.random() * 0.12 * radius;
+      positions[i * 3 + 2] = Math.sin(angle) * ir;
     }
   }
   return positions;

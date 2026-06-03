@@ -29,7 +29,7 @@ import {
 // ============================================================
 const SECTION_COLORS = [
   "#D4AF6A", // 0  Hero / Butterfly — Champagne Gold
-  "#3F5A4A", // 1  Trust Problem / Cash Note — Green
+  "#EF4444", // 1  Trust Problem / Cash Note — Red
   "#C68B3E", // 2  Food / Bowl — Warm Amber
   "#D4AF6A", // 3  Education / Book — Champagne Gold
   "#3F5A4A", // 4  Healthcare / Cross — Green

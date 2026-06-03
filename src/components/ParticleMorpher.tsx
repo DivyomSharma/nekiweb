@@ -6,7 +6,7 @@ import * as THREE from "three";
 import {
   PARTICLE_COUNT,
   getButterflyPositions,
-  getCashNotePositions,
+  getPhonePositions,
   getBowlPositions,
   getBookPositions,
   getCrossPositions,
@@ -122,7 +122,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   const shapes = useMemo(() => {
     return [
       getButterflyPositions(PARTICLE_COUNT, 1.4),     // 0  Butterfly
-      getCashNotePositions(PARTICLE_COUNT, 1.0),      // 1  Cash Note
+      getPhonePositions(PARTICLE_COUNT, 1.2),         // 1  Phone
       getBowlPositions(PARTICLE_COUNT, 1.2),          // 2  Bowl
       getBookPositions(PARTICLE_COUNT),               // 3  Book
       getCrossPositions(PARTICLE_COUNT, 2.0),         // 4  Cross

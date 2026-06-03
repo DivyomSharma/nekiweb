@@ -43,64 +43,84 @@ export function getButterflyPositions(count: number, scale: number): Float32Arra
 }
 
 // ============================================================
-// 1: CASH NOTE — A slightly wavy rectangular banknote
+// 1: APPLE PHONE — Phone shape with NEKI app (N logo inside)
 // ============================================================
-export function getCashNotePositions(count: number, scale: number): Float32Array {
+export function getPhonePositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
-  const width = 2.4 * scale;
-  const height = 1.1 * scale;
+  const w = 1.2 * scale;
+  const h = 2.5 * scale;
+  const cr = 0.25 * scale; // corner radius
+
+  const getBorderPoint = (bw: number, bh: number, bcr: number) => {
+    let bx = 0, by = 0;
+    if (Math.random() < bw / (bw + bh)) {
+      bx = (Math.random() - 0.5) * bw;
+      by = (Math.random() > 0.5 ? 1 : -1) * bh / 2;
+    } else {
+      bx = (Math.random() > 0.5 ? 1 : -1) * bw / 2;
+      by = (Math.random() - 0.5) * bh;
+    }
+    const iw = bw - 2 * bcr;
+    const ih = bh - 2 * bcr;
+    const dx = Math.abs(bx) - iw / 2;
+    const dy = Math.abs(by) - ih / 2;
+    if (dx > 0 && dy > 0) {
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      bx = Math.sign(bx) * (iw / 2 + (dx / dist) * bcr);
+      by = Math.sign(by) * (ih / 2 + (dy / dist) * bcr);
+    }
+    return { x: bx, y: by };
+  };
 
   for (let i = 0; i < count; i++) {
     const r = Math.random();
     let x = 0, y = 0, z = 0;
 
-    if (r < 0.3) {
-      // Outer border (crisp)
-      const edge = Math.floor(Math.random() * 4);
-      const t = (Math.random() - 0.5);
-      if (edge === 0) { x = t * width; y = height / 2; }
-      else if (edge === 1) { x = t * width; y = -height / 2; }
-      else if (edge === 2) { x = width / 2; y = t * height; }
-      else { x = -width / 2; y = t * height; }
-      x += (Math.random() - 0.5) * 0.02 * scale;
-      y += (Math.random() - 0.5) * 0.02 * scale;
+    if (r < 0.25) {
+      // Outer Phone Body
+      const pt = getBorderPoint(w, h, cr);
+      x = pt.x + (Math.random() - 0.5) * 0.02 * scale;
+      y = pt.y + (Math.random() - 0.5) * 0.02 * scale;
+    } else if (r < 0.45) {
+      // Screen Border
+      const pt = getBorderPoint(w * 0.9, h * 0.95, cr * 0.8);
+      x = pt.x + (Math.random() - 0.5) * 0.02 * scale;
+      y = pt.y + (Math.random() - 0.5) * 0.02 * scale;
     } else if (r < 0.5) {
-      // Inner border
-      const innerW = width * 0.85;
-      const innerH = height * 0.75;
-      const edge = Math.floor(Math.random() * 4);
-      const t = (Math.random() - 0.5);
-      if (edge === 0) { x = t * innerW; y = innerH / 2; }
-      else if (edge === 1) { x = t * innerW; y = -innerH / 2; }
-      else if (edge === 2) { x = innerW / 2; y = t * innerH; }
-      else { x = -innerW / 2; y = t * innerH; }
-      x += (Math.random() - 0.5) * 0.02 * scale;
-      y += (Math.random() - 0.5) * 0.02 * scale;
-    } else if (r < 0.65) {
-      // Central portrait circle
-      const angle = Math.random() * Math.PI * 2;
-      const radius = 0.25 * scale;
-      x = Math.cos(angle) * radius;
-      y = Math.sin(angle) * radius;
-      x += (Math.random() - 0.5) * 0.02 * scale;
-      y += (Math.random() - 0.5) * 0.02 * scale;
+      // Dynamic Island (notch)
+      x = (Math.random() - 0.5) * w * 0.35;
+      y = h * 0.42 + (Math.random() - 0.5) * 0.04 * scale;
+    } else if (r < 0.53) {
+      // Home Indicator Line
+      x = (Math.random() - 0.5) * w * 0.4;
+      y = -h * 0.44 + (Math.random() - 0.5) * 0.01 * scale;
     } else if (r < 0.75) {
-      // Small side circles (seals/numbers)
-      const sideX = (Math.random() > 0.5 ? 1 : -1) * (width * 0.3);
-      const angle = Math.random() * Math.PI * 2;
-      const radius = 0.1 * scale;
-      x = sideX + Math.cos(angle) * radius;
-      y = Math.sin(angle) * radius;
-      x += (Math.random() - 0.5) * 0.02 * scale;
-      y += (Math.random() - 0.5) * 0.02 * scale;
+      // NEKI App Logo 'N' in the center
+      const nScale = 0.45 * scale;
+      const stroke = Math.random();
+      const t = Math.random();
+      const thickness = 0.12 * nScale;
+
+      if (stroke < 0.3) {
+        x = -0.6 * nScale + (Math.random() - 0.5) * thickness;
+        y = (-0.8 + t * 1.6) * nScale;
+      } else if (stroke < 0.6) {
+        x = 0.6 * nScale + (Math.random() - 0.5) * thickness;
+        y = (-0.8 + t * 1.6) * nScale;
+      } else {
+        x = -0.6 * nScale + t * 1.2 * nScale + (Math.random() - 0.5) * thickness;
+        y = 0.8 * nScale - t * 1.6 * nScale + (Math.random() - 0.5) * thickness;
+      }
+      x += (Math.random() - 0.5) * 0.01 * scale;
+      y += (Math.random() - 0.5) * 0.01 * scale;
     } else {
-      // Fill / paper texture
-      x = (Math.random() - 0.5) * width;
-      y = (Math.random() - 0.5) * height;
+      // Screen Fill (sparse ambient apps/content)
+      x = (Math.random() - 0.5) * w * 0.85;
+      y = (Math.random() - 0.5) * h * 0.9;
     }
 
-    // Add a slight wave to make it look like a physical paper note
-    z = Math.sin(x * 2.0 / scale) * 0.08 * scale;
+    // Slightly curved screen/phone surface
+    z = (Math.cos(x * 1.5 / scale) + Math.cos(y * 1.5 / scale)) * 0.02 * scale;
     
     positions[i * 3] = x;
     positions[i * 3 + 1] = y;

@@ -1,4 +1,4 @@
-export const PARTICLE_COUNT = 15000;
+export const PARTICLE_COUNT = 8000;
 
 // Helper to get random point on sphere surface
 function randomSpherePoint(radius: number) {

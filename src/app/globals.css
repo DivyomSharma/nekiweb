@@ -1,26 +1,42 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FFF6E9; /* Soft Cream */
+  --background: #FAF9F7; /* Ultra-soft ivory */
+  --surface: #F3F1ED; /* Secondary surface */
   --foreground: #111111; /* Deep Charcoal */
+  --text-secondary: #6B6B6B;
+  --text-muted: #9A9A9A;
   
-  --neki-orange: #FF7A00;
-  --neki-yellow: #FFC247;
-  --neki-green: #1E3D2B;
-  --neki-charcoal: #111111;
-  --neki-cream: #FFF6E9;
+  --neki-gold: #D4AF6A; /* Champagne Gold */
+  --neki-gold-glow: #E7C88A;
+  --neki-gold-light: #F2D9A6;
+  --neki-green: #3F5A4A; /* Deep Moss Green */
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
-  --color-neki-orange: var(--neki-orange);
-  --color-neki-yellow: var(--neki-yellow);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-neki-gold: var(--neki-gold);
+  --color-neki-gold-glow: var(--neki-gold-glow);
+  --color-neki-gold-light: var(--neki-gold-light);
   --color-neki-green: var(--neki-green);
-  --color-neki-charcoal: var(--neki-charcoal);
-  --color-neki-cream: var(--neki-cream);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Geist", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Strict Scrollbar Hiding */
+html, body, * {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 body {
@@ -28,11 +44,6 @@ body {
   background: var(--background);
   font-family: var(--font-inter), sans-serif;
   overflow-x: hidden;
-  /* Hide scrollbar */
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-body::-webkit-scrollbar {
-  display: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

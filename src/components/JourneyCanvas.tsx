@@ -44,7 +44,7 @@ export function JourneyCanvas() {
       {/* 3D CANVAS - FIXED TO BACKGROUND */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <Canvas camera={{ position: [0, 0, 10], fov: 45 }} gl={{ antialias: false, alpha: false }}>
-          <color attach="background" args={["#FAF9F7"]} />
+          <color attach="background" args={["#050505"]} />
           <ambientLight intensity={1.2} />
           <Environment preset="city" />
           
@@ -71,10 +71,10 @@ export function JourneyCanvas() {
             <button className="bg-foreground text-background px-8 py-4 rounded-full font-medium text-lg hover:bg-[#222222] transition-colors">
               Start Contributing
             </button>
-            <button className="bg-transparent border border-[#D8D4CE] text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-black/5 transition-colors">
+            <button className="bg-transparent border border-white/20 text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-white/5 transition-colors">
               Become a Volunteer
             </button>
-            <button className="bg-transparent border border-[#D8D4CE] text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-black/5 transition-colors">
+            <button className="bg-transparent border border-white/20 text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-white/5 transition-colors">
               Partner with NEKI
             </button>
           </div>
@@ -151,12 +151,12 @@ export function JourneyCanvas() {
           <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-12">
             Every mission starts with a simple decision.
           </h2>
-          <div className="bg-white/60 backdrop-blur-2xl border border-black/5 p-8 rounded-3xl text-center max-w-sm w-full shadow-2xl shadow-black/5">
+          <div className="bg-black/40 backdrop-blur-2xl border border-white/10 p-8 rounded-3xl text-center max-w-sm w-full shadow-2xl shadow-white/5">
             <div className="w-12 h-12 bg-neki-gold/10 text-neki-gold rounded-full flex items-center justify-center mx-auto mb-4">
               <Package strokeWidth={1.5} />
             </div>
             <h3 className="text-2xl font-bold text-foreground tracking-tight mb-2">Feed 200 Cows</h3>
-            <div className="bg-surface text-text-secondary py-1 px-4 rounded-full text-sm font-medium border border-black/5">Mission Status: Created</div>
+            <div className="bg-surface text-text-secondary py-1 px-4 rounded-full text-sm font-medium border border-white/5">Mission Status: Created</div>
           </div>
         </div>
 
@@ -166,18 +166,18 @@ export function JourneyCanvas() {
             Follow every step.
           </h2>
           <p className="text-xl text-text-secondary mb-12 font-light">From contribution to completion. Nothing disappears.</p>
-          <div className="bg-white/60 backdrop-blur-2xl border border-black/5 p-8 rounded-3xl max-w-sm w-full relative overflow-hidden shadow-2xl shadow-black/5 text-left">
+          <div className="bg-black/40 backdrop-blur-2xl border border-white/10 p-8 rounded-3xl max-w-sm w-full relative overflow-hidden shadow-2xl shadow-white/5 text-left">
             <div className="flex justify-between items-center mb-6">
               <span className="text-foreground text-sm font-bold tracking-widest uppercase">Live Tracking</span>
               <MapPin className="text-neki-gold w-5 h-5" />
             </div>
             <div className="space-y-4 font-medium text-sm">
-              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-black/10" /> Mission Created</div>
-              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-black/10" /> Volunteer Assigned</div>
-              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-black/10" /> Pickup Complete</div>
+              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-white/10" /> Mission Created</div>
+              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-white/10" /> Volunteer Assigned</div>
+              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-white/10" /> Pickup Complete</div>
               <div className="flex items-center gap-4 text-foreground"><div className="w-3 h-3 rounded-full bg-neki-gold shadow-[0_0_10px_rgba(212,175,106,0.4)]" /> En Route</div>
-              <div className="flex items-center gap-4 text-text-muted/50"><div className="w-3 h-3 rounded-full border border-black/10" /> Delivered</div>
-              <div className="flex items-center gap-4 text-text-muted/50"><div className="w-3 h-3 rounded-full border border-black/10" /> Verified</div>
+              <div className="flex items-center gap-4 text-text-muted/50"><div className="w-3 h-3 rounded-full border border-white/10" /> Delivered</div>
+              <div className="flex items-center gap-4 text-text-muted/50"><div className="w-3 h-3 rounded-full border border-white/10" /> Verified</div>
             </div>
           </div>
         </div>
@@ -231,10 +231,10 @@ export function JourneyCanvas() {
             <button className="bg-foreground text-background px-8 py-4 rounded-full font-medium text-lg hover:bg-[#222222] transition-colors pointer-events-auto">
               Start a Mission
             </button>
-            <button className="bg-transparent border border-[#D8D4CE] text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-black/5 transition-colors pointer-events-auto">
+            <button className="bg-transparent border border-white/20 text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-white/5 transition-colors pointer-events-auto">
               Become a Volunteer
             </button>
-            <button className="bg-transparent border border-[#D8D4CE] text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-black/5 transition-colors pointer-events-auto">
+            <button className="bg-transparent border border-white/20 text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-white/5 transition-colors pointer-events-auto">
               Partner with NEKI
             </button>
           </div>

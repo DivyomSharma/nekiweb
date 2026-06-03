@@ -32,15 +32,15 @@ function AmbientBackground({ progressRef }: { progressRef: React.MutableRefObjec
     pointsRef.current.rotation.x += 0.02 * delta;
 
     const mat = pointsRef.current.material as THREE.PointsMaterial;
-    if (p < 0.1) mat.color.lerp(new THREE.Color("#CCCCCC"), 0.05);
-    else if (p < 0.2) mat.color.lerp(new THREE.Color("#3F5A4A"), 0.05); // Moss
+    if (p < 0.1) mat.color.lerp(new THREE.Color("#444444"), 0.05);
+    else if (p < 0.2) mat.color.lerp(new THREE.Color("#4ADE80"), 0.05); // Moss
     else if (p < 0.3) mat.color.lerp(new THREE.Color("#D4AF6A"), 0.05);
     else if (p < 0.4) mat.color.lerp(new THREE.Color("#D4AF6A"), 0.05); // Gold
-    else if (p < 0.5) mat.color.lerp(new THREE.Color("#8B5CF6"), 0.05);
+    else if (p < 0.5) mat.color.lerp(new THREE.Color("#A78BFA"), 0.05);
     else mat.color.lerp(new THREE.Color("#D4AF6A"), 0.05);
 
     if (p < 0.03 || p > 0.97) mat.opacity = 0;
-    else mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0.1, 0.05);
+    else mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0.15, 0.05);
   });
 
   return (
@@ -48,15 +48,22 @@ function AmbientBackground({ progressRef }: { progressRef: React.MutableRefObjec
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" count={3000} args={[bgPositions, 3]} />
       </bufferGeometry>
-      <pointsMaterial size={0.03} color="#D4AF6A" transparent opacity={0} depthWrite={false} />
+      <pointsMaterial 
+        size={0.02} 
+        color="#D4AF6A" 
+        transparent 
+        opacity={0} 
+        depthWrite={false} 
+        blending={THREE.AdditiveBlending}
+      />
     </points>
   );
 }
 
 export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
-  const meshRef = useRef<THREE.InstancedMesh>(null);
-  const materialRef = useRef<THREE.MeshPhysicalMaterial>(null);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
+  const pointsRef = useRef<THREE.Points>(null);
+  const geometryRef = useRef<THREE.BufferGeometry>(null);
+  const materialRef = useRef<THREE.PointsMaterial>(null);
 
   const shapes = useMemo(() => {
     return {
@@ -79,24 +86,23 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   const currentPositions = useMemo(() => new Float32Array(shapes.orb), [shapes]);
 
   useFrame((state, delta) => {
-    if (!meshRef.current || !materialRef.current) return;
+    if (!geometryRef.current || !pointsRef.current || !materialRef.current) return;
 
     const p = progressRef.current;
     let targetShape = shapes.orb;
     let targetColor = new THREE.Color("#D4AF6A"); // Champagne Gold
-    let targetSize = 0.03;
+    let targetSize = 0.015; // Small and classy
     let rotationSpeed = 0.2;
 
-    // Timeline: 16 sections, ~0.066 per section interval
     if (p < 0.033) {
       targetShape = shapes.orb;
     } else if (p < 0.10) {
       targetShape = shapes.chaos;
-      targetColor.set("#888888"); 
-      targetSize = 0.015;
+      targetColor.set("#555555"); 
+      targetSize = 0.01;
     } else if (p < 0.166) {
       targetShape = shapes.bowl;
-      targetColor.set("#3F5A4A"); // Moss Green
+      targetColor.set("#4ADE80"); // Bright Moss
     } else if (p < 0.233) {
       targetShape = shapes.book;
       targetColor.set("#D4AF6A"); 
@@ -114,93 +120,88 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
       targetColor.set("#D4AF6A");
     } else if (p < 0.566) {
       targetShape = shapes.network;
-      meshRef.current.scale.setScalar(1.5); // Bigger network
+      pointsRef.current.scale.setScalar(1.5); // Bigger network
     } else if (p < 0.633) {
       targetShape = shapes.box;
-      meshRef.current.scale.setScalar(0.5);
+      pointsRef.current.scale.setScalar(0.5);
     } else if (p < 0.70) {
       targetShape = shapes.pin;
-      meshRef.current.scale.setScalar(1);
+      pointsRef.current.scale.setScalar(1);
     } else if (p < 0.766) {
       targetShape = shapes.box;
-      meshRef.current.scale.setScalar(0.5);
-      meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.2;
+      pointsRef.current.scale.setScalar(0.5);
+      pointsRef.current.position.y = Math.sin(state.clock.elapsedTime * 2) * 0.2;
     } else if (p < 0.833) {
       targetShape = shapes.camera;
-      meshRef.current.scale.setScalar(1);
+      pointsRef.current.scale.setScalar(1);
     } else if (p < 0.90) {
       targetShape = shapes.chaos; // Multiplier
       targetColor.set("#D4AF6A");
     } else if (p < 0.966) {
       targetShape = shapes.india;
-      meshRef.current.scale.setScalar(1.5);
+      pointsRef.current.scale.setScalar(1.5);
       rotationSpeed = 0;
     } else {
       targetShape = shapes.logo;
-      meshRef.current.scale.setScalar(1);
+      pointsRef.current.scale.setScalar(1);
       rotationSpeed = 0.5;
     }
 
-    // Reset scales/positions if not explicitly set
     if (p < 0.5 || p === 0.633 || p === 0.70 || p === 0.833 || p === 0.90 || p >= 0.966) {
       if (p !== 0.566 && p !== 0.966) {
-        meshRef.current.scale.setScalar(1);
+        pointsRef.current.scale.setScalar(1);
       }
-      meshRef.current.position.y = 0;
+      pointsRef.current.position.y = 0;
     }
     
-    // Package path tracking effect
     if (p >= 0.70 && p < 0.766) {
       const subP = (p - 0.70) / (0.766 - 0.70);
-      meshRef.current.position.x = (subP - 0.5) * 10;
+      pointsRef.current.position.x = (subP - 0.5) * 10;
     } else {
-      meshRef.current.position.x = 0;
+      pointsRef.current.position.x = 0;
     }
 
-    const lerpFactor = 5 * delta;
+    // Cinematic easing (slow, elegant morph)
+    const lerpFactor = 2 * delta; 
     
-    // Update instances
-    for (let i = 0; i < PARTICLE_COUNT; i++) {
-      currentPositions[i*3] += (targetShape[i*3] - currentPositions[i*3]) * lerpFactor;
-      currentPositions[i*3+1] += (targetShape[i*3+1] - currentPositions[i*3+1]) * lerpFactor;
-      currentPositions[i*3+2] += (targetShape[i*3+2] - currentPositions[i*3+2]) * lerpFactor;
+    const positions = geometryRef.current.attributes.position.array as Float32Array;
+    
+    for (let i = 0; i < PARTICLE_COUNT * 3; i++) {
+      positions[i] += (targetShape[i] - positions[i]) * lerpFactor;
       
       if (p < 0.05 || p > 0.966) { 
-        currentPositions[i*3] += Math.sin(state.clock.elapsedTime * 2 + i) * 0.002;
+        positions[i] += Math.sin(state.clock.elapsedTime * 2 + i) * 0.002;
       }
-
-      dummy.position.set(currentPositions[i*3], currentPositions[i*3+1], currentPositions[i*3+2]);
-      
-      const currentScale = dummy.scale.x;
-      const newScale = THREE.MathUtils.lerp(currentScale, targetSize, lerpFactor);
-      dummy.scale.setScalar(newScale);
-      
-      dummy.updateMatrix();
-      meshRef.current.setMatrixAt(i, dummy.matrix);
     }
     
-    meshRef.current.instanceMatrix.needsUpdate = true;
+    geometryRef.current.attributes.position.needsUpdate = true;
+    
     materialRef.current.color.lerp(targetColor, 5 * delta);
-    meshRef.current.rotation.y += rotationSpeed * delta;
+    materialRef.current.size = THREE.MathUtils.lerp(materialRef.current.size, targetSize, 2 * delta);
+    pointsRef.current.rotation.y += rotationSpeed * delta;
   });
 
   return (
     <>
       <AmbientBackground progressRef={progressRef} />
-      <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]}>
-        <sphereGeometry args={[1, 16, 16]} />
-        <meshPhysicalMaterial 
+      <points ref={pointsRef}>
+        <bufferGeometry ref={geometryRef}>
+          <bufferAttribute 
+            attach="attributes-position" 
+            count={PARTICLE_COUNT} 
+            args={[currentPositions, 3]} 
+          />
+        </bufferGeometry>
+        <pointsMaterial 
           ref={materialRef}
+          size={0.015} 
           color="#D4AF6A"
-          metalness={0.8}
-          roughness={0.2}
-          transmission={0.9}
-          ior={1.5}
-          thickness={0.5}
-          clearcoat={1}
-          clearcoatRoughness={0.1}
+          transparent 
+          opacity={0.9}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
         />
-      </instancedMesh>
+      </points>
     </>
   );
 }

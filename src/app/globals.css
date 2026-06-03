@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FAF9F7; /* Ultra-soft ivory */
-  --surface: #F3F1ED; /* Secondary surface */
-  --foreground: #111111; /* Deep Charcoal */
-  --text-secondary: #6B6B6B;
-  --text-muted: #9A9A9A;
+  --background: #050505; /* Deep Black */
+  --surface: #111111; /* Secondary surface */
+  --foreground: #FFFFFF; /* White */
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.4);
   
   --neki-gold: #D4AF6A; /* Champagne Gold */
   --neki-gold-glow: #E7C88A;

@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { ParticleMorpher } from "./ParticleMorpher";
+import { StoryEngine } from "./StoryEngine";
 import { ShieldCheck, MapPin, Package, Image as ImageIcon } from "lucide-react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import Lenis from "lenis";
@@ -48,7 +48,7 @@ export function JourneyCanvas() {
           <ambientLight intensity={1.2} />
           <Environment preset="city" />
           
-          <ParticleMorpher progressRef={progressRef} />
+          <StoryEngine progressRef={progressRef} />
           
           <EffectComposer>
             <Bloom luminanceThreshold={0.8} mipmapBlur intensity={0.5} radius={0.4} />

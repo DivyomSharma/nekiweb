@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { ParticleMorpher } from "./ParticleMorpher";
+import { MissionEcosystem } from "./MissionEcosystem";
 import { ShieldCheck, MapPin, Package, Image as ImageIcon } from "lucide-react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import Lenis from "lenis";
@@ -157,40 +158,8 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 9: MISSION CREATION (Center / Scattered Cards) */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center relative">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-16 z-20 relative">
-            Every mission starts with a <span className="font-playfair italic text-neki-gold">simple decision.</span>
-          </h2>
-          
-          <div className="relative w-full max-w-4xl mx-auto h-[400px]">
-            {/* Center Main Card */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-md border border-black/5 p-6 rounded-2xl text-center w-64 shadow-xl shadow-black/5 z-10">
-              <Package strokeWidth={1.5} className="w-8 h-8 text-neki-gold mx-auto mb-3" />
-              <h3 className="text-lg font-bold text-foreground mb-2">Feed 200 Cows</h3>
-              <div className="bg-surface text-text-secondary py-1 px-3 rounded-full text-xs font-medium border border-black/5">Created</div>
-            </div>
-
-            {/* Scattered Cards */}
-            <div className="absolute top-0 left-10 md:left-20 bg-white/60 backdrop-blur-md border border-black/5 p-4 rounded-xl text-center w-48 opacity-80 scale-90 -rotate-6 shadow-lg shadow-black/5">
-              <h3 className="text-sm font-bold text-foreground mb-1">50 Winter Blankets</h3>
-              <div className="text-text-muted text-xs">Delhi • 14 Volunteers</div>
-            </div>
-
-            <div className="absolute bottom-10 left-4 md:left-12 bg-white/60 backdrop-blur-md border border-black/5 p-4 rounded-xl text-center w-52 opacity-70 scale-75 rotate-3 shadow-lg shadow-black/5">
-              <h3 className="text-sm font-bold text-foreground mb-1">Math Tutoring</h3>
-              <div className="text-text-muted text-xs">Online • Skill Mission</div>
-            </div>
-
-            <div className="absolute top-10 right-10 md:right-24 bg-white/60 backdrop-blur-md border border-black/5 p-4 rounded-xl text-center w-48 opacity-90 scale-90 rotate-6 shadow-lg shadow-black/5">
-              <h3 className="text-sm font-bold text-foreground mb-1">First Aid Camp</h3>
-              <div className="text-text-muted text-xs">Mumbai • Med-Kit</div>
-            </div>
-
-            <div className="absolute bottom-0 right-10 md:right-16 bg-white/60 backdrop-blur-md border border-black/5 p-4 rounded-xl text-center w-56 opacity-60 scale-75 -rotate-3 shadow-lg shadow-black/5">
-              <h3 className="text-sm font-bold text-foreground mb-1">Animal Shelter Setup</h3>
-              <div className="text-text-muted text-xs">Bangalore • Labour</div>
-            </div>
-          </div>
+        <div className="h-screen w-full relative overflow-hidden pointer-events-none">
+          <MissionEcosystem />
         </div>
 
         {/* PAGE 10: TRACKING (Left) */}

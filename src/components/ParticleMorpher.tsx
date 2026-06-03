@@ -151,6 +151,10 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     const sectionIndex = Math.min(Math.floor(p * 16), 15);
     const targetShape = shapes[sectionIndex];
 
+    // Hide particles completely in Section 9 for the clean DOM Mission Ecosystem
+    const targetScale = sectionIndex === 9 ? 0.001 : 1;
+    meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), lerpFactor * 2.0);
+
     // Set target color
     targetColor.set(SECTION_COLORS[sectionIndex]);
     currentColor.lerp(targetColor, lerpFactor);

@@ -515,35 +515,57 @@ export function getNetworkPositions(count: number, scale: number): Float32Array 
 // ============================================================
 export function getMissionEcoPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
-  const orbitRadii = [1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5];
-  const orbitAngles = [0, 0.9, 1.8, 2.7, 3.6, 4.5, 5.4];
-
+  
+  // Generate distinct ray directions
+  const numRays = 16;
+  const rays = [];
+  for (let i=0; i<numRays; i++) {
+     rays.push(randomSpherePoint(1.0));
+  }
+  
   for (let i = 0; i < count; i++) {
     const r = Math.random();
-    if (r < 0.25) {
-      // Central sphere (dense)
-      const pt = randomSpherePoint(Math.cbrt(Math.random()) * 0.6 * scale);
-      positions[i * 3] = pt.x;
-      positions[i * 3 + 1] = pt.y;
-      positions[i * 3 + 2] = pt.z;
-    } else if (r < 0.5) {
-      // Orbit rings
-      const orbitIdx = Math.floor(Math.random() * 7);
+    let x=0, y=0, z=0;
+    
+    if (r < 0.15) {
+      // Core spark/droplet
+      const pt = randomSpherePoint(Math.pow(Math.random(), 0.5) * 0.4 * scale);
+      x = pt.x; y = pt.y; z = pt.z;
+    } else if (r < 0.6) {
+      // 3 Concentric rings (impact ripples)
+      const ring = Math.floor(Math.random() * 3);
+      const ringRadius = (1.5 + ring * 1.2) * scale;
       const angle = Math.random() * Math.PI * 2;
-      const orbitR = orbitRadii[orbitIdx] * scale * 0.5;
-      positions[i * 3] = Math.cos(angle) * orbitR;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 0.02 * scale;
-      positions[i * 3 + 2] = Math.sin(angle) * orbitR;
+      const thickness = 0.08 * scale;
+      
+      x = Math.cos(angle) * ringRadius + (Math.random() - 0.5) * thickness;
+      z = Math.sin(angle) * ringRadius + (Math.random() - 0.5) * thickness;
+      y = (Math.random() - 0.5) * thickness * 0.5;
     } else {
-      // Orbiting objects (small dense clusters)
-      const orbitIdx = Math.floor(Math.random() * 7);
-      const orbitR = orbitRadii[orbitIdx] * scale * 0.5;
-      const baseAngle = orbitAngles[orbitIdx];
-      const pt = randomSpherePoint(0.18 * scale);
-      positions[i * 3] = Math.cos(baseAngle) * orbitR + pt.x;
-      positions[i * 3 + 1] = pt.y;
-      positions[i * 3 + 2] = Math.sin(baseAngle) * orbitR + pt.z;
+      // Impact rays shooting outwards
+      const ray = rays[Math.floor(Math.random() * numRays)];
+      const dist = (0.2 + Math.random() * 3.8) * scale;
+      const thickness = 0.06 * scale;
+      x = ray.x * dist + (Math.random() - 0.5) * thickness;
+      y = ray.y * dist + (Math.random() - 0.5) * thickness;
+      z = ray.z * dist + (Math.random() - 0.5) * thickness;
     }
+    
+    // Tilt the entire shape so it's not a flat line when viewed head-on
+    const tiltX = Math.PI / 3; // 60 degrees
+    const tiltZ = Math.PI / 6; // 30 degrees
+    
+    // Rotate X
+    let yRot = y * Math.cos(tiltX) - z * Math.sin(tiltX);
+    let zRot = y * Math.sin(tiltX) + z * Math.cos(tiltX);
+    
+    // Rotate Z
+    let xRot = x * Math.cos(tiltZ) - yRot * Math.sin(tiltZ);
+    yRot = x * Math.sin(tiltZ) + yRot * Math.cos(tiltZ);
+
+    positions[i * 3] = xRot;
+    positions[i * 3 + 1] = yRot;
+    positions[i * 3 + 2] = zRot;
   }
   return positions;
 }

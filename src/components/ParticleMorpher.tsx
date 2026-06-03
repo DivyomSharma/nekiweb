@@ -118,9 +118,10 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     } else if (p < 0.50) {
       targetShape = shapes.network;
       targetColor.set("#D4AF6A");
+      pointsRef.current.scale.setScalar(0.7); // Smaller network
     } else if (p < 0.566) {
       targetShape = shapes.network;
-      pointsRef.current.scale.setScalar(1.5); // Bigger network
+      pointsRef.current.scale.setScalar(0.8); // Slightly bigger but still small
     } else if (p < 0.633) {
       targetShape = shapes.box;
       pointsRef.current.scale.setScalar(0.5);
@@ -138,9 +139,9 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
       targetShape = shapes.chaos; // Multiplier
       targetColor.set("#D4AF6A");
     } else if (p < 0.966) {
-      targetShape = shapes.india;
-      pointsRef.current.scale.setScalar(1.5);
-      rotationSpeed = 0;
+      targetShape = shapes.orb; // Sphere for Millions Move Together
+      pointsRef.current.scale.setScalar(2.0); // Massive sphere
+      rotationSpeed = 0.5;
     } else {
       targetShape = shapes.logo;
       pointsRef.current.scale.setScalar(1);
@@ -148,7 +149,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     }
 
     if (p < 0.5 || p === 0.633 || p === 0.70 || p === 0.833 || p === 0.90 || p >= 0.966) {
-      if (p !== 0.566 && p !== 0.966) {
+      if (p !== 0.566 && p !== 0.966 && p !== 0.433 && p < 0.45) { // Protect scaled nodes
         pointsRef.current.scale.setScalar(1);
       }
       pointsRef.current.position.y = 0;

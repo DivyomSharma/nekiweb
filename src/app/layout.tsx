@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Poppins } from "next/font/google";
+import { Inter, Poppins, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/SmoothScroll";
 
@@ -12,6 +12,12 @@ const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
+});
+
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  style: ["italic"],
 });
 
 export const metadata: Metadata = {
@@ -27,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${poppins.variable} h-full antialiased bg-neki-cream text-neki-charcoal`}
+      className={`${inter.variable} ${poppins.variable} ${playfair.variable} h-full antialiased bg-background text-foreground`}
     >
       <body className="min-h-full flex flex-col font-sans selection:bg-neki-orange selection:text-white">
         <SmoothScroll>{children}</SmoothScroll>

@@ -59,182 +59,200 @@ export function JourneyCanvas() {
       {/* DOM OVERLAYS - NATIVELY SCROLLING */}
       <div className="relative z-10 w-full pointer-events-none">
         
-        {/* PAGE 0: HERO */}
+        {/* PAGE 0: HERO (Center) */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h1 className="text-6xl md:text-9xl font-heading font-extrabold text-foreground tracking-tight mb-6">
-            Humanity, <br/><span className="text-neki-gold">Delivered.</span>
+          <h1 className="text-5xl md:text-7xl font-heading font-extrabold text-foreground tracking-tight mb-6">
+            Humanity, <br/><span className="text-neki-gold font-playfair italic">Delivered.</span>
           </h1>
-          <p className="text-xl md:text-2xl text-text-secondary max-w-2xl font-light">
+          <p className="text-lg md:text-xl text-text-secondary max-w-xl font-light">
             NEKI makes helping people as easy, trackable, and trustworthy as modern commerce.
           </p>
           <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center pointer-events-auto">
-            <button className="bg-foreground text-background px-8 py-4 rounded-full font-medium text-lg hover:bg-[#222222] transition-colors">
+            <button className="bg-foreground text-background px-6 py-3 rounded-full font-medium text-base hover:bg-gray-200 transition-colors">
               Start Contributing
             </button>
-            <button className="bg-transparent border border-white/20 text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-white/5 transition-colors">
+            <button className="bg-transparent border border-white/20 text-foreground px-6 py-3 rounded-full font-medium text-base hover:bg-white/5 transition-colors">
               Become a Volunteer
             </button>
-            <button className="bg-transparent border border-white/20 text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-white/5 transition-colors">
+            <button className="bg-transparent border border-white/20 text-foreground px-6 py-3 rounded-full font-medium text-base hover:bg-white/5 transition-colors">
               Partner with NEKI
             </button>
           </div>
         </div>
 
-        {/* PAGE 1: PROBLEM */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-6">
-            Good intentions deserve better infrastructure.
+        {/* PAGE 1: PROBLEM (Left) */}
+        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%]">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-6 max-w-2xl">
+            Good intentions deserve <br/><span className="font-playfair italic text-text-muted">better infrastructure.</span>
           </h2>
-          <p className="text-xl md:text-3xl text-text-muted max-w-3xl font-light leading-relaxed">
+          <p className="text-lg text-text-muted max-w-xl font-light leading-relaxed">
             People don't stop helping because they stop caring.<br/>
             They stop helping because they stop seeing where help goes.
           </p>
         </div>
 
-        {/* PAGE 2: FOOD */}
-        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[10%]">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-neki-green tracking-tight mb-4">
-            A meal can change a day.
+        {/* PAGE 2: FOOD (Right) */}
+        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-neki-green tracking-tight mb-4">
+            A meal can <span className="font-playfair italic">change a day.</span>
           </h2>
-          <p className="text-2xl text-text-secondary font-light">Food. Community kitchens. Animal shelters.</p>
+          <p className="text-lg text-text-secondary font-light">Food. Community kitchens. Animal shelters.</p>
         </div>
 
-        {/* PAGE 3: BOOKS */}
-        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[10%] text-right">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-neki-gold tracking-tight mb-4">
-            Knowledge travels farther than books.
+        {/* PAGE 3: BOOKS (Left) */}
+        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%]">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-neki-gold tracking-tight mb-4 max-w-xl">
+            Knowledge travels farther <span className="font-playfair italic">than books.</span>
           </h2>
-          <p className="text-2xl text-text-secondary font-light">Education. Learning. Opportunity.</p>
+          <p className="text-lg text-text-secondary font-light">Education. Learning. Opportunity.</p>
         </div>
 
-        {/* PAGE 4: MEDICAL */}
-        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[10%]">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-red-400 tracking-tight mb-4">
-            Care should never be out of reach.
+        {/* PAGE 4: MEDICAL (Right) */}
+        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-red-400 tracking-tight mb-4 max-w-xl">
+            Care should never be <span className="font-playfair italic">out of reach.</span>
           </h2>
-          <p className="text-2xl text-text-secondary font-light">Healthcare. Medicine. Relief.</p>
+          <p className="text-lg text-text-secondary font-light">Healthcare. Medicine. Relief.</p>
         </div>
 
-        {/* PAGE 5: TIME */}
-        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[10%] text-right">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-blue-400 tracking-tight mb-4 max-w-4xl">
-            Some contributions can't be measured in money.
+        {/* PAGE 5: TIME (Left) */}
+        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%]">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-blue-400 tracking-tight mb-4 max-w-2xl">
+            Some contributions can't be <span className="font-playfair italic">measured in money.</span>
           </h2>
-          <p className="text-2xl text-text-secondary font-light">Time. Presence. Effort.</p>
+          <p className="text-lg text-text-secondary font-light">Time. Presence. Effort.</p>
         </div>
 
-        {/* PAGE 6: SKILLS */}
-        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[10%]">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-purple-400 tracking-tight mb-4">
-            Expertise can be a form of service.
+        {/* PAGE 6: SKILLS (Right) */}
+        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-purple-400 tracking-tight mb-4 max-w-xl">
+            Expertise can be a <span className="font-playfair italic">form of service.</span>
           </h2>
-          <p className="text-2xl text-text-secondary font-light">Teaching. Mentoring. Building. Healing.</p>
+          <p className="text-lg text-text-secondary font-light">Teaching. Mentoring. Building. Healing.</p>
         </div>
 
-        {/* PAGE 7: NETWORK EFFECT */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-6xl md:text-8xl font-heading font-bold text-foreground tracking-tight mb-6">
-            Goodness scales through connection.
+        {/* PAGE 7: NETWORK EFFECT (Left) */}
+        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%]">
+          <h2 className="text-4xl md:text-6xl font-heading font-bold text-foreground tracking-tight mb-6 max-w-2xl">
+            Goodness scales through <span className="text-neki-gold font-playfair italic">connection.</span>
           </h2>
-          <p className="text-2xl text-text-secondary font-light">The strongest force is people, connected.</p>
+          <p className="text-lg text-text-secondary font-light">The strongest force is people, connected.</p>
         </div>
 
-        {/* PAGE 8: NEKI NETWORK */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-6xl md:text-8xl font-heading font-extrabold text-foreground tracking-tight mb-4">
-            Humanity works better as a network.
+        {/* PAGE 8: NEKI NETWORK (Right) */}
+        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right">
+          <h2 className="text-4xl md:text-6xl font-heading font-extrabold text-foreground tracking-tight mb-4 max-w-2xl">
+            Humanity works better as a <span className="font-playfair italic text-neki-gold">network.</span>
           </h2>
         </div>
 
-        {/* PAGE 9: MISSION CREATION */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-12">
-            Every mission starts with a simple decision.
+        {/* PAGE 9: MISSION CREATION (Center / Scattered Cards) */}
+        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center relative">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-16 z-20 relative">
+            Every mission starts with a <span className="font-playfair italic text-neki-gold">simple decision.</span>
           </h2>
-          <div className="bg-black/40 backdrop-blur-2xl border border-white/10 p-8 rounded-3xl text-center max-w-sm w-full shadow-2xl shadow-white/5">
-            <div className="w-12 h-12 bg-neki-gold/10 text-neki-gold rounded-full flex items-center justify-center mx-auto mb-4">
-              <Package strokeWidth={1.5} />
+          
+          <div className="relative w-full max-w-4xl mx-auto h-[400px]">
+            {/* Center Main Card */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/60 backdrop-blur-md border border-white/10 p-6 rounded-2xl text-center w-64 shadow-2xl z-10">
+              <Package strokeWidth={1.5} className="w-8 h-8 text-neki-gold mx-auto mb-3" />
+              <h3 className="text-lg font-bold text-foreground mb-2">Feed 200 Cows</h3>
+              <div className="bg-surface text-text-secondary py-1 px-3 rounded-full text-xs font-medium border border-white/5">Created</div>
             </div>
-            <h3 className="text-2xl font-bold text-foreground tracking-tight mb-2">Feed 200 Cows</h3>
-            <div className="bg-surface text-text-secondary py-1 px-4 rounded-full text-sm font-medium border border-white/5">Mission Status: Created</div>
+
+            {/* Scattered Cards */}
+            <div className="absolute top-0 left-10 md:left-20 bg-black/40 backdrop-blur-sm border border-white/5 p-4 rounded-xl text-center w-48 opacity-60 scale-90 -rotate-6">
+              <h3 className="text-sm font-bold text-foreground mb-1">50 Winter Blankets</h3>
+              <div className="text-text-muted text-xs">Delhi • 14 Volunteers</div>
+            </div>
+
+            <div className="absolute bottom-10 left-4 md:left-12 bg-black/40 backdrop-blur-sm border border-white/5 p-4 rounded-xl text-center w-52 opacity-50 scale-75 rotate-3">
+              <h3 className="text-sm font-bold text-foreground mb-1">Math Tutoring</h3>
+              <div className="text-text-muted text-xs">Online • Skill Mission</div>
+            </div>
+
+            <div className="absolute top-10 right-10 md:right-24 bg-black/40 backdrop-blur-sm border border-white/5 p-4 rounded-xl text-center w-48 opacity-70 scale-90 rotate-6">
+              <h3 className="text-sm font-bold text-foreground mb-1">First Aid Camp</h3>
+              <div className="text-text-muted text-xs">Mumbai • Med-Kit</div>
+            </div>
+
+            <div className="absolute bottom-0 right-10 md:right-16 bg-black/40 backdrop-blur-sm border border-white/5 p-4 rounded-xl text-center w-56 opacity-40 scale-75 -rotate-3">
+              <h3 className="text-sm font-bold text-foreground mb-1">Animal Shelter Setup</h3>
+              <div className="text-text-muted text-xs">Bangalore • Labour</div>
+            </div>
           </div>
         </div>
 
-        {/* PAGE 10: TRACKING */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-4">
-            Follow every step.
+        {/* PAGE 10: TRACKING (Left) */}
+        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%]">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-4">
+            Follow <span className="font-playfair italic">every step.</span>
           </h2>
-          <p className="text-xl text-text-secondary mb-12 font-light">From contribution to completion. Nothing disappears.</p>
-          <div className="bg-black/40 backdrop-blur-2xl border border-white/10 p-8 rounded-3xl max-w-sm w-full relative overflow-hidden shadow-2xl shadow-white/5 text-left">
+          <p className="text-lg text-text-secondary mb-8 font-light">From contribution to completion. Nothing disappears.</p>
+          <div className="bg-black/40 backdrop-blur-2xl border border-white/10 p-6 rounded-3xl w-full max-w-sm relative shadow-2xl">
             <div className="flex justify-between items-center mb-6">
-              <span className="text-foreground text-sm font-bold tracking-widest uppercase">Live Tracking</span>
-              <MapPin className="text-neki-gold w-5 h-5" />
+              <span className="text-foreground text-xs font-bold tracking-widest uppercase">Live Tracking</span>
+              <MapPin className="text-neki-gold w-4 h-4" />
             </div>
             <div className="space-y-4 font-medium text-sm">
-              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-white/10" /> Mission Created</div>
-              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-white/10" /> Volunteer Assigned</div>
-              <div className="flex items-center gap-4 text-text-muted"><div className="w-3 h-3 rounded-full bg-white/10" /> Pickup Complete</div>
-              <div className="flex items-center gap-4 text-foreground"><div className="w-3 h-3 rounded-full bg-neki-gold shadow-[0_0_10px_rgba(212,175,106,0.4)]" /> En Route</div>
-              <div className="flex items-center gap-4 text-text-muted/50"><div className="w-3 h-3 rounded-full border border-white/10" /> Delivered</div>
-              <div className="flex items-center gap-4 text-text-muted/50"><div className="w-3 h-3 rounded-full border border-white/10" /> Verified</div>
+              <div className="flex items-center gap-4 text-text-muted"><div className="w-2 h-2 rounded-full bg-white/10" /> Mission Created</div>
+              <div className="flex items-center gap-4 text-text-muted"><div className="w-2 h-2 rounded-full bg-white/10" /> Volunteer Assigned</div>
+              <div className="flex items-center gap-4 text-foreground"><div className="w-2 h-2 rounded-full bg-neki-gold shadow-[0_0_8px_rgba(212,175,106,0.6)]" /> En Route</div>
+              <div className="flex items-center gap-4 text-text-muted/40"><div className="w-2 h-2 rounded-full border border-white/10" /> Delivered</div>
             </div>
           </div>
         </div>
 
-        {/* PAGE 11: TRUST */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <ShieldCheck className="w-20 h-20 text-neki-green mx-auto mb-6" strokeWidth={1.5} />
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-4">
-            Trust begins where uncertainty ends.
+        {/* PAGE 11: TRUST (Right) */}
+        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right">
+          <ShieldCheck className="w-12 h-12 text-neki-green mb-6" strokeWidth={1.5} />
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-4 max-w-xl">
+            Trust begins where <span className="font-playfair italic text-neki-green">uncertainty ends.</span>
           </h2>
         </div>
 
-        {/* PAGE 12: PROOF OF IMPACT */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <ImageIcon className="w-20 h-20 text-neki-gold mx-auto mb-6" strokeWidth={1.5} />
-          <h2 className="text-5xl md:text-7xl font-heading font-bold text-foreground tracking-tight mb-6">
-            Impact should be seen. <br/><span className="text-text-muted">Not assumed.</span>
+        {/* PAGE 12: PROOF OF IMPACT (Left) */}
+        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%]">
+          <ImageIcon className="w-12 h-12 text-neki-gold mb-6" strokeWidth={1.5} />
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-6 max-w-xl">
+            Impact should be seen. <br/><span className="text-text-muted font-playfair italic">Not assumed.</span>
           </h2>
-          <p className="text-2xl text-text-secondary font-light max-w-2xl">
-            Every completed mission becomes proof.<br/>
-            Every proof inspires another mission.
+          <p className="text-lg text-text-secondary font-light max-w-md">
+            Every completed mission becomes proof. Every proof inspires another mission.
           </p>
         </div>
 
-        {/* PAGE 13: MULTIPLIER */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-6xl md:text-9xl font-heading font-extrabold text-foreground tracking-tighter mb-4">
-            1 → 1000
+        {/* PAGE 13: MULTIPLIER (Right) */}
+        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right">
+          <h2 className="text-5xl md:text-8xl font-heading font-extrabold text-foreground tracking-tighter mb-4">
+            1 <span className="font-playfair italic text-neki-gold">→</span> 1000
           </h2>
-          <p className="text-3xl text-text-secondary font-light">One act inspires another. And another. And another.</p>
+          <p className="text-xl text-text-secondary font-light max-w-sm">One act inspires another. And another. And another.</p>
         </div>
 
-        {/* PAGE 14: INDIA NETWORK */}
+        {/* PAGE 14: INDIA NETWORK (Center) */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-5xl md:text-7xl font-heading font-extrabold text-foreground tracking-tight mb-4 max-w-5xl">
-            When millions move together, impossible becomes routine.
+          <h2 className="text-4xl md:text-6xl font-heading font-extrabold text-foreground tracking-tight mb-4 max-w-4xl">
+            When millions move together, <span className="font-playfair italic text-neki-gold">impossible</span> becomes routine.
           </h2>
         </div>
 
-        {/* PAGE 15: FINAL */}
+        {/* PAGE 15: FINAL (Center) */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center pointer-events-auto">
-          <h1 className="text-6xl md:text-9xl font-heading font-extrabold text-foreground tracking-tight mb-6">
-            Humanity, <br/><span className="text-neki-gold">Delivered.</span>
+          <h1 className="text-5xl md:text-7xl font-heading font-extrabold text-foreground tracking-tight mb-6">
+            Humanity, <br/><span className="text-neki-gold font-playfair italic">Delivered.</span>
           </h1>
-          <p className="text-xl md:text-2xl text-text-secondary max-w-2xl mx-auto mb-12 font-light">
-            Track every contribution.<br/>
-            Verify every mission.<br/>
-            See every impact.
+          <p className="text-lg md:text-xl text-text-secondary max-w-xl mx-auto mb-12 font-light">
+            Track every contribution. Verify every mission. See every impact.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-foreground text-background px-8 py-4 rounded-full font-medium text-lg hover:bg-[#222222] transition-colors pointer-events-auto">
+            <button className="bg-foreground text-background px-6 py-3 rounded-full font-medium text-base hover:bg-gray-200 transition-colors pointer-events-auto">
               Start a Mission
             </button>
-            <button className="bg-transparent border border-white/20 text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-white/5 transition-colors pointer-events-auto">
+            <button className="bg-transparent border border-white/20 text-foreground px-6 py-3 rounded-full font-medium text-base hover:bg-white/5 transition-colors pointer-events-auto">
               Become a Volunteer
             </button>
-            <button className="bg-transparent border border-white/20 text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-white/5 transition-colors pointer-events-auto">
+            <button className="bg-transparent border border-white/20 text-foreground px-6 py-3 rounded-full font-medium text-base hover:bg-white/5 transition-colors pointer-events-auto">
               Partner with NEKI
             </button>
           </div>

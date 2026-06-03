@@ -220,13 +220,32 @@ export function getHeartPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
     const t = Math.random() * Math.PI * 2;
-    const x = 16 * Math.pow(Math.sin(t), 3);
-    const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-    const r = Math.sqrt(Math.random());
-    const finalScale = scale * 0.1 * r;
-    positions[i * 3] = x * finalScale + (Math.random() - 0.5) * 0.06 * scale;
-    positions[i * 3 + 1] = y * finalScale + (Math.random() - 0.5) * 0.06 * scale;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.3 * scale;
+    const xBorder = 16 * Math.pow(Math.sin(t), 3);
+    const yBorder = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+    
+    let x = 0, y = 0, z = 0;
+
+    if (Math.random() < 0.4) {
+      // Dense crisp border
+      x = xBorder;
+      y = yBorder;
+      // Slight jitter for a thick line
+      x += (Math.random() - 0.5) * 0.8;
+      y += (Math.random() - 0.5) * 0.8;
+      z = (Math.random() - 0.5) * 1.5;
+    } else {
+      // Fill: scale towards the visual center of the heart (0, -3) to ensure uniform filling
+      const r = Math.sqrt(Math.random());
+      x = xBorder * r;
+      y = -3 + (yBorder - -3) * r;
+      z = (Math.random() - 0.5) * 4.0; // give it some 3D volume
+    }
+
+    // Apply global scale (0.1 normalizes the parametric bounds)
+    const finalScale = scale * 0.1;
+    positions[i * 3] = x * finalScale;
+    positions[i * 3 + 1] = y * finalScale;
+    positions[i * 3 + 2] = z * finalScale;
   }
   return positions;
 }

@@ -477,35 +477,110 @@ export function getTrackingPositions(count: number, scale: number): Float32Array
 // ============================================================
 export function getShieldPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
-  for (let i = 0; i < count; i++) {
-    // Simple shield: flat top, straight sides tapering to a point at bottom
-    // Generate random y from -1 to 0.6
-    const ny = -1 + Math.random() * 1.6; // -1 to 0.6
-    // Width narrows linearly from top to bottom
-    let maxW: number;
-    if (ny > 0) {
-      maxW = 1.0; // flat top
-    } else {
-      maxW = 1.0 + ny; // tapers: at ny=-1 width=0, at ny=0 width=1
-    }
-    maxW = Math.max(maxW, 0);
+  const W = 0.9 * scale;
+  const topY = 0.6 * scale;
+  
+  const distToSeg = (px: number, py: number, ax: number, ay: number, bx: number, by: number) => {
+    const l2 = (ax - bx) * (ax - bx) + (ay - by) * (ay - by);
+    if (l2 === 0) return Math.sqrt((px - ax) * (px - ax) + (py - ay) * (py - ay));
+    let t = ((px - ax) * (bx - ax) + (py - ay) * (by - ay)) / l2;
+    t = Math.max(0, Math.min(1, t));
+    return Math.sqrt((px - (ax + t * (bx - ax))) ** 2 + (py - (ay + t * (by - ay))) ** 2);
+  };
 
-    const r = Math.random();
-    let x: number, y: number;
-    if (r < 0.35) {
-      // Boundary outline
-      const side = Math.random() > 0.5 ? 1 : -1;
-      x = side * maxW * scale;
-      y = ny * scale;
+  for (let i = 0; i < count; i++) {
+    const rType = Math.random();
+    let x = 0, y = 0, z = 0;
+
+    if (rType < 0.35) {
+      // Border outline (Classic Heraldic Shield)
+      const edge = Math.random();
+      if (edge < 0.25) {
+        // Top edge
+        x = (Math.random() - 0.5) * 2 * W;
+        y = topY;
+      } else if (edge < 0.4) {
+        // Left straight edge
+        x = -W;
+        y = Math.random() * topY;
+      } else if (edge < 0.55) {
+        // Right straight edge
+        x = W;
+        y = Math.random() * topY;
+      } else {
+        // Curved bottom edges (Quarter circles meeting at the bottom point)
+        const tY = -Math.random() * scale; // 0 to -1*scale
+        const normY = tY / scale;
+        const curW = W * Math.sqrt(1 - normY * normY);
+        x = (Math.random() > 0.5 ? 1 : -1) * curW;
+        y = tY;
+      }
+      x += (Math.random() - 0.5) * 0.05 * scale;
+      y += (Math.random() - 0.5) * 0.05 * scale;
+      z += (Math.random() - 0.5) * 0.05 * scale;
     } else {
       // Fill interior
-      x = (Math.random() - 0.5) * 2 * maxW * scale;
-      y = ny * scale;
+      while (true) {
+        const testX = (Math.random() - 0.5) * 2 * W;
+        const testY = -1.0 * scale + Math.random() * 1.6 * scale; // -1 to 0.6
+
+        // Check if inside shield bounds
+        let inside = false;
+        if (testY >= 0) {
+          if (Math.abs(testX) <= W) inside = true;
+        } else {
+          const normY = testY / scale;
+          const curW = W * Math.sqrt(1 - normY * normY);
+          if (Math.abs(testX) <= curW) inside = true;
+        }
+
+        if (inside) {
+          // Create a negative space hole for the checkmark
+          const ax = -0.3 * scale, ay = -0.05 * scale;
+          const bx = -0.05 * scale, by = -0.3 * scale;
+          const cx = 0.4 * scale, cy = 0.2 * scale;
+          
+          const d1 = distToSeg(testX, testY, ax, ay, bx, by);
+          const d2 = distToSeg(testX, testY, bx, by, cx, cy);
+          
+          if (Math.min(d1, d2) < 0.15 * scale) {
+            continue; // Reject particles in the checkmark path
+          }
+          
+          x = testX;
+          y = testY;
+          break;
+        }
+      }
+      z = (Math.random() - 0.5) * 0.2 * scale;
+    }
+    
+    // Add dense, raised particles inside the negative space to form the solid checkmark
+    if (Math.random() < 0.12) {
+       const t = Math.random();
+       if (Math.random() < 0.35) {
+          // Left leg of checkmark
+          const ax = -0.3 * scale, ay = -0.05 * scale;
+          const bx = -0.05 * scale, by = -0.3 * scale;
+          x = ax + t * (bx - ax);
+          y = ay + t * (by - ay);
+       } else {
+          // Right leg of checkmark
+          const bx = -0.05 * scale, by = -0.3 * scale;
+          const cx = 0.4 * scale, cy = 0.2 * scale;
+          x = bx + t * (cx - bx);
+          y = by + t * (cy - by);
+       }
+       // Thicken the checkmark
+       x += (Math.random() - 0.5) * 0.08 * scale;
+       y += (Math.random() - 0.5) * 0.08 * scale;
+       // Pop out in 3D
+       z = 0.3 * scale + Math.random() * 0.1 * scale; 
     }
 
-    positions[i * 3] = x + (Math.random() - 0.5) * 0.02 * scale;
-    positions[i * 3 + 1] = y + (Math.random() - 0.5) * 0.02 * scale;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.1 * scale;
+    positions[i * 3] = x;
+    positions[i * 3 + 1] = y;
+    positions[i * 3 + 2] = z;
   }
   return positions;
 }

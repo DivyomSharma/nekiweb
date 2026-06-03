@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #050505; /* Deep Black */
-  --surface: #111111; /* Secondary surface */
-  --foreground: #FFFFFF; /* White */
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted: rgba(255, 255, 255, 0.4);
+  --background: #FAF9F7; /* Ivory */
+  --surface: #F3F1ED; /* Secondary surface */
+  --foreground: #111111; /* Deep Charcoal */
+  --text-secondary: #6B6B6B;
+  --text-muted: #9A9A9A;
   
   --neki-gold: #D4AF6A; /* Champagne Gold */
   --neki-gold-glow: #E7C88A;
@@ -24,26 +24,6 @@
   --color-neki-gold-light: var(--neki-gold-light);
   --color-neki-green: var(--neki-green);
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Geist", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-}
-
-/* Strict Scrollbar Hiding */
-html, body, * {
-  -ms-overflow-style: none !important;
-  scrollbar-width: none !important;
-}
-
-::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: var(--font-inter), sans-serif;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --font-heading: -apple-system, BlinkMacSystemFont, "SF Pro Display", var(--font-poppins), sans-serif;
+  --font-playfair: var(--font-playfair), serif;
 }

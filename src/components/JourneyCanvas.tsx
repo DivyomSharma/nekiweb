@@ -44,7 +44,7 @@ export function JourneyCanvas() {
       {/* 3D CANVAS - FIXED TO BACKGROUND */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <Canvas camera={{ position: [0, 0, 10], fov: 45 }} gl={{ antialias: false, alpha: false }}>
-          <color attach="background" args={["#050505"]} />
+          <color attach="background" args={["#FAF9F7"]} />
           <ambientLight intensity={1.2} />
           <Environment preset="city" />
           
@@ -59,24 +59,35 @@ export function JourneyCanvas() {
       {/* DOM OVERLAYS - NATIVELY SCROLLING */}
       <div className="relative z-10 w-full pointer-events-none">
         
-        {/* PAGE 0: HERO (Center) */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h1 className="text-5xl md:text-7xl font-heading font-extrabold text-foreground tracking-tight mb-6">
-            Humanity, <br/><span className="text-neki-gold font-playfair italic">Delivered.</span>
-          </h1>
-          <p className="text-lg md:text-xl text-text-secondary max-w-xl font-light">
-            NEKI makes helping people as easy, trackable, and trustworthy as modern commerce.
-          </p>
-          <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-center pointer-events-auto">
-            <button className="bg-foreground text-background px-6 py-3 rounded-full font-medium text-base hover:bg-gray-200 transition-colors">
-              Start Contributing
+        {/* PAGE 0: HERO (Split Layout) */}
+        <div className="h-screen w-full flex flex-col justify-center p-6 md:pl-[10%] text-left relative">
+          <div className="max-w-xl">
+            <h1 className="text-6xl md:text-8xl font-heading font-extrabold text-foreground tracking-tight mb-4">
+              Humanity, <br/><span className="text-neki-gold font-playfair italic">Delivered.</span>
+            </h1>
+            <p className="text-xl md:text-2xl text-text-secondary font-medium mb-6">
+              The future of helping is visible.
+            </p>
+            <p className="text-lg text-text-muted mb-12 font-light">
+              Track every contribution.<br/>
+              Verify every mission.<br/>
+              See every impact.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 pointer-events-auto items-center">
+              <button className="bg-foreground text-background px-8 py-4 rounded-full font-medium text-lg hover:bg-gray-800 transition-colors">
+                Start a Mission
+              </button>
+              <button className="bg-transparent border border-black/10 text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-black/5 transition-colors">
+                Explore Missions
+              </button>
+            </div>
+            <button className="mt-6 text-sm text-text-muted hover:text-foreground font-medium transition-colors pointer-events-auto underline underline-offset-4">
+              For NGOs, institutions and communities →
             </button>
-            <button className="bg-transparent border border-white/20 text-foreground px-6 py-3 rounded-full font-medium text-base hover:bg-white/5 transition-colors">
-              Become a Volunteer
-            </button>
-            <button className="bg-transparent border border-white/20 text-foreground px-6 py-3 rounded-full font-medium text-base hover:bg-white/5 transition-colors">
-              Partner with NEKI
-            </button>
+          </div>
+          
+          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-xs font-bold tracking-widest text-text-muted uppercase">
+            Scroll to follow the journey
           </div>
         </div>
 
@@ -154,29 +165,29 @@ export function JourneyCanvas() {
           
           <div className="relative w-full max-w-4xl mx-auto h-[400px]">
             {/* Center Main Card */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/60 backdrop-blur-md border border-white/10 p-6 rounded-2xl text-center w-64 shadow-2xl z-10">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white/80 backdrop-blur-md border border-black/5 p-6 rounded-2xl text-center w-64 shadow-xl shadow-black/5 z-10">
               <Package strokeWidth={1.5} className="w-8 h-8 text-neki-gold mx-auto mb-3" />
               <h3 className="text-lg font-bold text-foreground mb-2">Feed 200 Cows</h3>
-              <div className="bg-surface text-text-secondary py-1 px-3 rounded-full text-xs font-medium border border-white/5">Created</div>
+              <div className="bg-surface text-text-secondary py-1 px-3 rounded-full text-xs font-medium border border-black/5">Created</div>
             </div>
 
             {/* Scattered Cards */}
-            <div className="absolute top-0 left-10 md:left-20 bg-black/40 backdrop-blur-sm border border-white/5 p-4 rounded-xl text-center w-48 opacity-60 scale-90 -rotate-6">
+            <div className="absolute top-0 left-10 md:left-20 bg-white/60 backdrop-blur-md border border-black/5 p-4 rounded-xl text-center w-48 opacity-80 scale-90 -rotate-6 shadow-lg shadow-black/5">
               <h3 className="text-sm font-bold text-foreground mb-1">50 Winter Blankets</h3>
               <div className="text-text-muted text-xs">Delhi • 14 Volunteers</div>
             </div>
 
-            <div className="absolute bottom-10 left-4 md:left-12 bg-black/40 backdrop-blur-sm border border-white/5 p-4 rounded-xl text-center w-52 opacity-50 scale-75 rotate-3">
+            <div className="absolute bottom-10 left-4 md:left-12 bg-white/60 backdrop-blur-md border border-black/5 p-4 rounded-xl text-center w-52 opacity-70 scale-75 rotate-3 shadow-lg shadow-black/5">
               <h3 className="text-sm font-bold text-foreground mb-1">Math Tutoring</h3>
               <div className="text-text-muted text-xs">Online • Skill Mission</div>
             </div>
 
-            <div className="absolute top-10 right-10 md:right-24 bg-black/40 backdrop-blur-sm border border-white/5 p-4 rounded-xl text-center w-48 opacity-70 scale-90 rotate-6">
+            <div className="absolute top-10 right-10 md:right-24 bg-white/60 backdrop-blur-md border border-black/5 p-4 rounded-xl text-center w-48 opacity-90 scale-90 rotate-6 shadow-lg shadow-black/5">
               <h3 className="text-sm font-bold text-foreground mb-1">First Aid Camp</h3>
               <div className="text-text-muted text-xs">Mumbai • Med-Kit</div>
             </div>
 
-            <div className="absolute bottom-0 right-10 md:right-16 bg-black/40 backdrop-blur-sm border border-white/5 p-4 rounded-xl text-center w-56 opacity-40 scale-75 -rotate-3">
+            <div className="absolute bottom-0 right-10 md:right-16 bg-white/60 backdrop-blur-md border border-black/5 p-4 rounded-xl text-center w-56 opacity-60 scale-75 -rotate-3 shadow-lg shadow-black/5">
               <h3 className="text-sm font-bold text-foreground mb-1">Animal Shelter Setup</h3>
               <div className="text-text-muted text-xs">Bangalore • Labour</div>
             </div>
@@ -189,16 +200,16 @@ export function JourneyCanvas() {
             Follow <span className="font-playfair italic">every step.</span>
           </h2>
           <p className="text-lg text-text-secondary mb-8 font-light">From contribution to completion. Nothing disappears.</p>
-          <div className="bg-black/40 backdrop-blur-2xl border border-white/10 p-6 rounded-3xl w-full max-w-sm relative shadow-2xl">
+          <div className="bg-white/60 backdrop-blur-2xl border border-black/5 p-6 rounded-3xl w-full max-w-sm relative shadow-xl shadow-black/5">
             <div className="flex justify-between items-center mb-6">
               <span className="text-foreground text-xs font-bold tracking-widest uppercase">Live Tracking</span>
               <MapPin className="text-neki-gold w-4 h-4" />
             </div>
             <div className="space-y-4 font-medium text-sm">
-              <div className="flex items-center gap-4 text-text-muted"><div className="w-2 h-2 rounded-full bg-white/10" /> Mission Created</div>
-              <div className="flex items-center gap-4 text-text-muted"><div className="w-2 h-2 rounded-full bg-white/10" /> Volunteer Assigned</div>
+              <div className="flex items-center gap-4 text-text-muted"><div className="w-2 h-2 rounded-full bg-black/10" /> Mission Created</div>
+              <div className="flex items-center gap-4 text-text-muted"><div className="w-2 h-2 rounded-full bg-black/10" /> Volunteer Assigned</div>
               <div className="flex items-center gap-4 text-foreground"><div className="w-2 h-2 rounded-full bg-neki-gold shadow-[0_0_8px_rgba(212,175,106,0.6)]" /> En Route</div>
-              <div className="flex items-center gap-4 text-text-muted/40"><div className="w-2 h-2 rounded-full border border-white/10" /> Delivered</div>
+              <div className="flex items-center gap-4 text-text-muted/40"><div className="w-2 h-2 rounded-full border border-black/10" /> Delivered</div>
             </div>
           </div>
         </div>
@@ -249,10 +260,10 @@ export function JourneyCanvas() {
             <button className="bg-foreground text-background px-6 py-3 rounded-full font-medium text-base hover:bg-gray-200 transition-colors pointer-events-auto">
               Start a Mission
             </button>
-            <button className="bg-transparent border border-white/20 text-foreground px-6 py-3 rounded-full font-medium text-base hover:bg-white/5 transition-colors pointer-events-auto">
+            <button className="bg-transparent border border-black/10 text-foreground px-6 py-3 rounded-full font-medium text-base hover:bg-black/5 transition-colors pointer-events-auto">
               Become a Volunteer
             </button>
-            <button className="bg-transparent border border-white/20 text-foreground px-6 py-3 rounded-full font-medium text-base hover:bg-white/5 transition-colors pointer-events-auto">
+            <button className="bg-transparent border border-black/10 text-foreground px-6 py-3 rounded-full font-medium text-base hover:bg-black/5 transition-colors pointer-events-auto">
               Partner with NEKI
             </button>
           </div>

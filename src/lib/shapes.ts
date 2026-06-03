@@ -177,24 +177,24 @@ export function getBowlPositions(count: number, radius: number): Float32Array {
   return positions;
 }
 
-export function getHandPositions(count: number, scale: number): Float32Array {
+export function getHeartPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
-    const part = Math.random();
-    if (part < 0.4) {
-      positions[i*3] = (Math.random() - 0.5) * 1.5 * scale;
-      positions[i*3+1] = (Math.random() - 0.5) * 1.5 * scale - 0.5 * scale;
-      positions[i*3+2] = (Math.random() - 0.5) * 0.2 * scale;
-    } else {
-      const f = Math.floor(Math.random() * 5);
-      const heights = [1.2, 1.5, 1.6, 1.4, 1.0];
-      const xs = [-0.6, -0.2, 0.2, 0.6, 0.9];
-      const yOffset = f === 4 ? -0.5 : 0.25;
-      
-      positions[i*3] = xs[f] * scale + (Math.random() - 0.5) * 0.2 * scale;
-      positions[i*3+1] = Math.random() * heights[f] * scale + yOffset * scale;
-      positions[i*3+2] = (Math.random() - 0.5) * 0.2 * scale;
-    }
+    const t = Math.random() * Math.PI * 2;
+    // Heart parametric equations
+    const x = 16 * Math.pow(Math.sin(t), 3);
+    const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+    
+    // Fill the inside randomly by scaling the boundary vector
+    const r = Math.random(); // 0 to 1
+    const insideScale = Math.sqrt(r); // Square root for uniform area distribution
+    
+    // Scale down the standard equation which outputs values around -16 to 16
+    const finalScale = scale * 0.1 * insideScale;
+    
+    positions[i*3] = x * finalScale + (Math.random() - 0.5) * 0.2 * scale;
+    positions[i*3+1] = y * finalScale + (Math.random() - 0.5) * 0.2 * scale;
+    positions[i*3+2] = (Math.random() - 0.5) * 0.5 * scale; // Add some depth
   }
   return positions;
 }
@@ -214,6 +214,36 @@ export function getGearPositions(count: number, radius: number): Float32Array {
     positions[i*3] = Math.cos(angle) * r;
     positions[i*3+1] = Math.sin(angle) * r;
     positions[i*3+2] = (Math.random() - 0.5) * 0.5;
+  }
+  return positions;
+}
+
+export function getConnectionPositions(count: number, scale: number): Float32Array {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const r = Math.random();
+    if (r < 0.25) {
+      // Node 1 (bottom left)
+      positions[i*3] = -1.0 * scale + (Math.random() - 0.5) * 0.5 * scale;
+      positions[i*3+1] = -0.5 * scale + (Math.random() - 0.5) * 0.5 * scale;
+      positions[i*3+2] = (Math.random() - 0.5) * 0.5 * scale;
+    } else if (r < 0.50) {
+      // Node 2 (top right)
+      positions[i*3] = 1.0 * scale + (Math.random() - 0.5) * 0.5 * scale;
+      positions[i*3+1] = 0.5 * scale + (Math.random() - 0.5) * 0.5 * scale;
+      positions[i*3+2] = (Math.random() - 0.5) * 0.5 * scale;
+    } else {
+      // Single thick connecting line between them
+      const t = Math.random();
+      const x = -1.0 * scale + t * 2.0 * scale;
+      const y = -0.5 * scale + t * 1.0 * scale;
+      
+      const taper = Math.pow(Math.abs(t - 0.5) * 2, 2) * 0.15 + 0.05;
+      
+      positions[i*3] = x + (Math.random() - 0.5) * taper * scale;
+      positions[i*3+1] = y + (Math.random() - 0.5) * taper * scale;
+      positions[i*3+2] = (Math.random() - 0.5) * taper * scale;
+    }
   }
   return positions;
 }
@@ -289,24 +319,102 @@ export function getCameraFramePositions(count: number, scale: number): Float32Ar
   return positions;
 }
 
+export function getOrbPositions(count: number, scale: number): Float32Array {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const u = Math.random();
+    const v = Math.random();
+    const theta = u * 2.0 * Math.PI;
+    const phi = Math.acos(2.0 * v - 1.0);
+    const r = Math.cbrt(Math.random()) * scale; 
+    
+    const clump = Math.sin(theta * 3) * Math.cos(phi * 3) * 0.2;
+    const finalR = r + clump * scale;
+
+    positions[i*3] = finalR * Math.sin(phi) * Math.cos(theta);
+    positions[i*3+1] = finalR * Math.sin(phi) * Math.sin(theta);
+    positions[i*3+2] = finalR * Math.cos(phi);
+  }
+  return positions;
+}
+
+export function getNodePositions(count: number, scale: number): Float32Array {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const r = Math.random();
+    const radius = r * r * scale * 0.3; 
+    const theta = Math.random() * 2 * Math.PI;
+    const phi = Math.acos(2 * Math.random() - 1);
+    
+    positions[i*3] = radius * Math.sin(phi) * Math.cos(theta);
+    positions[i*3+1] = radius * Math.sin(phi) * Math.sin(theta);
+    positions[i*3+2] = radius * Math.cos(phi);
+  }
+  return positions;
+}
+
+export function getRoutePositions(count: number, scale: number): Float32Array {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const t = Math.random(); 
+    const x = -2.0 * scale + t * 4.0 * scale;
+    const y = Math.sin(t * Math.PI * 2) * scale * 0.5;
+    const z = Math.cos(t * Math.PI) * scale * 0.5;
+    
+    const noise = (Math.random() - 0.5) * 0.2 * scale;
+    
+    positions[i*3] = x + noise;
+    positions[i*3+1] = y + noise;
+    positions[i*3+2] = z + noise;
+  }
+  return positions;
+}
+
+export function getButterflyPositions(count: number, scale: number): Float32Array {
+  const positions = new Float32Array(count * 3);
+  for (let i = 0; i < count; i++) {
+    const t = Math.random() * Math.PI * 2;
+    const e = Math.exp(Math.cos(t));
+    const r = Math.exp(Math.cos(t)) - 2 * Math.cos(4*t) - Math.pow(Math.sin(t/12), 5);
+    
+    const inner = Math.sqrt(Math.random());
+    const x = Math.sin(t) * r * inner * scale * 0.4;
+    const y = Math.cos(t) * r * inner * scale * 0.4;
+    
+    positions[i*3] = x + (Math.random() - 0.5) * 0.1 * scale;
+    positions[i*3+1] = y + (Math.random() - 0.5) * 0.1 * scale;
+    positions[i*3+2] = (Math.random() - 0.5) * 0.2 * scale;
+  }
+  return positions;
+}
+
 export function getNekiLogoPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
-    const part = Math.random();
-    if (part < 0.33) {
-      positions[i * 3] = -0.5 * scale + (Math.random() - 0.5) * 0.15 * scale;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 1.5 * scale;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 0.05 * scale;
-    } else if (part < 0.66) {
-      positions[i * 3] = 0.5 * scale + (Math.random() - 0.5) * 0.15 * scale;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 1.5 * scale;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 0.05 * scale;
+    const stroke = Math.random();
+    const t = Math.random();
+    const noise = 0.05 * scale;
+    let x = 0, y = 0, z = (Math.random() - 0.5) * noise;
+    
+    if (stroke < 0.33) {
+      x = -0.5 * scale + (Math.random() - 0.5) * noise;
+      y = -0.5 * scale + t * 1.0 * scale;
+      if (Math.random() < 0.2 && t < 0.2) {
+        x += (Math.random() - 0.5) * noise * 3;
+        y += (Math.random() - 0.5) * noise * 3;
+        z += (Math.random() - 0.5) * noise * 3;
+      }
+    } else if (stroke < 0.66) {
+      x = -0.5 * scale + t * 1.0 * scale;
+      y = 0.5 * scale - t * 1.0 * scale;
     } else {
-      const t = (Math.random() - 0.5); 
-      positions[i * 3] = t * scale + (Math.random() - 0.5) * 0.15 * scale; 
-      positions[i * 3 + 1] = -t * 1.5 * scale + (Math.random() - 0.5) * 0.15 * scale; 
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 0.05 * scale;
+      x = 0.5 * scale + (Math.random() - 0.5) * noise;
+      y = -0.5 * scale + t * 1.0 * scale;
     }
+    
+    positions[i*3] = x;
+    positions[i*3+1] = y;
+    positions[i*3+2] = z;
   }
   return positions;
 }

@@ -47,6 +47,31 @@ const SECTION_COLORS = [
 ];
 
 // ============================================================
+// Per-section X offset: positive = right side, negative = left side
+// Text LEFT  → shape RIGHT (+3.5)
+// Text RIGHT → shape LEFT  (-3.5)
+// Text CENTER → shape CENTER (0)
+// ============================================================
+const SECTION_X_OFFSET = [
+   3.5,  // 0  Hero: text left → shape right
+   3.5,  // 1  Problem: text left → shape right
+  -3.5,  // 2  Food: text right → shape left
+   3.5,  // 3  Book: text left → shape right
+  -3.5,  // 4  Medical: text right → shape left
+   3.5,  // 5  Time: text left → shape right
+  -3.5,  // 6  Skills: text right → shape left
+   3.5,  // 7  Connection: text left → shape right
+  -3.5,  // 8  Network: text right → shape left
+   0.0,  // 9  Mission: text center → shape center (behind cards)
+   3.5,  // 10 Tracking: text left → shape right
+  -3.5,  // 11 Trust: text right → shape left
+   3.5,  // 12 Proof: text left → shape right
+  -3.5,  // 13 Multiplier: text right → shape left
+   0.0,  // 14 India: text center → shape center
+   0.0,  // 15 Final: text center → shape center
+];
+
+// ============================================================
 // AMBIENT BACKGROUND — Sparse floating dust
 // ============================================================
 function AmbientBackground({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
@@ -65,7 +90,7 @@ function AmbientBackground({ progressRef }: { progressRef: React.MutableRefObjec
     mat.color.lerp(new THREE.Color(SECTION_COLORS[sectionIndex]), 0.03);
 
     if (p < 0.03 || p > 0.97) mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0, 0.05);
-    else mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0.12, 0.05);
+    else mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0.08, 0.05);
   });
 
   return (
@@ -74,7 +99,7 @@ function AmbientBackground({ progressRef }: { progressRef: React.MutableRefObjec
         <bufferAttribute attach="attributes-position" count={3000} args={[bgPositions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.02}
+        size={0.015}
         color="#D4AF6A"
         transparent
         opacity={0}
@@ -96,22 +121,22 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   // Pre-compute all 16 target shapes
   const shapes = useMemo(() => {
     return [
-      getButterflyPositions(PARTICLE_COUNT, 2.5),    // 0  Butterfly
-      getRoutePositions(PARTICLE_COUNT, 1.2),         // 1  Route
-      getBowlPositions(PARTICLE_COUNT, 2.0),          // 2  Bowl
-      getBookPositions(PARTICLE_COUNT),               // 3  Book
-      getCrossPositions(PARTICLE_COUNT, 3.5),         // 4  Cross
-      getHeartPositions(PARTICLE_COUNT, 2.5),         // 5  Heart
-      getGearPositions(PARTICLE_COUNT, 2.0),          // 6  Cogwheel
-      getConnectionPositions(PARTICLE_COUNT, 1.2),    // 7  Two Nodes
-      getNetworkPositions(PARTICLE_COUNT, 1.0),       // 8  Network
-      getMissionEcoPositions(PARTICLE_COUNT, 2.0),    // 9  Mission Eco
-      getTrackingPositions(PARTICLE_COUNT, 1.2),      // 10 Tracking
-      getShieldPositions(PARTICLE_COUNT, 2.0),        // 11 Shield
-      getCameraFramePositions(PARTICLE_COUNT, 2.0),   // 12 Camera
-      getMultiplierPositions(PARTICLE_COUNT, 1.0),    // 13 Multiplier
-      getIndiaNetworkPositions(PARTICLE_COUNT, 3.0),  // 14 India Network
-      getNekiLogoPositions(PARTICLE_COUNT, 3.0),      // 15 Logo
+      getButterflyPositions(PARTICLE_COUNT, 3.0),     // 0  Butterfly
+      getRoutePositions(PARTICLE_COUNT, 1.5),          // 1  Route
+      getBowlPositions(PARTICLE_COUNT, 2.5),           // 2  Bowl
+      getBookPositions(PARTICLE_COUNT),                // 3  Book
+      getCrossPositions(PARTICLE_COUNT, 4.0),          // 4  Cross
+      getHeartPositions(PARTICLE_COUNT, 3.0),          // 5  Heart
+      getGearPositions(PARTICLE_COUNT, 2.5),           // 6  Cogwheel
+      getConnectionPositions(PARTICLE_COUNT, 1.5),     // 7  Two Nodes
+      getNetworkPositions(PARTICLE_COUNT, 1.2),        // 8  Network
+      getMissionEcoPositions(PARTICLE_COUNT, 2.0),     // 9  Mission Eco
+      getTrackingPositions(PARTICLE_COUNT, 1.5),       // 10 Tracking
+      getShieldPositions(PARTICLE_COUNT, 2.5),         // 11 Shield
+      getCameraFramePositions(PARTICLE_COUNT, 2.5),    // 12 Camera
+      getMultiplierPositions(PARTICLE_COUNT, 1.2),     // 13 Multiplier
+      getIndiaNetworkPositions(PARTICLE_COUNT, 3.5),   // 14 India Network
+      getNekiLogoPositions(PARTICLE_COUNT, 3.5),       // 15 Logo
     ];
   }, []);
 
@@ -122,32 +147,26 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     if (!pointsRef.current || !geometryRef.current || !materialRef.current) return;
 
     const p = progressRef.current;
-    const lerpFactor = 2.5 * delta; // Smooth cinematic easing
+    const lerpFactor = 2.5 * delta;
 
-    // Calculate which section we're in (0 to 15)
+    // Current section (0 to 15)
     const sectionIndex = Math.min(Math.floor(p * 16), 15);
     const targetShape = shapes[sectionIndex];
 
-    // Set target color for this section
+    // Set target color
     targetColor.set(SECTION_COLORS[sectionIndex]);
 
-    // --- HERO SPLIT LAYOUT ---
-    // In hero section (section 0), position the particle cloud on the right
-    if (p < 0.04) {
-      pointsRef.current.position.x = THREE.MathUtils.lerp(
-        pointsRef.current.position.x, 3.5, lerpFactor
-      );
-    } else {
-      pointsRef.current.position.x = THREE.MathUtils.lerp(
-        pointsRef.current.position.x, 0, lerpFactor
-      );
-    }
+    // --- POSITION: push to the opposite side of text ---
+    const targetX = SECTION_X_OFFSET[sectionIndex];
+    pointsRef.current.position.x = THREE.MathUtils.lerp(
+      pointsRef.current.position.x, targetX, lerpFactor
+    );
 
     // --- GENTLE FLOATING ---
-    pointsRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.15;
+    pointsRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.12;
 
     // --- SLOW ROTATION ---
-    pointsRef.current.rotation.y += 0.15 * delta;
+    pointsRef.current.rotation.y += 0.12 * delta;
 
     // --- MORPH POSITIONS ---
     const positions = geometryRef.current.attributes.position.array as Float32Array;
@@ -159,12 +178,6 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
 
     // --- COLOR MORPH ---
     materialRef.current.color.lerp(targetColor, lerpFactor);
-
-    // --- SIZE PULSE for specific sections ---
-    let targetSize = 0.015;
-    if (sectionIndex === 8 || sectionIndex === 14) targetSize = 0.02; // Network & India: slightly larger dots
-    if (sectionIndex === 15) targetSize = 0.018; // Logo: medium
-    materialRef.current.size = THREE.MathUtils.lerp(materialRef.current.size, targetSize, lerpFactor);
   });
 
   return (
@@ -180,10 +193,10 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
         </bufferGeometry>
         <pointsMaterial
           ref={materialRef}
-          size={0.015}
+          size={0.035}
           color="#D4AF6A"
           transparent
-          opacity={0.9}
+          opacity={0.95}
           depthWrite={false}
           blending={THREE.NormalBlending}
         />

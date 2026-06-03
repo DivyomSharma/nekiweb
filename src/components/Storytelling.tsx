@@ -1,109 +1,96 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Float, Points, PointMaterial } from "@react-three/drei";
+import { useEffect, useRef, useState, useMemo } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Float, Points, PointMaterial, Environment } from "@react-three/drei";
+import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, useScroll, useTransform } from "framer-motion";
-
-gsap.registerPlugin(ScrollTrigger);
+import { MapPin, ShieldCheck, User } from "lucide-react";
 
 // --- 3D COMPONENTS ---
 
 function GlowingOrb({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
   const orbRef = useRef<THREE.Mesh>(null);
-  const glowRef = useRef<THREE.Mesh>(null);
-  const lightRef = useRef<THREE.PointLight>(null);
+  const materialRef = useRef<THREE.MeshStandardMaterial>(null);
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
-    const p = progressRef.current; // 0 to 1 scroll progress
+    const p = progressRef.current; // 0 to 1
 
-    if (orbRef.current) {
-      // Rotate the orb
-      orbRef.current.rotation.y = t * 0.2;
-      orbRef.current.rotation.z = t * 0.1;
+    if (orbRef.current && materialRef.current) {
+      // Gentle float
+      orbRef.current.position.y = Math.sin(t) * 0.2;
       
-      // Move orb forward as progress increases
-      orbRef.current.position.z = -p * 15;
+      // Scale down during tracking scenes, scale massively at the end
+      let scale = 1;
+      if (p > 0.4 && p < 0.8) scale = 0.5;
+      else if (p >= 0.8) scale = 1 + (p - 0.8) * 20; // Massive expansion at end
       
-      // Scene 2 (Fog/Uncertainty) - Dim the orb slightly
-      const dimFactor = p > 0.15 && p < 0.3 ? 0.4 : 1;
-      (orbRef.current.material as THREE.MeshStandardMaterial).emissiveIntensity = 2 * dimFactor;
-      if (lightRef.current) lightRef.current.intensity = 20 * dimFactor;
-    }
+      orbRef.current.scale.lerp(new THREE.Vector3(scale, scale, scale), 0.1);
 
-    if (glowRef.current && orbRef.current) {
-      glowRef.current.position.copy(orbRef.current.position);
-      // Pulsing glow
-      const scale = 1.2 + Math.sin(t * 2) * 0.1;
-      glowRef.current.scale.set(scale, scale, scale);
+      // Emissive Intensity fades in fog (Scene 2)
+      let intensity = 4;
+      if (p > 0.15 && p < 0.35) intensity = 1; // Dim in fog
+      else if (p >= 0.8) intensity = 10; // Extremely bright at end
+      
+      materialRef.current.emissiveIntensity = THREE.MathUtils.lerp(materialRef.current.emissiveIntensity, intensity, 0.1);
     }
   });
 
   return (
-    <>
-      <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
-        <mesh ref={orbRef}>
-          <sphereGeometry args={[1, 64, 64]} />
-          <meshStandardMaterial 
-            color="#FFC247" 
-            emissive="#FF7A00"
-            emissiveIntensity={2}
-            toneMapped={false}
-          />
-        </mesh>
-        
-        {/* Soft Glow Billboard */}
-        <mesh ref={glowRef}>
-          <sphereGeometry args={[1.5, 32, 32]} />
-          <meshBasicMaterial 
-            color="#FF7A00"
-            transparent={true}
-            opacity={0.3}
-            blending={THREE.AdditiveBlending}
-            depthWrite={false}
-          />
-        </mesh>
-
-        <pointLight ref={lightRef} color="#FFC247" intensity={20} distance={10} />
-      </Float>
-    </>
+    <Float speed={2} rotationIntensity={1} floatIntensity={2}>
+      <mesh ref={orbRef}>
+        <sphereGeometry args={[1.5, 64, 64]} />
+        <meshStandardMaterial 
+          ref={materialRef}
+          color="#FFC247" 
+          emissive="#FF7A00"
+          emissiveIntensity={4}
+          toneMapped={false}
+        />
+      </mesh>
+    </Float>
   );
 }
 
 function ParticleNetwork({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
   const pointsRef = useRef<THREE.Points>(null);
   
-  // Generate random points for the network
-  const [positions] = useState(() => {
-    const count = 2000;
+  // Create an organic galaxy/network shape
+  const positions = useMemo(() => {
+    const count = 3000;
     const pos = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 40;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 40;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 40 - 15; // Push back
+      const radius = 10 + Math.random() * 40;
+      const theta = Math.random() * 2 * Math.PI;
+      const y = (Math.random() - 0.5) * 20;
+      pos[i * 3] = Math.cos(theta) * radius;
+      pos[i * 3 + 1] = y;
+      pos[i * 3 + 2] = Math.sin(theta) * radius - 20; // Push back behind orb
     }
     return pos;
-  });
+  }, []);
 
   useFrame(({ clock }) => {
     const p = progressRef.current;
     if (pointsRef.current) {
-      // Particles only become visible/active after scene 3
-      const opacity = Math.max(0, (p - 0.4) * 2);
-      (pointsRef.current.material as THREE.PointsMaterial).opacity = Math.min(1, opacity);
+      pointsRef.current.rotation.y = clock.getElapsedTime() * 0.02;
       
-      pointsRef.current.rotation.y = clock.getElapsedTime() * 0.05;
-      
-      // Final zoom out effect
-      if (p > 0.8) {
-        const zoomP = (p - 0.8) * 5; // 0 to 1
-        pointsRef.current.scale.set(1 + zoomP, 1 + zoomP, 1 + zoomP);
+      // Fade particles in after scene 3
+      const opacityTarget = p > 0.35 ? Math.min(1, (p - 0.35) * 3) : 0;
+      (pointsRef.current.material as THREE.PointsMaterial).opacity = THREE.MathUtils.lerp(
+        (pointsRef.current.material as THREE.PointsMaterial).opacity,
+        opacityTarget,
+        0.1
+      );
+
+      // Camera fly-through effect at the very end
+      if (p > 0.85) {
+        const flyProgress = (p - 0.85) * 6; // 0 to ~1
+        pointsRef.current.position.z = flyProgress * 50;
       } else {
-        pointsRef.current.scale.set(1, 1, 1);
+        pointsRef.current.position.z = 0;
       }
     }
   });
@@ -123,46 +110,12 @@ function ParticleNetwork({ progressRef }: { progressRef: React.MutableRefObject<
   );
 }
 
-function StoryScene({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
-  const { camera, scene } = useThree();
-
-  useFrame(() => {
-    const p = progressRef.current;
-    
-    // Fog logic for uncertainty scene
-    if (p > 0.15 && p < 0.35) {
-      const fogDensity = Math.min(0.08, (p - 0.15) * 0.5);
-      scene.fog = new THREE.FogExp2("#111111", fogDensity);
-    } else if (p >= 0.35) {
-      scene.fog = new THREE.FogExp2("#111111", Math.max(0, 0.08 - (p - 0.35) * 0.5));
-    } else {
-      scene.fog = null;
-    }
-
-    // Camera movement
-    camera.position.z = 5 - (p * 10);
-    
-    // Final pullback
-    if (p > 0.85) {
-      camera.position.z = 5 - (p * 10) + ((p - 0.85) * 40);
-    }
-  });
-
-  return (
-    <>
-      <ambientLight intensity={0.2} />
-      <Environment preset="city" />
-      <GlowingOrb progressRef={progressRef} />
-      <ParticleNetwork progressRef={progressRef} />
-    </>
-  );
-}
-
 // --- DOM COMPONENTS ---
 
 export function Storytelling() {
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(0);
+  
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
@@ -174,107 +127,138 @@ export function Storytelling() {
     });
   }, [scrollYProgress]);
 
-  // Framer Motion transforms for text opacity
-  const scene1Opacity = useTransform(scrollYProgress, [0, 0.1, 0.15], [1, 1, 0]);
-  const scene2Opacity = useTransform(scrollYProgress, [0.15, 0.2, 0.25, 0.3], [0, 1, 1, 0]);
-  const scene3Opacity = useTransform(scrollYProgress, [0.3, 0.35, 0.45, 0.5], [0, 1, 1, 0]);
-  const scene4Opacity = useTransform(scrollYProgress, [0.5, 0.55, 0.7, 0.75], [0, 1, 1, 0]);
-  const scene5Opacity = useTransform(scrollYProgress, [0.75, 0.8, 0.85, 0.9], [0, 1, 1, 0]);
-  const scene6Opacity = useTransform(scrollYProgress, [0.9, 0.95, 1], [0, 1, 1]);
+  // Framer Motion transforms for perfectly centered, cross-fading text scenes
+  // Scene 1: Intent
+  const s1Op = useTransform(scrollYProgress, [0, 0.08, 0.12], [1, 1, 0]);
+  const s1Y = useTransform(scrollYProgress, [0, 0.12], [0, -50]);
+
+  // Scene 2: Fog / Uncertainty
+  const s2Op = useTransform(scrollYProgress, [0.15, 0.2, 0.3, 0.35], [0, 1, 1, 0]);
+  const s2Y = useTransform(scrollYProgress, [0.15, 0.2, 0.3, 0.35], [50, 0, 0, -50]);
+
+  // Scene 3: Network Awakens
+  const s3Op = useTransform(scrollYProgress, [0.38, 0.42, 0.5, 0.55], [0, 1, 1, 0]);
+  const s3Y = useTransform(scrollYProgress, [0.38, 0.42, 0.5, 0.55], [50, 0, 0, -50]);
+
+  // Scene 4/5: Live Tracking Cards
+  const s4Op = useTransform(scrollYProgress, [0.58, 0.62, 0.75, 0.8], [0, 1, 1, 0]);
+  const s4Scale = useTransform(scrollYProgress, [0.58, 0.62], [0.9, 1]);
+
+  // Scene 6/7: Final Zoom Out / Humanity Delivered
+  const s6Op = useTransform(scrollYProgress, [0.85, 0.9, 1], [0, 1, 1]);
+  const s6Y = useTransform(scrollYProgress, [0.85, 0.9], [50, 0]);
 
   return (
-    <section ref={containerRef} className="relative bg-neki-charcoal" style={{ height: "700vh" }}>
+    <section ref={containerRef} className="relative bg-[#050505]" style={{ height: "800vh" }}>
       
-      {/* 3D Canvas - Sticky Background */}
-      <div className="sticky top-0 left-0 w-full h-screen overflow-hidden pointer-events-none z-0">
-        <Canvas camera={{ position: [0, 0, 5], fov: 45 }} gl={{ antialias: true, alpha: false }}>
-          <color attach="background" args={["#111111"]} />
-          <StoryScene progressRef={progressRef} />
-        </Canvas>
-      </div>
-
-      {/* HTML Overlays - Scrolling content */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-10 flex flex-col">
+      {/* STICKY CONTAINER - Locks to screen while user scrolls through the 800vh */}
+      <div className="sticky top-0 left-0 w-full h-screen overflow-hidden">
         
-        {/* SCENE 1 */}
-        <div className="h-screen flex items-center justify-center p-8">
-          <motion.div style={{ opacity: scene1Opacity }} className="text-center">
-            <h2 className="text-4xl md:text-6xl font-heading font-bold text-white mb-4">
+        {/* 3D CANVAS */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <Canvas camera={{ position: [0, 0, 12], fov: 45 }} gl={{ antialias: false, alpha: false }}>
+            <color attach="background" args={["#050505"]} />
+            <ambientLight intensity={0.2} />
+            <Environment preset="city" />
+            
+            <GlowingOrb progressRef={progressRef} />
+            <ParticleNetwork progressRef={progressRef} />
+            
+            <EffectComposer>
+              <Bloom luminanceThreshold={0} mipmapBlur intensity={1.5} radius={0.8} />
+            </EffectComposer>
+          </Canvas>
+        </div>
+
+        {/* DOM OVERLAYS - Fixed positioned, fading based on scroll */}
+        <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none p-6">
+          
+          {/* SCENE 1 */}
+          <motion.div style={{ opacity: s1Op, y: s1Y }} className="absolute text-center max-w-4xl">
+            <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-6 leading-tight">
               Good intentions deserve <br/><span className="text-neki-orange">visible impact.</span>
             </h2>
-            <p className="text-white/60 text-lg">Scroll to see the journey of a contribution.</p>
+            <p className="text-white/50 text-xl font-medium tracking-wide uppercase">Scroll to see the journey</p>
           </motion.div>
-        </div>
 
-        {/* SCENE 2 - Fog */}
-        <div className="h-screen flex items-center justify-center p-8">
-          <motion.div style={{ opacity: scene2Opacity }} className="text-center max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-heading font-bold text-white mb-6">
-              Most contributions disappear into uncertainty.
+          {/* SCENE 2 */}
+          <motion.div style={{ opacity: s2Op, y: s2Y }} className="absolute text-center max-w-3xl">
+            <h2 className="text-4xl md:text-6xl font-heading font-bold text-white/90 mb-6 leading-tight">
+              But most contributions disappear into uncertainty.
             </h2>
-            <p className="text-white/40 text-xl">
-              Without visibility, trust fades. The connection between intent and impact gets lost in the fog.
+            <p className="text-white/60 text-xl md:text-2xl leading-relaxed">
+              Without visibility, trust fades. The connection between your intent and real-world impact gets lost in the fog.
             </p>
           </motion.div>
-        </div>
 
-        {/* SCENE 3 - Network Awakens */}
-        <div className="h-screen flex items-center justify-center p-8">
-          <motion.div style={{ opacity: scene3Opacity }} className="text-center">
-            <h2 className="text-4xl md:text-6xl font-heading font-bold text-white mb-4">
+          {/* SCENE 3 */}
+          <motion.div style={{ opacity: s3Op, y: s3Y }} className="absolute text-center max-w-4xl">
+            <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-6">
               NEKI turns intent into action.
             </h2>
-            <p className="text-neki-yellow text-xl font-medium">The network awakens.</p>
+            <p className="text-neki-yellow text-2xl font-medium">The network awakens.</p>
           </motion.div>
-        </div>
 
-        {/* SCENE 4 & 5 - Logistics and Tracking */}
-        <div className="h-[200vh] flex flex-col items-center justify-center p-8">
-          <div className="sticky top-1/2 -translate-y-1/2 w-full max-w-lg">
-            <motion.div style={{ opacity: scene4Opacity }} className="bg-white/10 backdrop-blur-xl p-8 rounded-3xl border border-white/20 text-white shadow-2xl">
-              <div className="text-neki-orange text-sm font-bold uppercase mb-2">Live Mission: Cow Shelter Food Drive</div>
-              <h3 className="text-2xl font-bold mb-6">Mission in Progress</h3>
+          {/* SCENE 4 & 5 */}
+          <motion.div style={{ opacity: s4Op, scale: s4Scale }} className="absolute w-full max-w-md">
+            <div className="bg-black/40 backdrop-blur-2xl p-8 rounded-[2rem] border border-white/10 text-white shadow-2xl relative overflow-hidden">
+              {/* Subtle glass reflection */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50 pointer-events-none" />
               
-              <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="w-4 h-4 rounded-full bg-neki-green shadow-[0_0_10px_#1E3D2B]" />
-                  <span className="font-medium">Volunteer Assigned</span>
+              <div className="relative z-10">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="text-neki-orange text-xs font-bold uppercase tracking-widest">Live Mission</div>
+                  <div className="bg-neki-green/20 text-neki-green px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4" /> Verified
+                  </div>
                 </div>
-                <div className="w-[2px] h-4 bg-white/20 ml-2" />
-                <div className="flex items-center gap-4">
-                  <div className="w-4 h-4 rounded-full bg-neki-green shadow-[0_0_10px_#1E3D2B]" />
-                  <span className="font-medium">En Route to Pickup</span>
-                </div>
-                <div className="w-[2px] h-4 bg-white/20 ml-2" />
-                <div className="flex items-center gap-4">
-                  <div className="w-4 h-4 rounded-full border-2 border-neki-yellow" />
-                  <span className="text-white/60">Delivery Pending</span>
+                
+                <h3 className="text-2xl font-bold mb-8">Disaster Relief Kits</h3>
+                
+                <div className="space-y-6 relative">
+                  {/* Timeline Line */}
+                  <div className="absolute left-[11px] top-4 bottom-4 w-[2px] bg-white/10" />
+                  
+                  <div className="flex items-center gap-6 relative z-10">
+                    <div className="w-6 h-6 rounded-full bg-neki-green shadow-[0_0_15px_#1E3D2B] flex-shrink-0" />
+                    <span className="font-medium text-lg text-white">Need Identified</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-6 relative z-10">
+                    <div className="w-6 h-6 rounded-full bg-neki-orange flex items-center justify-center shadow-[0_0_15px_#FF7A00] flex-shrink-0">
+                      <User className="w-3 h-3 text-white" />
+                    </div>
+                    <span className="font-medium text-lg text-white">Volunteer En Route</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-6 relative z-10">
+                    <div className="w-6 h-6 rounded-full border-2 border-white/20 bg-black flex-shrink-0" />
+                    <span className="font-medium text-lg text-white/40">Delivery Pending</span>
+                  </div>
                 </div>
               </div>
-            </motion.div>
-          </div>
-        </div>
+            </div>
+          </motion.div>
 
-        {/* SCENE 6 & 7 - Trust and Final Zoom */}
-        <div className="h-[200vh] flex flex-col items-center justify-end pb-[20vh] p-8">
-          <motion.div style={{ opacity: scene6Opacity }} className="text-center max-w-4xl">
-            <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-6">
-              Humanity, <span className="text-neki-orange">Delivered.</span>
+          {/* SCENE 6 & 7 */}
+          <motion.div style={{ opacity: s6Op, y: s6Y }} className="absolute text-center max-w-5xl pointer-events-auto">
+            <h2 className="text-6xl md:text-8xl lg:text-[7rem] font-heading font-extrabold text-white mb-8 leading-none drop-shadow-2xl">
+              Humanity, <br/><span className="text-neki-orange">Delivered.</span>
             </h2>
-            <p className="text-2xl text-white/80 mb-12">
+            <p className="text-2xl md:text-3xl text-white/80 mb-12 font-medium drop-shadow-md">
               The operating system for collective human goodness.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pointer-events-auto">
-              <button className="bg-neki-orange text-white px-8 py-4 rounded-full font-bold hover:bg-white hover:text-neki-charcoal transition-colors">
-                Join NEKI
-              </button>
-              <button className="bg-white/10 border border-white/20 text-white px-8 py-4 rounded-full font-bold hover:bg-white/20 transition-colors">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
+              <button className="bg-neki-orange text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-white hover:text-neki-charcoal transition-colors shadow-[0_0_30px_rgba(255,122,0,0.4)]">
                 Start Contributing
+              </button>
+              <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-full font-bold text-lg hover:bg-white/20 transition-colors">
+                Onboard NGO
               </button>
             </div>
           </motion.div>
-        </div>
 
+        </div>
       </div>
     </section>
   );

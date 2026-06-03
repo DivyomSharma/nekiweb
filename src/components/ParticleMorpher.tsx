@@ -5,7 +5,7 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import {
   PARTICLE_COUNT,
-  getButterflyPositions,
+  getHeroLogoPositions,
   getPhonePositions,
   getBowlPositions,
   getBookPositions,
@@ -121,7 +121,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   // Pre-compute all 16 target shapes
   const shapes = useMemo(() => {
     return [
-      getButterflyPositions(PARTICLE_COUNT, 1.4),     // 0  Butterfly
+      getHeroLogoPositions(PARTICLE_COUNT, 1.4),     // 0  Hero Logo
       getPhonePositions(PARTICLE_COUNT, 1.2),         // 1  Phone
       getBowlPositions(PARTICLE_COUNT, 1.2),          // 2  Bowl
       getBookPositions(PARTICLE_COUNT),               // 3  Book

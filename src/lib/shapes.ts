@@ -214,37 +214,49 @@ export function getCrossPositions(count: number, size: number): Float32Array {
 }
 
 // ============================================================
-// 5: HEART — Cardioid parametric, dense fill
+// 5: HEART — Solid 3D Taubin Heart (Completely Filled)
 // ============================================================
 export function getHeartPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
-    const t = Math.random() * Math.PI * 2;
-    const xBorder = 16 * Math.pow(Math.sin(t), 3);
-    const yBorder = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-    
     let x = 0, y = 0, z = 0;
-
-    if (Math.random() < 0.4) {
-      // Dense crisp border
-      x = xBorder;
-      y = yBorder;
-      // Slight jitter for a thick line
-      x += (Math.random() - 0.5) * 0.8;
-      y += (Math.random() - 0.5) * 0.8;
-      z = (Math.random() - 0.5) * 1.5;
-    } else {
-      // Fill: scale towards the visual center of the heart (0, -3) to ensure uniform filling
-      const r = Math.sqrt(Math.random());
-      x = xBorder * r;
-      y = -3 + (yBorder - -3) * r;
-      z = (Math.random() - 0.5) * 4.0; // give it some 3D volume
+    
+    // Rejection sampling using the 3D Taubin heart algebraic equation:
+    // (x^2 + 2.25*z^2 + y^2 - 1)^3 - x^2*y^3 - 0.1125*z^2*y^3 <= 0
+    while (true) {
+      // Bounding box for the Taubin heart is roughly [-1.3, 1.3] in all axes
+      const tx = (Math.random() - 0.5) * 2.8; 
+      const ty = (Math.random() - 0.5) * 2.8; 
+      const tz = (Math.random() - 0.5) * 2.8; 
+      
+      const x2 = tx * tx;
+      const y2 = ty * ty;
+      const z2 = tz * tz;
+      const y3 = ty * y2; // ty^3
+      
+      const a = x2 + 2.25 * z2 + y2 - 1.0;
+      const val = a * a * a - x2 * y3 - 0.1125 * z2 * y3;
+      
+      if (val <= 0) {
+        // Density function: denser near the surface (where val is close to 0) 
+        // to maintain a crisp, recognizable shape, while still filling the interior.
+        const prob = (val > -0.2) ? 1.0 : 0.2; 
+        
+        if (Math.random() < prob) {
+          x = tx; 
+          y = ty; 
+          z = tz;
+          break;
+        }
+      }
     }
 
-    // Apply global scale (0.1 normalizes the parametric bounds)
-    const finalScale = scale * 0.1;
+    // Scale up slightly to match the visual size of the previous heart
+    const finalScale = scale * 1.3;
+    
+    // Shift slightly up to center visually
     positions[i * 3] = x * finalScale;
-    positions[i * 3 + 1] = y * finalScale;
+    positions[i * 3 + 1] = (y + 0.2) * finalScale;
     positions[i * 3 + 2] = z * finalScale;
   }
   return positions;

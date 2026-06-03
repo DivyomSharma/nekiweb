@@ -43,35 +43,54 @@ export function getButterflyPositions(count: number, scale: number): Float32Arra
 }
 
 // ============================================================
-// 1: ROUTE — Point A → Point B with dense endpoints
+// 1: CASH NOTE — A slightly wavy rectangular banknote
 // ============================================================
-export function getRoutePositions(count: number, scale: number): Float32Array {
+export function getCashNotePositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
+  const width = 2.2 * scale;
+  const height = 1.0 * scale;
+
   for (let i = 0; i < count; i++) {
     const r = Math.random();
-    if (r < 0.18) {
-      // Dense sphere at Point A
-      const pt = randomSpherePoint(0.4 * scale);
-      positions[i * 3] = pt.x - 2.5 * scale;
-      positions[i * 3 + 1] = pt.y;
-      positions[i * 3 + 2] = pt.z;
-    } else if (r < 0.36) {
-      // Dense sphere at Point B
-      const pt = randomSpherePoint(0.4 * scale);
-      positions[i * 3] = pt.x + 2.5 * scale;
-      positions[i * 3 + 1] = pt.y;
-      positions[i * 3 + 2] = pt.z;
+    let x = 0, y = 0, z = 0;
+
+    if (r < 0.4) {
+      // Border outline
+      const edge = Math.floor(Math.random() * 4);
+      if (edge === 0) { x = (Math.random() - 0.5) * width; y = height / 2; }
+      else if (edge === 1) { x = (Math.random() - 0.5) * width; y = -height / 2; }
+      else if (edge === 2) { x = width / 2; y = (Math.random() - 0.5) * height; }
+      else { x = -width / 2; y = (Math.random() - 0.5) * height; }
+      
+      // slightly thicken the border
+      x += (Math.random() - 0.5) * 0.05 * scale;
+      y += (Math.random() - 0.5) * 0.05 * scale;
+    } else if (r < 0.6) {
+      // Central circle (portrait/seal)
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 0.25 * scale + (Math.random() - 0.5) * 0.04 * scale;
+      x = Math.cos(angle) * radius;
+      y = Math.sin(angle) * radius;
+    } else if (r < 0.7) {
+      // Corner circles / decorations
+      const cornerX = (Math.random() > 0.5 ? 1 : -1) * (width / 2 - 0.15 * scale);
+      const cornerY = (Math.random() > 0.5 ? 1 : -1) * (height / 2 - 0.15 * scale);
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 0.08 * scale + (Math.random() - 0.5) * 0.02 * scale;
+      x = cornerX + Math.cos(angle) * radius;
+      y = cornerY + Math.sin(angle) * radius;
     } else {
-      // Route line
-      const t = Math.random();
-      const x = -2.5 * scale + t * 5.0 * scale;
-      const y = Math.sin(t * Math.PI * 2) * scale * 0.6;
-      const z = Math.cos(t * Math.PI) * scale * 0.2;
-      const noise = (Math.random() - 0.5) * 0.06 * scale;
-      positions[i * 3] = x + noise;
-      positions[i * 3 + 1] = y + noise;
-      positions[i * 3 + 2] = z + noise;
+      // Fill / paper texture
+      x = (Math.random() - 0.5) * width;
+      y = (Math.random() - 0.5) * height;
     }
+
+    // Add a slight wave to make it look like a physical note
+    z = Math.sin(x * 2.0 / scale) * 0.1 * scale + Math.cos(y * 2.0 / scale) * 0.05 * scale;
+    
+    positions[i * 3] = x;
+    positions[i * 3 + 1] = y;
+    positions[i * 3 + 2] = z + (Math.random() - 0.5) * 0.02 * scale;
   }
   return positions;
 }

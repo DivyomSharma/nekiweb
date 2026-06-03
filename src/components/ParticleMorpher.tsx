@@ -6,7 +6,7 @@ import * as THREE from "three";
 import {
   PARTICLE_COUNT,
   getButterflyPositions,
-  getRoutePositions,
+  getCashNotePositions,
   getBowlPositions,
   getBookPositions,
   getCrossPositions,
@@ -29,7 +29,7 @@ import {
 // ============================================================
 const SECTION_COLORS = [
   "#D4AF6A", // 0  Hero / Butterfly — Champagne Gold
-  "#D4AF6A", // 1  Trust Problem / Route — Muted Gold
+  "#3F5A4A", // 1  Trust Problem / Cash Note — Green
   "#C68B3E", // 2  Food / Bowl — Warm Amber
   "#D4AF6A", // 3  Education / Book — Champagne Gold
   "#3F5A4A", // 4  Healthcare / Cross — Green
@@ -122,7 +122,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   const shapes = useMemo(() => {
     return [
       getButterflyPositions(PARTICLE_COUNT, 1.4),     // 0  Butterfly
-      getRoutePositions(PARTICLE_COUNT, 0.7),         // 1  Route
+      getCashNotePositions(PARTICLE_COUNT, 1.0),      // 1  Cash Note
       getBowlPositions(PARTICLE_COUNT, 1.2),          // 2  Bowl
       getBookPositions(PARTICLE_COUNT),               // 3  Book
       getCrossPositions(PARTICLE_COUNT, 2.0),         // 4  Cross

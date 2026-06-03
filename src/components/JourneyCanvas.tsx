@@ -45,6 +45,7 @@ export function JourneyCanvas() {
         <Canvas camera={{ position: [0, 0, 10], fov: 45 }} gl={{ antialias: false, alpha: false }}>
           <color attach="background" args={["#FAF9F7"]} />
           <ambientLight intensity={1.2} />
+          <directionalLight position={[10, 10, 10]} intensity={2} />
           
           <ParticleMorpher progressRef={progressRef} />
           

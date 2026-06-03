@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import {
@@ -21,7 +21,8 @@ import {
   getMultiplierPositions,
   getIndiaNetworkPositions,
   getNekiLogoPositions,
-  getChaosPositions
+  getChaosPositions,
+  getImagePositions
 } from "@/lib/shapes";
 
 // ============================================================
@@ -111,17 +112,15 @@ function AmbientBackground({ progressRef }: { progressRef: React.MutableRefObjec
 }
 
 // ============================================================
-// PARTICLE MORPHER — The main 3D storytelling engine
+// PARTICLE MORPHER — 3D Metallic Instanced Mesh
 // ============================================================
 export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
-  const pointsRef = useRef<THREE.Points>(null);
-  const geometryRef = useRef<THREE.BufferGeometry>(null);
-  const materialRef = useRef<THREE.PointsMaterial>(null);
-
-  // Pre-compute all 16 target shapes
-  const shapes = useMemo(() => {
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+  
+  // Pre-compute procedural shapes
+  const initialShapes = useMemo(() => {
     return [
-      getHeroLogoPositions(PARTICLE_COUNT, 1.4),     // 0  Hero Logo
+      getHeroLogoPositions(PARTICLE_COUNT, 1.4),      // 0  Hero Logo (fallback)
       getPhonePositions(PARTICLE_COUNT, 1.2),         // 1  Phone
       getBowlPositions(PARTICLE_COUNT, 1.2),          // 2  Bowl
       getBookPositions(PARTICLE_COUNT),               // 3  Book
@@ -140,67 +139,90 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     ];
   }, []);
 
-  const currentPositions = useMemo(() => new Float32Array(shapes[0]), [shapes]);
+  const [dynamicShapes, setDynamicShapes] = useState(initialShapes);
+
+  useEffect(() => {
+    // Load the logo from image
+    getImagePositions("/logo.png", PARTICLE_COUNT, 1.4).then((imgPositions) => {
+      const newShapes = [...initialShapes];
+      newShapes[0] = imgPositions; // Replace Hero Logo with Image
+      setDynamicShapes(newShapes);
+    }).catch(err => {
+      console.warn("Failed to load logo.png, using procedural fallback:", err);
+    });
+  }, [initialShapes]);
+
+  const currentPositions = useMemo(() => new Float32Array(dynamicShapes[0]), [dynamicShapes]);
   const targetColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
+  const currentColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
 
   useFrame((state, delta) => {
-    if (!pointsRef.current || !geometryRef.current || !materialRef.current) return;
+    if (!meshRef.current) return;
 
     const p = progressRef.current;
     const lerpFactor = 2.5 * delta;
 
     // Current section (0 to 15)
     const sectionIndex = Math.min(Math.floor(p * 16), 15);
-    const targetShape = shapes[sectionIndex];
+    const targetShape = dynamicShapes[sectionIndex];
 
     // Set target color
     targetColor.set(SECTION_COLORS[sectionIndex]);
+    currentColor.lerp(targetColor, lerpFactor);
+    (meshRef.current.material as THREE.MeshStandardMaterial).color.copy(currentColor);
 
     // --- POSITION: push to the opposite side of text ---
     const targetX = SECTION_X_OFFSET[sectionIndex];
-    pointsRef.current.position.x = THREE.MathUtils.lerp(
-      pointsRef.current.position.x, targetX, lerpFactor
+    meshRef.current.position.x = THREE.MathUtils.lerp(
+      meshRef.current.position.x, targetX, lerpFactor
     );
 
     // --- GENTLE FLOATING ---
-    pointsRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.12;
+    meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.12;
 
     // --- SLOW ROTATION ---
-    pointsRef.current.rotation.y += 0.12 * delta;
+    meshRef.current.rotation.y += 0.12 * delta;
 
-    // --- MORPH POSITIONS ---
-    const positions = geometryRef.current.attributes.position.array as Float32Array;
-    for (let i = 0; i < PARTICLE_COUNT * 3; i++) {
-      currentPositions[i] = THREE.MathUtils.lerp(currentPositions[i], targetShape[i], lerpFactor);
-      positions[i] = currentPositions[i];
+    // --- MORPH POSITIONS (InstancedMesh) ---
+    const matrixArray = meshRef.current.instanceMatrix.array as Float32Array;
+    
+    // We update the translation part of each 4x4 matrix
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      currentPositions[i * 3]     = THREE.MathUtils.lerp(currentPositions[i * 3],     targetShape[i * 3],     lerpFactor);
+      currentPositions[i * 3 + 1] = THREE.MathUtils.lerp(currentPositions[i * 3 + 1], targetShape[i * 3 + 1], lerpFactor);
+      currentPositions[i * 3 + 2] = THREE.MathUtils.lerp(currentPositions[i * 3 + 2], targetShape[i * 3 + 2], lerpFactor);
+      
+      // index inside 4x4 matrix: 12 is x, 13 is y, 14 is z
+      matrixArray[i * 16 + 12] = currentPositions[i * 3];
+      matrixArray[i * 16 + 13] = currentPositions[i * 3 + 1];
+      matrixArray[i * 16 + 14] = currentPositions[i * 3 + 2];
     }
-    geometryRef.current.attributes.position.needsUpdate = true;
-
-    // --- COLOR MORPH ---
-    materialRef.current.color.lerp(targetColor, lerpFactor);
+    meshRef.current.instanceMatrix.needsUpdate = true;
   });
+
+  // Initialize identity matrices
+  useEffect(() => {
+    if (!meshRef.current) return;
+    const dummy = new THREE.Object3D();
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      dummy.updateMatrix();
+      meshRef.current.setMatrixAt(i, dummy.matrix);
+    }
+    meshRef.current.instanceMatrix.needsUpdate = true;
+  }, []);
 
   return (
     <>
       <AmbientBackground progressRef={progressRef} />
-      <points ref={pointsRef}>
-        <bufferGeometry ref={geometryRef}>
-          <bufferAttribute
-            attach="attributes-position"
-            count={PARTICLE_COUNT}
-            args={[currentPositions, 3]}
-          />
-        </bufferGeometry>
-        <pointsMaterial
-          ref={materialRef}
-          size={0.02}
-          color="#D4AF6A"
-          transparent
-          opacity={0.85}
-          depthWrite={false}
-          blending={THREE.NormalBlending}
+      <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]}>
+        <sphereGeometry args={[0.012, 6, 6]} />
+        <meshStandardMaterial 
+          color="#D4AF6A" 
+          metalness={0.9} 
+          roughness={0.2} 
+          envMapIntensity={1.5}
         />
-      </points>
+      </instancedMesh>
     </>
   );
 }

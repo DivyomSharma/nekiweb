@@ -1003,3 +1003,93 @@ export function getChaosPositions(count: number, spread: number): Float32Array {
   }
   return positions;
 }
+
+// ============================================================
+// UTILITY: Extract Particle Positions from an Image (PNG/SVG)
+// ============================================================
+export async function getImagePositions(imageUrl: string, count: number, scale: number): Promise<Float32Array> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      // Use a reasonable resolution for scanning
+      const size = 512;
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("Canvas 2D context not available"));
+        return;
+      }
+
+      // Draw image scaled to fit canvas
+      const aspect = img.width / img.height;
+      let w = size;
+      let h = size;
+      if (aspect > 1) h = size / aspect;
+      else w = size * aspect;
+      
+      const dx = (size - w) / 2;
+      const dy = (size - h) / 2;
+      ctx.drawImage(img, dx, dy, w, h);
+
+      // Read pixels
+      const imageData = ctx.getImageData(0, 0, size, size);
+      const data = imageData.data;
+
+      // Find all valid pixels (alpha > 50)
+      const validPixels: {x: number, y: number}[] = [];
+      for (let y = 0; y < size; y++) {
+        for (let x = 0; x < size; x++) {
+          const idx = (y * size + x) * 4;
+          const r = data[idx];
+          const g = data[idx+1];
+          const b = data[idx+2];
+          const a = data[idx+3];
+          
+          // Assuming a transparent or dark logo on transparent background
+          // We check alpha primarily. If it's a solid image (white bg), we could check brightness instead.
+          // Let's assume standard transparent PNG logo (alpha > 50).
+          if (a > 50) {
+            // Check if it's dark enough if we expect a black logo on transparent, 
+            // but alpha is usually the safest bet for logos.
+            validPixels.push({ x, y });
+          }
+        }
+      }
+
+      if (validPixels.length === 0) {
+        console.warn("No visible pixels found in logo.png");
+        resolve(new Float32Array(count * 3));
+        return;
+      }
+
+      const positions = new Float32Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        // Randomly pick a valid pixel
+        const px = validPixels[Math.floor(Math.random() * validPixels.length)];
+        
+        // Add pixel-level sub-jitter for smoothness
+        const jx = px.x + Math.random() - 0.5;
+        const jy = px.y + Math.random() - 0.5;
+
+        // Map from [0, size] to standard coordinate space [-1, 1]
+        // In Canvas, Y goes down, so we flip it
+        const nx = (jx / size) * 2.0 - 1.0;
+        const ny = -((jy / size) * 2.0 - 1.0);
+        
+        // Add slight Z noise for 3D metallic volume
+        const nz = (Math.random() - 0.5) * 0.1;
+
+        positions[i * 3] = nx * scale * 1.5;
+        positions[i * 3 + 1] = ny * scale * 1.5;
+        positions[i * 3 + 2] = nz * scale * 1.5;
+      }
+
+      resolve(positions);
+    };
+    img.onerror = (err) => reject(err);
+    img.src = imageUrl;
+  });
+}

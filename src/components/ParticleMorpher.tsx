@@ -3,20 +3,52 @@
 import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { 
-  PARTICLE_COUNT, 
-  getOrbPositions,
-  getNodePositions,
-  getRoutePositions,
+import {
+  PARTICLE_COUNT,
   getButterflyPositions,
-  getNekiLogoPositions,
-  getBoxPositions,
+  getRoutePositions,
+  getBowlPositions,
+  getBookPositions,
+  getCrossPositions,
+  getHeartPositions,
+  getGearPositions,
+  getConnectionPositions,
   getNetworkPositions,
-  getPinPositions,
+  getMissionEcoPositions,
+  getTrackingPositions,
+  getShieldPositions,
   getCameraFramePositions,
+  getMultiplierPositions,
+  getIndiaNetworkPositions,
+  getNekiLogoPositions,
   getChaosPositions
 } from "@/lib/shapes";
 
+// ============================================================
+// SECTION COLOR PALETTE (matches each section's theme)
+// ============================================================
+const SECTION_COLORS = [
+  "#D4AF6A", // 0  Hero / Butterfly — Champagne Gold
+  "#D4AF6A", // 1  Trust Problem / Route — Muted Gold
+  "#C68B3E", // 2  Food / Bowl — Warm Amber
+  "#D4AF6A", // 3  Education / Book — Champagne Gold
+  "#3F5A4A", // 4  Healthcare / Cross — Green
+  "#60A5FA", // 5  Time / Heart — Soft Blue
+  "#9B7FDB", // 6  Skills / Cogwheel — Purple
+  "#D4AF6A", // 7  Connection / Two Nodes — Gold
+  "#D4AF6A", // 8  Network — Gold
+  "#D4AF6A", // 9  Mission Eco — Gold
+  "#D4AF6A", // 10 Tracking — Gold
+  "#3F5A4A", // 11 Trust / Shield — Green
+  "#D4AF6A", // 12 Proof / Camera — Gold
+  "#D4AF6A", // 13 Multiplier — Gold
+  "#D4AF6A", // 14 India Network — Gold
+  "#D4AF6A", // 15 Logo — Gold
+];
+
+// ============================================================
+// AMBIENT BACKGROUND — Sparse floating dust
+// ============================================================
 function AmbientBackground({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
   const pointsRef = useRef<THREE.Points>(null);
   const bgPositions = useMemo(() => getChaosPositions(3000, 40), []);
@@ -24,17 +56,16 @@ function AmbientBackground({ progressRef }: { progressRef: React.MutableRefObjec
   useFrame((state, delta) => {
     if (!pointsRef.current) return;
     const p = progressRef.current;
-    
+
     pointsRef.current.rotation.y += 0.05 * delta;
     pointsRef.current.rotation.x += 0.02 * delta;
 
     const mat = pointsRef.current.material as THREE.PointsMaterial;
-    if (p < 0.1) mat.color.lerp(new THREE.Color("#E7C88A"), 0.05);
-    else if (p < 0.2) mat.color.lerp(new THREE.Color("#3F5A4A"), 0.05); // Moss
-    else mat.color.lerp(new THREE.Color("#D4AF6A"), 0.05);
+    const sectionIndex = Math.min(Math.floor(p * 16), 15);
+    mat.color.lerp(new THREE.Color(SECTION_COLORS[sectionIndex]), 0.03);
 
-    if (p < 0.03 || p > 0.97) mat.opacity = 0;
-    else mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0.15, 0.05);
+    if (p < 0.03 || p > 0.97) mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0, 0.05);
+    else mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0.12, 0.05);
   });
 
   return (
@@ -42,93 +73,83 @@ function AmbientBackground({ progressRef }: { progressRef: React.MutableRefObjec
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" count={3000} args={[bgPositions, 3]} />
       </bufferGeometry>
-      <pointsMaterial 
-        size={0.02} 
-        color="#D4AF6A" 
-        transparent 
-        opacity={0} 
-        depthWrite={false} 
+      <pointsMaterial
+        size={0.02}
+        color="#D4AF6A"
+        transparent
+        opacity={0}
+        depthWrite={false}
         blending={THREE.NormalBlending}
       />
     </points>
   );
 }
 
+// ============================================================
+// PARTICLE MORPHER — The main 3D storytelling engine
+// ============================================================
 export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRefObject<number> }) {
   const pointsRef = useRef<THREE.Points>(null);
   const geometryRef = useRef<THREE.BufferGeometry>(null);
   const materialRef = useRef<THREE.PointsMaterial>(null);
 
+  // Pre-compute all 16 target shapes
   const shapes = useMemo(() => {
-    return {
-      orb: getOrbPositions(PARTICLE_COUNT, 2.5),
-      node: getNodePositions(PARTICLE_COUNT, 1.5),
-      network: getNetworkPositions(PARTICLE_COUNT, 2.0),
-      pin: getPinPositions(PARTICLE_COUNT, 1.5),
-      route: getRoutePositions(PARTICLE_COUNT, 1.5),
-      box: getBoxPositions(PARTICLE_COUNT, 2, 2, 2),
-      camera: getCameraFramePositions(PARTICLE_COUNT, 2.5),
-      chaos: getChaosPositions(PARTICLE_COUNT, 10),
-      butterfly: getButterflyPositions(PARTICLE_COUNT, 2.5),
-      logo: getNekiLogoPositions(PARTICLE_COUNT, 3),
-    };
+    return [
+      getButterflyPositions(PARTICLE_COUNT, 2.5),    // 0  Butterfly
+      getRoutePositions(PARTICLE_COUNT, 1.2),         // 1  Route
+      getBowlPositions(PARTICLE_COUNT, 2.0),          // 2  Bowl
+      getBookPositions(PARTICLE_COUNT),               // 3  Book
+      getCrossPositions(PARTICLE_COUNT, 3.5),         // 4  Cross
+      getHeartPositions(PARTICLE_COUNT, 2.5),         // 5  Heart
+      getGearPositions(PARTICLE_COUNT, 2.0),          // 6  Cogwheel
+      getConnectionPositions(PARTICLE_COUNT, 1.2),    // 7  Two Nodes
+      getNetworkPositions(PARTICLE_COUNT, 1.0),       // 8  Network
+      getMissionEcoPositions(PARTICLE_COUNT, 2.0),    // 9  Mission Eco
+      getTrackingPositions(PARTICLE_COUNT, 1.2),      // 10 Tracking
+      getShieldPositions(PARTICLE_COUNT, 2.0),        // 11 Shield
+      getCameraFramePositions(PARTICLE_COUNT, 2.0),   // 12 Camera
+      getMultiplierPositions(PARTICLE_COUNT, 1.0),    // 13 Multiplier
+      getIndiaNetworkPositions(PARTICLE_COUNT, 3.0),  // 14 India Network
+      getNekiLogoPositions(PARTICLE_COUNT, 3.0),      // 15 Logo
+    ];
   }, []);
 
-  const currentPositions = useMemo(() => new Float32Array(shapes.orb), [shapes.orb]);
-  const targetColor = useMemo(() => new THREE.Color("#D4AF6A"), []);
+  const currentPositions = useMemo(() => new Float32Array(shapes[0]), [shapes]);
+  const targetColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
 
   useFrame((state, delta) => {
     if (!pointsRef.current || !geometryRef.current || !materialRef.current) return;
 
     const p = progressRef.current;
-    let targetShape = shapes.orb;
-    let rotationSpeed = 0.2;
+    const lerpFactor = 2.5 * delta; // Smooth cinematic easing
 
-    // Default base color (Charcoal/Gold for light theme)
-    targetColor.set("#D4AF6A");
+    // Calculate which section we're in (0 to 15)
+    const sectionIndex = Math.min(Math.floor(p * 16), 15);
+    const targetShape = shapes[sectionIndex];
 
-    // Sequence: Orb -> Node -> Network -> Pin -> Route -> Package -> Camera -> Chaos -> Butterfly -> Logo
-    if (p < 0.10) {
-      targetShape = shapes.orb; // Hero, Problem
-    } else if (p < 0.20) {
-      targetShape = shapes.node; // Food, Books
-      targetColor.set("#3F5A4A"); // Moss green
-    } else if (p < 0.35) {
-      targetShape = shapes.route; // Medical, Time, Skills
-      targetColor.set("#D4AF6A");
-    } else if (p < 0.55) {
-      targetShape = shapes.network; // Network effect, NEKI network
-    } else if (p < 0.65) {
-      targetShape = shapes.box; // Mission Creation
-    } else if (p < 0.75) {
-      targetShape = shapes.pin; // Tracking
-      targetColor.set("#D4AF6A");
-    } else if (p < 0.83) {
-      targetShape = shapes.camera; // Proof of impact
-    } else if (p < 0.90) {
-      targetShape = shapes.chaos; // Multiplier
-    } else if (p < 0.96) {
-      targetShape = shapes.butterfly; // India / Millions move together
-      targetColor.set("#D4AF6A");
+    // Set target color for this section
+    targetColor.set(SECTION_COLORS[sectionIndex]);
+
+    // --- HERO SPLIT LAYOUT ---
+    // In hero section (section 0), position the particle cloud on the right
+    if (p < 0.04) {
+      pointsRef.current.position.x = THREE.MathUtils.lerp(
+        pointsRef.current.position.x, 3.5, lerpFactor
+      );
     } else {
-      targetShape = shapes.logo; // Final
+      pointsRef.current.position.x = THREE.MathUtils.lerp(
+        pointsRef.current.position.x, 0, lerpFactor
+      );
     }
 
-    // Hero Section Split Layout Positioning
-    const lerpFactor = 2 * delta; // Slow, cinematic easing
-    if (p < 0.05) {
-      // Right side for hero split
-      pointsRef.current.position.x = THREE.MathUtils.lerp(pointsRef.current.position.x, 3.5, lerpFactor);
-    } else {
-      // Move to center
-      pointsRef.current.position.x = THREE.MathUtils.lerp(pointsRef.current.position.x, 0, lerpFactor);
-    }
+    // --- GENTLE FLOATING ---
+    pointsRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.15;
 
-    // Gentle floating
-    pointsRef.current.position.y = Math.sin(state.clock.elapsedTime) * 0.2;
-    pointsRef.current.rotation.y += rotationSpeed * delta;
+    // --- SLOW ROTATION ---
+    pointsRef.current.rotation.y += 0.15 * delta;
 
-    // Morph positions
+    // --- MORPH POSITIONS ---
     const positions = geometryRef.current.attributes.position.array as Float32Array;
     for (let i = 0; i < PARTICLE_COUNT * 3; i++) {
       currentPositions[i] = THREE.MathUtils.lerp(currentPositions[i], targetShape[i], lerpFactor);
@@ -136,8 +157,14 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     }
     geometryRef.current.attributes.position.needsUpdate = true;
 
-    // Color morphing
+    // --- COLOR MORPH ---
     materialRef.current.color.lerp(targetColor, lerpFactor);
+
+    // --- SIZE PULSE for specific sections ---
+    let targetSize = 0.015;
+    if (sectionIndex === 8 || sectionIndex === 14) targetSize = 0.02; // Network & India: slightly larger dots
+    if (sectionIndex === 15) targetSize = 0.018; // Logo: medium
+    materialRef.current.size = THREE.MathUtils.lerp(materialRef.current.size, targetSize, lerpFactor);
   });
 
   return (
@@ -153,12 +180,12 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
         </bufferGeometry>
         <pointsMaterial
           ref={materialRef}
-          size={0.015} // Fine dust
+          size={0.015}
           color="#D4AF6A"
           transparent
           opacity={0.9}
           depthWrite={false}
-          blending={THREE.NormalBlending} // Normal blending for light theme (Additive washes out on white)
+          blending={THREE.NormalBlending}
         />
       </points>
     </>

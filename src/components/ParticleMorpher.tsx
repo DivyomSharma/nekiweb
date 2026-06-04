@@ -139,8 +139,10 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   }, []);
 
   const currentPositions = useMemo(() => new Float32Array(shapes[0]), [shapes]);
+  const currentColors = useMemo(() => new Float32Array(PARTICLE_COUNT * 3), []);
+  const tempColor = useMemo(() => new THREE.Color(), []);
+  const goldColor = useMemo(() => new THREE.Color("#D4AF6A"), []);
   const targetColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
-  const currentColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
 
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -165,10 +167,8 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     const targetScale = sectionIndex === 9 ? 0.001 : baseScale;
     meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), lerpFactor * 2.0);
 
-    // Set target color
+    // Base color for the section
     targetColor.set(SECTION_COLORS[sectionIndex]);
-    currentColor.lerp(targetColor, lerpFactor);
-    (meshRef.current.material as THREE.MeshPhysicalMaterial).color.copy(currentColor);
 
     // --- POSITION: push to the opposite side of text ---
     // On mobile, center the shapes or give them a much smaller offset so they don't overflow
@@ -189,33 +189,59 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     // --- SLOW ROTATION ---
     meshRef.current.rotation.y += 0.12 * delta;
 
-    // --- MORPH POSITIONS (InstancedMesh) ---
+    // --- MORPH POSITIONS & COLORS (InstancedMesh) ---
     const matrixArray = meshRef.current.instanceMatrix.array as Float32Array;
     
-    // We update the translation part of each 4x4 matrix
     for (let i = 0; i < PARTICLE_COUNT; i++) {
+      // 1. Positions
       currentPositions[i * 3]     = THREE.MathUtils.lerp(currentPositions[i * 3],     targetShape[i * 3],     lerpFactor);
       currentPositions[i * 3 + 1] = THREE.MathUtils.lerp(currentPositions[i * 3 + 1], targetShape[i * 3 + 1], lerpFactor);
       currentPositions[i * 3 + 2] = THREE.MathUtils.lerp(currentPositions[i * 3 + 2], targetShape[i * 3 + 2], lerpFactor);
       
-      // index inside 4x4 matrix: 12 is x, 13 is y, 14 is z
       matrixArray[i * 16 + 12] = currentPositions[i * 3];
       matrixArray[i * 16 + 13] = currentPositions[i * 3 + 1];
       matrixArray[i * 16 + 14] = currentPositions[i * 3 + 2];
+
+      // 2. Colors
+      let tr = targetColor.r;
+      let tg = targetColor.g;
+      let tb = targetColor.b;
+      
+      // If we are in the Phone section (1), make the last 30% of particles (the logo) Gold
+      if (sectionIndex === 1 && i >= PARTICLE_COUNT * 0.7) {
+        tr = goldColor.r;
+        tg = goldColor.g;
+        tb = goldColor.b;
+      }
+      
+      currentColors[i * 3]     = THREE.MathUtils.lerp(currentColors[i * 3],     tr, lerpFactor);
+      currentColors[i * 3 + 1] = THREE.MathUtils.lerp(currentColors[i * 3 + 1], tg, lerpFactor);
+      currentColors[i * 3 + 2] = THREE.MathUtils.lerp(currentColors[i * 3 + 2], tb, lerpFactor);
+      
+      tempColor.setRGB(currentColors[i * 3], currentColors[i * 3 + 1], currentColors[i * 3 + 2]);
+      meshRef.current.setColorAt(i, tempColor);
     }
+    
     meshRef.current.instanceMatrix.needsUpdate = true;
+    if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
   });
 
-  // Initialize identity matrices
+  // Initialize identity matrices and colors
   useEffect(() => {
     if (!meshRef.current) return;
     const dummy = new THREE.Object3D();
+    const initColor = new THREE.Color(SECTION_COLORS[0]);
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       dummy.updateMatrix();
       meshRef.current.setMatrixAt(i, dummy.matrix);
+      meshRef.current.setColorAt(i, initColor);
+      currentColors[i * 3] = initColor.r;
+      currentColors[i * 3 + 1] = initColor.g;
+      currentColors[i * 3 + 2] = initColor.b;
     }
     meshRef.current.instanceMatrix.needsUpdate = true;
-  }, []);
+    if (meshRef.current.instanceColor) meshRef.current.instanceColor.needsUpdate = true;
+  }, [currentColors]);
 
   return (
     <>
@@ -223,7 +249,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
       <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]}>
         <sphereGeometry args={[0.015, 8, 8]} />
         <meshPhysicalMaterial 
-          color="#D4AF6A" 
+          color="#FFFFFF" 
           metalness={0.1} 
           roughness={0.15} 
           transmission={0.9} 

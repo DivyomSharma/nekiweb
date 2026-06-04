@@ -74,7 +74,9 @@ export function getPhonePositions(count: number, scale: number): Float32Array {
   };
 
   for (let i = 0; i < count; i++) {
-    const r = Math.random();
+    // Partition: first 70% of particles form the phone, remaining 30% form the logo
+    const isLogo = i >= count * 0.7;
+    const r = isLogo ? 0.99 : Math.random() * 0.70;
     let x = 0, y = 0, z = 0;
 
     if (r < 0.35) {
@@ -98,7 +100,7 @@ export function getPhonePositions(count: number, scale: number): Float32Array {
     } else {
       // Exact Neki Logo inside the phone, empty background
       const idx = i % 3000;
-      const logoScale = 0.5 * scale;
+      const logoScale = 0.7 * scale; // Made bigger as requested
       x = LOGO_POSITIONS[idx * 3] * logoScale;
       y = LOGO_POSITIONS[idx * 3 + 1] * logoScale;
     }

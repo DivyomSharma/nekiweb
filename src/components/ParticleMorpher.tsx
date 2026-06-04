@@ -89,7 +89,7 @@ function AmbientBackground({ progressRef }: { progressRef: React.MutableRefObjec
     const sectionIndex = Math.min(Math.floor(p * 16), 15);
     mat.color.lerp(new THREE.Color(SECTION_COLORS[sectionIndex]), 0.03);
 
-    if (p < 0.03 || p > 0.97) mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0, 0.05);
+    if (p < 0.03) mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0, 0.05);
     else mat.opacity = THREE.MathUtils.lerp(mat.opacity, 0.08, 0.05);
   });
 
@@ -134,6 +134,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
       getCameraFramePositions(PARTICLE_COUNT, 1.2),   // 12 Camera
       getMultiplierPositions(PARTICLE_COUNT, 0.6),    // 13 Multiplier
       getIndiaNetworkPositions(PARTICLE_COUNT, 1.8),  // 14 India Network
+      getHeroLogoPositions(PARTICLE_COUNT, 2.0),      // 15 Final Logo
     ];
   }, []);
 

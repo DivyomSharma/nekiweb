@@ -12,7 +12,6 @@ function randomSpherePoint(radius: number) {
     z: radius * Math.cos(phi)
   };
 }
-
 // Simple seedable PRNG for reproducible node positions
 function seedRandom(seed: number) {
   let s = seed;
@@ -22,93 +21,23 @@ function seedRandom(seed: number) {
   };
 }
 
+import { LOGO_POSITIONS } from './logoData';
+
+
 // ============================================================
-// 0: HERO LOGO — Custom Calligraphy (N + Butterfly Wings)
+// 0: HERO LOGO — Exact Image Extraction
 // ============================================================
 export function getHeroLogoPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
   
-  // Helper for cubic bezier
-  const getBezierPoint = (t: number, p0x: number, p0y: number, p1x: number, p1y: number, p2x: number, p2y: number, p3x: number, p3y: number) => {
-    const mt = 1 - t;
-    const mt2 = mt * mt;
-    const mt3 = mt2 * mt;
-    const t2 = t * t;
-    const t3 = t2 * t;
-    return {
-      x: mt3 * p0x + 3 * mt2 * t * p1x + 3 * mt * t2 * p2x + t3 * p3x,
-      y: mt3 * p0y + 3 * mt2 * t * p1y + 3 * mt * t2 * p2y + t3 * p3y
-    };
-  };
-
-  // Helper for bezier tangent (derivative) -> normalized perpendicular normal
-  const getBezierTangent = (t: number, p0x: number, p0y: number, p1x: number, p1y: number, p2x: number, p2y: number, p3x: number, p3y: number) => {
-    const mt = 1 - t;
-    const dx = 3 * mt * mt * (p1x - p0x) + 6 * mt * t * (p2x - p1x) + 3 * t * t * (p3x - p2x);
-    const dy = 3 * mt * mt * (p1y - p0y) + 6 * mt * t * (p2y - p1y) + 3 * t * t * (p3y - p2y);
-    const len = Math.sqrt(dx * dx + dy * dy);
-    if (len === 0) return { nx: 0, ny: 1 };
-    return { nx: -dy / len, ny: dx / len };
-  };
-
-  const ribbons = [
-    // Main Diagonal
-    [0.2, -0.6,  0.0, -0.2,  -0.1, 0.1,  -0.25, 0.35,  0.02, 0.02, 0.15],
-    // Right Arm Lower
-    [0.2, -0.6,  0.4, -0.2,  0.6, 0.1,  0.8, 0.2,  0.02, 0.01, 0.04],
-    // Right Arm Upper
-    [-0.05, 0.0,  0.2, 0.05,  0.5, 0.1,  0.8, 0.2,  0.02, 0.01, 0.02],
-    // Lower Left Wing Bottom
-    [-0.1, -0.1,  -0.3, -0.3,  -0.5, -0.5,  -0.7, -0.6,  0.05, 0.01, 0.05],
-    // Lower Left Wing Top
-    [-0.7, -0.6,  -0.5, -0.3,  -0.3, -0.1,  -0.15, 0.05,  0.01, 0.02, 0.02],
-    // Upper Left Wing Loop (Top)
-    [-0.25, 0.35,  -0.4, 0.7,  -0.8, 0.7,  -0.8, 0.3,  0.03, 0.01, 0.02],
-    // Upper Left Wing Loop (Bottom)
-    [-0.8, 0.3,  -0.7, 0.0,  -0.4, 0.0,  -0.15, 0.1,  0.01, 0.02, 0.04],
-    // Upper Vein 1
-    [-0.2, 0.25,  -0.4, 0.4,  -0.6, 0.5,  -0.75, 0.5,  0.015, 0.005, 0.0],
-    // Upper Vein 2
-    [-0.15, 0.15,  -0.4, 0.2,  -0.6, 0.3,  -0.75, 0.35,  0.015, 0.005, 0.0]
-  ];
-
   for (let i = 0; i < count; i++) {
-    let x = 0, y = 0, z = 0;
-    const r = Math.random();
-
-    if (r < 0.12) {
-      // 12% Head (Solid Circle)
-      const radius = 0.12 * Math.sqrt(Math.random());
-      const angle = Math.random() * Math.PI * 2;
-      x = 0.1 + Math.cos(angle) * radius;
-      y = 0.35 + Math.sin(angle) * radius;
-      z = (Math.random() - 0.5) * 0.1;
-    } else {
-      // 88% Ribbons
-      const ribbonIdx = Math.floor(Math.random() * ribbons.length);
-      const rib = ribbons[ribbonIdx];
-      const t = Math.random();
-      const pt = getBezierPoint(t, rib[0], rib[1], rib[2], rib[3], rib[4], rib[5], rib[6], rib[7]);
-      const norm = getBezierTangent(t, rib[0], rib[1], rib[2], rib[3], rib[4], rib[5], rib[6], rib[7]);
-      
-      const wStart = rib[8];
-      const wEnd = rib[9];
-      const swell = rib[10];
-      const width = wStart * (1 - t) + wEnd * t + Math.sin(t * Math.PI) * swell;
-      
-      const offset = (Math.random() - 0.5) * width;
-      // Add slight organic noise to make the stroke a bit sparser/more particle-like
-      const noiseX = (Math.random() - 0.5) * 0.04;
-      const noiseY = (Math.random() - 0.5) * 0.04;
-      x = pt.x + norm.nx * offset + noiseX;
-      y = pt.y + norm.ny * offset + noiseY;
-      z = (Math.random() - 0.5) * 0.15; // increased Z depth for sparse 3D look
-    }
-
-    const finalScale = scale * 1.6;
-    positions[i * 3] = x * finalScale;
-    positions[i * 3 + 1] = y * finalScale;
-    positions[i * 3 + 2] = z * finalScale;
+    // If we request more particles than we baked (3000), loop over them
+    const idx = i % 3000;
+    
+    // Scale by ~1.6 to match previous size
+    positions[i * 3] = LOGO_POSITIONS[idx * 3] * scale * 1.6;
+    positions[i * 3 + 1] = LOGO_POSITIONS[idx * 3 + 1] * scale * 1.6;
+    positions[i * 3 + 2] = LOGO_POSITIONS[idx * 3 + 2] * scale * 1.6;
   }
   
   return positions;

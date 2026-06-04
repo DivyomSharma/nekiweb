@@ -30,7 +30,7 @@ import {
 const SECTION_COLORS = [
   "#D4AF6A", // 0  Hero Logo — Champagne Gold
   "#EF4444", // 1  Problem / Cash Note — Red
-  "#22C55E", // 2  Food / Bowl — Vibrant Green
+  "#166534", // 2  Food / Bowl — Dark Green
   "#D4AF6A", // 3  Education / Book — Champagne Gold
   "#EF4444", // 4  Healthcare / Cross — Vibrant Red
   "#60A5FA", // 5  Time / Heart — Soft Blue

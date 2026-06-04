@@ -137,7 +137,7 @@ export function getBowlPositions(count: number, radius: number): Float32Array {
   const positions = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
     const r = Math.random();
-    if (r < 0.65) {
+    if (r < 0.55) {
       // Bowl shell (lower hemisphere, tight surface)
       const shell = radius + (Math.random() - 0.5) * 0.02 * radius;
       let pt;
@@ -145,13 +145,56 @@ export function getBowlPositions(count: number, radius: number): Float32Array {
       positions[i * 3] = pt.x;
       positions[i * 3 + 1] = pt.y;
       positions[i * 3 + 2] = pt.z;
-    } else {
+    } else if (r < 0.80) {
       // Contents (fill the top opening densely, looks like mounded food)
       const angle = Math.random() * Math.PI * 2;
       const ir = Math.sqrt(Math.random()) * radius * 0.95; // fills to the edge
       positions[i * 3] = Math.cos(angle) * ir;
       positions[i * 3 + 1] = 0.05 * radius + Math.random() * 0.12 * radius;
       positions[i * 3 + 2] = Math.sin(angle) * ir;
+    } else if (r < 0.90) {
+      // Fork on the left
+      const lx = -radius * 1.35;
+      let px = 0, py = 0, pz = (Math.random() - 0.5) * 0.05 * radius;
+      const forkPart = Math.random();
+      
+      if (forkPart < 0.6) {
+        // Handle
+        py = -radius * 0.9 + Math.random() * radius * 1.1; // from -0.9 to 0.2
+        px = lx + (Math.random() - 0.5) * 0.04 * radius;
+      } else if (forkPart < 0.7) {
+        // Base of prongs
+        py = radius * 0.2 + (Math.random() - 0.5) * 0.04 * radius;
+        px = lx + (Math.random() - 0.5) * 0.25 * radius;
+      } else {
+        // Prongs (3 prongs)
+        const prong = Math.floor(Math.random() * 3); // 0, 1, 2
+        px = lx - 0.2 * radius + prong * 0.2 * radius;
+        py = radius * 0.2 + Math.random() * 0.4 * radius; // from 0.2 to 0.6
+      }
+      positions[i * 3] = px;
+      positions[i * 3 + 1] = py;
+      positions[i * 3 + 2] = pz;
+    } else {
+      // Spoon on the right
+      const rx = radius * 1.35;
+      let px = 0, py = 0, pz = (Math.random() - 0.5) * 0.05 * radius;
+      const spoonPart = Math.random();
+      
+      if (spoonPart < 0.6) {
+        // Handle
+        py = -radius * 0.9 + Math.random() * radius * 1.1;
+        px = rx + (Math.random() - 0.5) * 0.04 * radius;
+      } else {
+        // Spoon head (ellipse)
+        const angle = Math.random() * Math.PI * 2;
+        const rad = Math.sqrt(Math.random());
+        px = rx + Math.cos(angle) * 0.2 * radius * rad;
+        py = radius * 0.4 + Math.sin(angle) * 0.3 * radius * rad;
+      }
+      positions[i * 3] = px;
+      positions[i * 3 + 1] = py;
+      positions[i * 3 + 2] = pz;
     }
   }
   return positions;

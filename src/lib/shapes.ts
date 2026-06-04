@@ -449,27 +449,90 @@ export function getGearPositions(count: number, radius: number): Float32Array {
 // ============================================================
 export function getConnectionPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
+  
+  const smSize = 1.8 * scale;
+  const leftX = -2.0 * scale;
+  const rightX = 2.0 * scale;
+  
+  // Hand positions for the connecting line
+  const leftHandX = leftX + smSize * 0.5;
+  const rightHandX = rightX - smSize * 0.5;
+  const handY = smSize * 0.3;
+
   for (let i = 0; i < count; i++) {
     const r = Math.random();
-    if (r < 0.35) {
-      // Node 1 (left)
-      const pt = randomSpherePoint(0.55 * scale);
-      positions[i * 3] = pt.x - 2.0 * scale;
-      positions[i * 3 + 1] = pt.y;
-      positions[i * 3 + 2] = pt.z;
-    } else if (r < 0.70) {
-      // Node 2 (right)
-      const pt = randomSpherePoint(0.55 * scale);
-      positions[i * 3] = pt.x + 2.0 * scale;
-      positions[i * 3 + 1] = pt.y;
-      positions[i * 3 + 2] = pt.z;
+    
+    if (r < 0.40) {
+      // Left Stickman
+      const part = Math.random();
+      let px = 0, py = 0, pz = (Math.random() - 0.5) * smSize * 0.1;
+
+      if (part < 0.25) {
+        const angle = Math.random() * Math.PI * 2;
+        const rad = Math.sqrt(Math.random()) * smSize * 0.25;
+        px = Math.cos(angle) * rad;
+        py = smSize * 0.7 + Math.sin(angle) * rad;
+      } else if (part < 0.45) {
+        py = smSize * 0.45 - Math.random() * (smSize * 0.75);
+        px = (Math.random() - 0.5) * smSize * 0.05;
+      } else if (part < 0.65) {
+        const t = Math.random();
+        if (Math.random() > 0.5) {
+          px = t * smSize * 0.5; py = smSize * 0.3; // Reaching right
+        } else {
+          px = -t * smSize * 0.5; py = smSize * 0.3 + t * smSize * 0.3; // Waving left
+        }
+      } else {
+        const t = Math.random();
+        const side = Math.random() > 0.5 ? 1 : -1;
+        px = side * t * smSize * 0.3;
+        py = -smSize * 0.3 - t * smSize * 0.5;
+      }
+
+      positions[i * 3] = leftX + px;
+      positions[i * 3 + 1] = py;
+      positions[i * 3 + 2] = pz;
+      
+    } else if (r < 0.80) {
+      // Right Stickman
+      const part = Math.random();
+      let px = 0, py = 0, pz = (Math.random() - 0.5) * smSize * 0.1;
+
+      if (part < 0.25) {
+        const angle = Math.random() * Math.PI * 2;
+        const rad = Math.sqrt(Math.random()) * smSize * 0.25;
+        px = Math.cos(angle) * rad;
+        py = smSize * 0.7 + Math.sin(angle) * rad;
+      } else if (part < 0.45) {
+        py = smSize * 0.45 - Math.random() * (smSize * 0.75);
+        px = (Math.random() - 0.5) * smSize * 0.05;
+      } else if (part < 0.65) {
+        const t = Math.random();
+        if (Math.random() > 0.5) {
+          px = -t * smSize * 0.5; py = smSize * 0.3; // Reaching left
+        } else {
+          px = t * smSize * 0.5; py = smSize * 0.3 + t * smSize * 0.3; // Waving right
+        }
+      } else {
+        const t = Math.random();
+        const side = Math.random() > 0.5 ? 1 : -1;
+        px = side * t * smSize * 0.3;
+        py = -smSize * 0.3 - t * smSize * 0.5;
+      }
+
+      positions[i * 3] = rightX + px;
+      positions[i * 3 + 1] = py;
+      positions[i * 3 + 2] = pz;
+
     } else {
-      // Connecting line (thin)
+      // Connecting line (holding hands)
       const t = Math.random();
-      const x = -2.0 * scale + t * 4.0 * scale;
+      const x = leftHandX + t * (rightHandX - leftHandX);
+      const dip = Math.sin(t * Math.PI) * 0.3 * scale; // curve downwards slightly like a slack rope
       const taper = 0.04;
+      
       positions[i * 3] = x + (Math.random() - 0.5) * taper * scale;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * taper * scale;
+      positions[i * 3 + 1] = handY - dip + (Math.random() - 0.5) * taper * scale;
       positions[i * 3 + 2] = (Math.random() - 0.5) * taper * scale;
     }
   }

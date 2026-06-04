@@ -878,147 +878,39 @@ export function getCameraFramePositions(count: number, scale: number): Float32Ar
 // ============================================================
 export function getMultiplierPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
-  
+  const smSize = 2.0 * scale; // single large stickman
+
   for (let i = 0; i < count; i++) {
-    const rType = Math.random();
-    let x = 0, y = 0, z = 0;
+    const part = Math.random();
+    let px = 0, py = 0, pz = (Math.random() - 0.5) * smSize * 0.1;
 
-    if (rType < 0.45) {
-      // 45% Bulb and Neck Shell (Glass)
-      const part = Math.random();
-      if (part < 0.8) {
-        // Bulb sphere shell
-        while (true) {
-          const u = Math.random();
-          const v = Math.random();
-          const theta = u * 2.0 * Math.PI;
-          const phi = Math.acos(2.0 * v - 1.0);
-          const r = 0.8 * scale;
-          const sx = r * Math.sin(phi) * Math.cos(theta);
-          const sy = r * Math.cos(phi); // Y is up
-          const sz = r * Math.sin(phi) * Math.sin(theta);
-          
-          if (sy > -0.5 * scale) {
-            x = sx;
-            y = sy + 0.4 * scale;
-            z = sz;
-            break;
-          }
-        }
-      } else {
-        // Neck tapering cylinder shell
-        const t = Math.random(); // 0 to 1
-        const ny = -0.1 * scale - t * 0.5 * scale; // from -0.1 to -0.6
-        const rTop = 0.624 * scale;
-        const rBot = 0.3 * scale;
-        const radius = rTop * (1 - t) + rBot * t;
-        const theta = Math.random() * Math.PI * 2;
-        x = radius * Math.cos(theta);
-        y = ny;
-        z = radius * Math.sin(theta);
-      }
-      
-      // Add a slight thickness/fuzz to the glass
-      x += (Math.random() - 0.5) * 0.04 * scale;
-      y += (Math.random() - 0.5) * 0.04 * scale;
-      z += (Math.random() - 0.5) * 0.04 * scale;
-
-    } else if (rType < 0.65) {
-      // 20% Base (Metal part)
+    if (part < 0.25) {
+      // Head (solid circle)
+      const angle = Math.random() * Math.PI * 2;
+      const r = Math.sqrt(Math.random()) * smSize * 0.25;
+      px = Math.cos(angle) * r;
+      py = smSize * 0.7 + Math.sin(angle) * r;
+    } else if (part < 0.45) {
+      // Torso (vertical line)
+      py = smSize * 0.45 - Math.random() * (smSize * 0.75);
+      px = (Math.random() - 0.5) * smSize * 0.05;
+    } else if (part < 0.65) {
+      // Arms (raised up)
       const t = Math.random();
-      const ny = -0.6 * scale - t * 0.3 * scale; // -0.6 to -0.9
-      const radius = 0.3 * scale;
-      const theta = Math.random() * Math.PI * 2;
-      
-      // Ridges: group some particles into horizontal bands
-      let currentR = radius;
-      if (Math.random() < 0.5) {
-        // 50% of base particles form 3 thick ridges
-        const ridge = Math.floor(Math.random() * 3);
-        y = -0.65 * scale - ridge * 0.1 * scale + (Math.random() - 0.5) * 0.03 * scale;
-        currentR = 0.33 * scale; // stick out slightly
-      } else {
-        y = ny;
-      }
-      x = currentR * Math.cos(theta);
-      z = currentR * Math.sin(theta);
-
-    } else if (rType < 0.70) {
-      // 5% Base bottom tip (Hemisphere)
-      while (true) {
-        const u = Math.random();
-        const v = Math.random();
-        const theta = u * 2.0 * Math.PI;
-        const phi = Math.acos(2.0 * v - 1.0);
-        const r = 0.15 * scale;
-        const sx = r * Math.sin(phi) * Math.cos(theta);
-        const sy = r * Math.cos(phi); // Y is up
-        const sz = r * Math.sin(phi) * Math.sin(theta);
-        
-        if (sy <= 0) { // Bottom half only
-          x = sx;
-          y = -0.9 * scale + sy;
-          z = sz;
-          break;
-        }
-      }
+      const side = Math.random() > 0.5 ? 1 : -1;
+      px = side * t * smSize * 0.5;
+      py = smSize * 0.3 + t * smSize * 0.3; // shoulder to hand
     } else {
-      // 30% Filament (Internal glowing parts)
-      const part = Math.random();
-      if (part < 0.2) {
-        // Stem
-        const t = Math.random();
-        y = -0.6 * scale + t * 0.4 * scale;
-        const radius = 0.05 * scale;
-        const theta = Math.random() * Math.PI * 2;
-        x = radius * Math.cos(theta);
-        z = radius * Math.sin(theta);
-      } else if (part < 0.4) {
-        // Wires
-        const t = Math.random();
-        const side = Math.random() > 0.5 ? 1 : -1;
-        const startX = side * 0.05 * scale;
-        const startY = -0.2 * scale;
-        const endX = side * 0.25 * scale;
-        const endY = 0.3 * scale;
-        x = startX + t * (endX - startX);
-        y = startY + t * (endY - startY);
-        z = (Math.random() - 0.5) * 0.02 * scale; // flat in Z
-      } else {
-        // Glowing W Coil
-        const t = Math.random();
-        if (t < 0.25) {
-          const t2 = t / 0.25;
-          x = -0.25 * scale + t2 * 0.125 * scale;
-          y = 0.3 * scale + t2 * 0.2 * scale;
-        } else if (t < 0.5) {
-          const t2 = (t - 0.25) / 0.25;
-          x = -0.125 * scale + t2 * 0.125 * scale;
-          y = 0.5 * scale - t2 * 0.2 * scale;
-        } else if (t < 0.75) {
-          const t2 = (t - 0.5) / 0.25;
-          x = 0 * scale + t2 * 0.125 * scale;
-          y = 0.3 * scale + t2 * 0.2 * scale;
-        } else {
-          const t2 = (t - 0.75) / 0.25;
-          x = 0.125 * scale + t2 * 0.125 * scale;
-          y = 0.5 * scale - t2 * 0.2 * scale;
-        }
-        z = (Math.random() - 0.5) * 0.05 * scale; // mostly flat but thick
-        
-        // Make the glowing coil ultra thick and scattered so it "glows" densely
-        x += (Math.random() - 0.5) * 0.08 * scale;
-        y += (Math.random() - 0.5) * 0.08 * scale;
-        z += (Math.random() - 0.5) * 0.08 * scale;
-      }
+      // Legs (walking stance)
+      const t = Math.random();
+      const side = Math.random() > 0.5 ? 1 : -1;
+      px = side * t * smSize * 0.3;
+      py = -smSize * 0.3 - t * smSize * 0.5; // waist to foot
     }
 
-    // Shift whole shape up slightly to perfectly center it visually
-    y += 0.2 * scale;
-
-    positions[i * 3] = x;
-    positions[i * 3 + 1] = y;
-    positions[i * 3 + 2] = z;
+    positions[i * 3] = px;
+    positions[i * 3 + 1] = py - 0.2 * scale; // Center it visually
+    positions[i * 3 + 2] = pz;
   }
   return positions;
 }

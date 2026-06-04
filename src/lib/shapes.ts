@@ -153,24 +153,25 @@ export function getBowlPositions(count: number, radius: number): Float32Array {
       positions[i * 3 + 1] = 0.05 * radius + Math.random() * 0.12 * radius;
       positions[i * 3 + 2] = Math.sin(angle) * ir;
     } else if (r < 0.90) {
-      // Fork on the left
+      // Butter knife on the left
       const lx = -radius * 1.35;
       let px = 0, py = 0, pz = (Math.random() - 0.5) * 0.05 * radius;
-      const forkPart = Math.random();
+      const knifePart = Math.random();
       
-      if (forkPart < 0.6) {
+      if (knifePart < 0.5) {
         // Handle
-        py = -radius * 0.9 + Math.random() * radius * 1.1; // from -0.9 to 0.2
-        px = lx + (Math.random() - 0.5) * 0.04 * radius;
-      } else if (forkPart < 0.7) {
-        // Base of prongs
-        py = radius * 0.2 + (Math.random() - 0.5) * 0.04 * radius;
-        px = lx + (Math.random() - 0.5) * 0.25 * radius;
+        py = -radius * 0.9 + Math.random() * radius * 1.0; // from -0.9 to 0.1
+        px = lx + (Math.random() - 0.5) * 0.06 * radius;
       } else {
-        // Prongs (3 prongs)
-        const prong = Math.floor(Math.random() * 3); // 0, 1, 2
-        px = lx - 0.2 * radius + prong * 0.2 * radius;
-        py = radius * 0.2 + Math.random() * 0.4 * radius; // from 0.2 to 0.6
+        // Blade (flat on the inner side, curved on the outer side, rounded top)
+        const t = Math.random(); // 0 to 1 along the blade height
+        py = radius * 0.1 + t * 0.55 * radius; // from 0.1 to 0.65
+        
+        // Blade width curve: tapers at the top (t=1)
+        const bladeWidth = (1 - Math.pow(t, 4)) * 0.15 * radius; 
+        
+        // Inner edge aligns with the handle, outer edge expands to the left
+        px = lx + 0.03 * radius - Math.random() * bladeWidth;
       }
       positions[i * 3] = px;
       positions[i * 3 + 1] = py;

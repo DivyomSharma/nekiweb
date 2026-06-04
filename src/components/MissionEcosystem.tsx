@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { 
   Package, BookOpen, Heart, Droplet, TreePine, BriefcaseMedical, 
   Snowflake, GraduationCap, Home, Gift, Sprout, Accessibility, 
@@ -113,13 +114,16 @@ export function MissionEcosystem() {
     <div ref={containerRef} className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto">
       
       {/* Subheadline & Text */}
-      <div className="absolute top-[20%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-50 pointer-events-none w-full px-6">
-        <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-4 drop-shadow-md">
+      <div className="absolute top-[20%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-50 pointer-events-auto w-full px-6 flex flex-col items-center">
+        <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-4 drop-shadow-md pointer-events-none">
           Every mission starts with a <span className="font-playfair italic text-neki-gold">simple decision.</span>
         </h2>
-        <p className="text-lg text-text-secondary font-medium tracking-wide">
+        <p className="text-lg text-text-secondary font-medium tracking-wide mb-8 pointer-events-none">
           Choose a cause. Start a mission. Create impact.
         </p>
+        <Link href="/missions" className="group flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors">
+          Explore Missions <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+        </Link>
       </div>
 
       {/* SVG Glowing Connections Overlay */}

@@ -232,7 +232,7 @@ export function JourneyCanvas() {
               Become a Volunteer
             </button>
             <button className="bg-transparent border border-black/10 text-foreground px-6 py-3 rounded-full font-medium text-base hover:bg-black/5 transition-colors pointer-events-auto">
-              Partner with NEKI
+              Join <span className="text-neki-gold font-playfair italic font-bold">Neki</span>
             </button>
           </div>
         </div>

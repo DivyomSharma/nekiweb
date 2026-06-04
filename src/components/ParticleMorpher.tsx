@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useMemo, useState, useEffect } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import {
   PARTICLE_COUNT,
@@ -142,6 +142,14 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   const targetColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
   const currentColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   useFrame((state, delta) => {
     if (!meshRef.current) return;
 
@@ -153,7 +161,8 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     const targetShape = shapes[sectionIndex];
 
     // Hide particles completely in Section 9 for the clean DOM Mission Ecosystem
-    const targetScale = sectionIndex === 9 ? 0.001 : 1;
+    const baseScale = isMobile ? 0.5 : 1;
+    const targetScale = sectionIndex === 9 ? 0.001 : baseScale;
     meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), lerpFactor * 2.0);
 
     // Set target color
@@ -162,13 +171,20 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     (meshRef.current.material as THREE.MeshPhysicalMaterial).color.copy(currentColor);
 
     // --- POSITION: push to the opposite side of text ---
-    const targetX = SECTION_X_OFFSET[sectionIndex];
+    // On mobile, center the shapes or give them a much smaller offset so they don't overflow
+    const targetX = isMobile ? SECTION_X_OFFSET[sectionIndex] * 0.3 : SECTION_X_OFFSET[sectionIndex];
     meshRef.current.position.x = THREE.MathUtils.lerp(
       meshRef.current.position.x, targetX, lerpFactor
     );
 
     // --- GENTLE FLOATING ---
-    meshRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.8) * 0.12;
+    // On mobile, push it up slightly so it doesn't sit exactly behind the dense text
+    const baseOffsetY = isMobile ? 1.0 : 0;
+    meshRef.current.position.y = THREE.MathUtils.lerp(
+      meshRef.current.position.y,
+      baseOffsetY + Math.sin(state.clock.elapsedTime * 0.8) * 0.12,
+      lerpFactor * 2.0
+    );
 
     // --- SLOW ROTATION ---
     meshRef.current.rotation.y += 0.12 * delta;

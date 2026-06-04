@@ -965,21 +965,53 @@ export function getMultiplierPositions(count: number, scale: number): Float32Arr
 // ============================================================
 export function getIndiaNetworkPositions(count: number, scale: number): Float32Array {
   const positions = new Float32Array(count * 3);
+  
+  // Create ~250 stickmen centers scattered across a large volume
+  const numStickmen = 250;
+  const stickmenCenters = [];
+  for (let i = 0; i < numStickmen; i++) {
+    stickmenCenters.push({
+      cx: (Math.random() - 0.5) * scale * 14,
+      cy: (Math.random() - 0.5) * scale * 8,
+      cz: (Math.random() - 0.5) * scale * 4,
+      size: scale * (0.15 + Math.random() * 0.2) // Tiny varying sizes
+    });
+  }
+
   for (let i = 0; i < count; i++) {
-    let x: number, y: number;
-    let tries = 0;
-    do {
-      x = (Math.random() - 0.5) * 2;
-      y = (Math.random() - 0.5) * 2;
-      tries++;
-      if (tries > 50) break;
-      if (y > 0.3 && Math.abs(x) < (1 - y * 0.5) * 0.8) break;
-      if (y >= -0.2 && y <= 0.3 && Math.abs(x) < 0.7) break;
-      if (y < -0.2 && Math.abs(x) < (1 + y) * 0.6) break;
-    } while (true);
-    positions[i * 3] = x * scale;
-    positions[i * 3 + 1] = y * scale;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.05 * scale;
+    // Pick a random stickman for this point
+    const sm = stickmenCenters[Math.floor(Math.random() * numStickmen)];
+    
+    const part = Math.random();
+    let px = 0, py = 0, pz = (Math.random() - 0.5) * sm.size * 0.1;
+
+    if (part < 0.25) {
+      // Head (solid circle)
+      const angle = Math.random() * Math.PI * 2;
+      const r = Math.sqrt(Math.random()) * sm.size * 0.25;
+      px = Math.cos(angle) * r;
+      py = sm.size * 0.7 + Math.sin(angle) * r;
+    } else if (part < 0.45) {
+      // Torso (vertical line)
+      py = sm.size * 0.45 - Math.random() * (sm.size * 0.75);
+      px = (Math.random() - 0.5) * sm.size * 0.05;
+    } else if (part < 0.65) {
+      // Arms (raised up)
+      const t = Math.random();
+      const side = Math.random() > 0.5 ? 1 : -1;
+      px = side * t * sm.size * 0.5;
+      py = sm.size * 0.3 + t * sm.size * 0.3; // shoulder to hand
+    } else {
+      // Legs (walking stance)
+      const t = Math.random();
+      const side = Math.random() > 0.5 ? 1 : -1;
+      px = side * t * sm.size * 0.3;
+      py = -sm.size * 0.3 - t * sm.size * 0.5; // waist to foot
+    }
+
+    positions[i * 3] = sm.cx + px;
+    positions[i * 3 + 1] = sm.cy + py;
+    positions[i * 3 + 2] = sm.cz + pz;
   }
   return positions;
 }

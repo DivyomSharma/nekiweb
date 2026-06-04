@@ -77,47 +77,30 @@ export function getPhonePositions(count: number, scale: number): Float32Array {
     const r = Math.random();
     let x = 0, y = 0, z = 0;
 
-    if (r < 0.25) {
+    if (r < 0.35) {
       // Outer Phone Body
       const pt = getBorderPoint(w, h, cr);
       x = pt.x + (Math.random() - 0.5) * 0.02 * scale;
       y = pt.y + (Math.random() - 0.5) * 0.02 * scale;
-    } else if (r < 0.45) {
+    } else if (r < 0.65) {
       // Screen Border
       const pt = getBorderPoint(w * 0.9, h * 0.95, cr * 0.8);
       x = pt.x + (Math.random() - 0.5) * 0.02 * scale;
       y = pt.y + (Math.random() - 0.5) * 0.02 * scale;
-    } else if (r < 0.5) {
+    } else if (r < 0.68) {
       // Dynamic Island (notch)
       x = (Math.random() - 0.5) * w * 0.35;
       y = h * 0.42 + (Math.random() - 0.5) * 0.04 * scale;
-    } else if (r < 0.53) {
+    } else if (r < 0.70) {
       // Home Indicator Line
       x = (Math.random() - 0.5) * w * 0.4;
       y = -h * 0.44 + (Math.random() - 0.5) * 0.01 * scale;
-    } else if (r < 0.75) {
-      // NEKI App Logo 'N' in the center
-      const nScale = 0.45 * scale;
-      const stroke = Math.random();
-      const t = Math.random();
-      const thickness = 0.12 * nScale;
-
-      if (stroke < 0.3) {
-        x = -0.6 * nScale + (Math.random() - 0.5) * thickness;
-        y = (-0.8 + t * 1.6) * nScale;
-      } else if (stroke < 0.6) {
-        x = 0.6 * nScale + (Math.random() - 0.5) * thickness;
-        y = (-0.8 + t * 1.6) * nScale;
-      } else {
-        x = -0.6 * nScale + t * 1.2 * nScale + (Math.random() - 0.5) * thickness;
-        y = 0.8 * nScale - t * 1.6 * nScale + (Math.random() - 0.5) * thickness;
-      }
-      x += (Math.random() - 0.5) * 0.01 * scale;
-      y += (Math.random() - 0.5) * 0.01 * scale;
     } else {
-      // Screen Fill (sparse ambient apps/content)
-      x = (Math.random() - 0.5) * w * 0.85;
-      y = (Math.random() - 0.5) * h * 0.9;
+      // Exact Neki Logo inside the phone, empty background
+      const idx = i % 3000;
+      const logoScale = 0.5 * scale;
+      x = LOGO_POSITIONS[idx * 3] * logoScale;
+      y = LOGO_POSITIONS[idx * 3 + 1] * logoScale;
     }
 
     // Slightly curved screen/phone surface

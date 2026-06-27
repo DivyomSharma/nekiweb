@@ -10,7 +10,7 @@ export function TrackingSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
-  const pulseRef = useRef<circle>(null);
+  const pulseRef = useRef<SVGCircleElement>(null);
   const nodesRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLHeadingElement>(null);
   const pRef = useRef<HTMLParagraphElement>(null);

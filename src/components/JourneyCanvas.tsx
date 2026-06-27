@@ -11,6 +11,7 @@ import Link from "next/link";
 import { HeroSection } from "./sections/HeroSection";
 import { TrackingSection } from "./sections/TrackingSection";
 import { NetworkEffectSection } from "./sections/NetworkEffectSection";
+import { useScroll, useMotionValueEvent } from "framer-motion";
 
 export function JourneyCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);

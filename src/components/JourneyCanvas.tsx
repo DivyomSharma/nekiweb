@@ -10,7 +10,6 @@ import Lenis from "lenis";
 import Link from "next/link";
 import { HeroSection } from "./sections/HeroSection";
 import { TrackingSection } from "./sections/TrackingSection";
-import { NetworkEffectSection } from "./sections/NetworkEffectSection";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 
 export function JourneyCanvas() {
@@ -172,7 +171,11 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 13: MULTIPLIER / NETWORK (Center) */}
-        <NetworkEffectSection />
+        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center pointer-events-auto">
+          <h2 className="text-4xl md:text-6xl font-heading font-extrabold text-foreground tracking-tight mb-4 max-w-4xl">
+            When millions move together, <br/><span className="font-playfair italic text-neki-gold">impossible</span> becomes routine.
+          </h2>
+        </div>
 
         {/* PAGE 15: FINAL (Center) */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center pointer-events-auto">

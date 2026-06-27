@@ -186,8 +186,14 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
       lerpFactor * 2.0
     );
 
-    // --- SLOW ROTATION ---
-    meshRef.current.rotation.y += 0.12 * delta;
+    // --- MOUSE TRACKING & SLOW DRIFT ---
+    // state.pointer gives normalized mouse coordinates (-1 to 1)
+    // 5 degrees is ~0.087 radians
+    const targetRotX = (state.pointer.y * 0.087);
+    const targetRotY = (state.pointer.x * 0.087) + (state.clock.elapsedTime * 0.05); // subtle drift + mouse
+    
+    meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, -targetRotX, lerpFactor);
+    meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, lerpFactor);
 
     // --- MORPH POSITIONS & COLORS (InstancedMesh) ---
     const matrixArray = meshRef.current.instanceMatrix.array as Float32Array;
@@ -246,7 +252,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   return (
     <>
       <AmbientBackground progressRef={progressRef} />
-      <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]}>
+      <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]} receiveShadow castShadow>
         <sphereGeometry args={[0.015, 8, 8]} />
         <meshPhysicalMaterial 
           color="#FFFFFF" 

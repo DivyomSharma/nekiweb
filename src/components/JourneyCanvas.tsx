@@ -6,9 +6,11 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { ParticleMorpher } from "./ParticleMorpher";
 import { MissionEcosystem } from "./MissionEcosystem";
 import { ShieldCheck, MapPin, Package, Image as ImageIcon } from "lucide-react";
-import { useScroll, useMotionValueEvent } from "framer-motion";
 import Lenis from "lenis";
 import Link from "next/link";
+import { HeroSection } from "./sections/HeroSection";
+import { TrackingSection } from "./sections/TrackingSection";
+import { NetworkEffectSection } from "./sections/NetworkEffectSection";
 
 export function JourneyCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -61,36 +63,7 @@ export function JourneyCanvas() {
       <div className="relative z-10 w-full pointer-events-none">
         
         {/* PAGE 0: HERO (Split Layout) */}
-        <div className="h-screen w-full flex flex-col justify-center p-6 md:pl-[10%] text-left relative">
-          <div className="max-w-xl">
-            <h1 className="text-6xl md:text-8xl font-heading font-extrabold text-foreground tracking-tight mb-4">
-              Humanity, <br/><span className="text-neki-gold font-playfair italic">Delivered.</span>
-            </h1>
-            <p className="text-xl md:text-2xl text-text-secondary font-medium mb-6">
-              The future of helping is visible.
-            </p>
-            <p className="text-lg text-text-muted mb-12 font-light">
-              Track every contribution.<br/>
-              Verify every mission.<br/>
-              See every impact.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 pointer-events-auto items-center">
-              <button className="bg-foreground text-background px-8 py-4 rounded-full font-medium text-lg hover:bg-gray-800 transition-colors">
-                Start a Mission
-              </button>
-              <button className="bg-transparent border border-black/10 text-foreground px-8 py-4 rounded-full font-medium text-lg hover:bg-black/5 transition-colors">
-                Explore Missions
-              </button>
-            </div>
-            <button className="mt-6 text-sm text-text-muted hover:text-foreground font-medium transition-colors pointer-events-auto underline underline-offset-4">
-              For NGOs, institutions and communities →
-            </button>
-          </div>
-          
-          <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-xs font-bold tracking-widest text-text-muted uppercase">
-            Scroll to follow the journey
-          </div>
-        </div>
+        <HeroSection />
 
         {/* PAGE 1: PROBLEM (Left) */}
         <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%] pointer-events-auto">
@@ -170,27 +143,7 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 10: TRACKING (Left) */}
-        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%] pointer-events-auto">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-4">
-            Follow <span className="font-playfair italic">every step.</span>
-          </h2>
-          <p className="text-lg text-text-secondary mb-8 font-light">From contribution to completion. Nothing disappears.</p>
-          <div className="bg-white/60 backdrop-blur-2xl border border-black/5 p-6 rounded-3xl w-full max-w-sm relative shadow-xl shadow-black/5 mb-8">
-            <div className="flex justify-between items-center mb-6">
-              <span className="text-foreground text-xs font-bold tracking-widest uppercase">Live Tracking</span>
-              <MapPin className="text-neki-gold w-4 h-4" />
-            </div>
-            <div className="space-y-4 font-medium text-sm">
-              <div className="flex items-center gap-4 text-text-muted"><div className="w-2 h-2 rounded-full bg-black/10" /> Mission Created</div>
-              <div className="flex items-center gap-4 text-text-muted"><div className="w-2 h-2 rounded-full bg-black/10" /> Volunteer Assigned</div>
-              <div className="flex items-center gap-4 text-foreground"><div className="w-2 h-2 rounded-full bg-neki-gold shadow-[0_0_8px_rgba(212,175,106,0.6)]" /> En Route</div>
-              <div className="flex items-center gap-4 text-text-muted/40"><div className="w-2 h-2 rounded-full border border-black/10" /> Delivered</div>
-            </div>
-          </div>
-          <Link href="/tracking" className="group flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors">
-            See Mission Tracking <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
-          </Link>
-        </div>
+        <TrackingSection />
 
         {/* PAGE 11: TRUST (Right) */}
         <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right pointer-events-auto">
@@ -217,20 +170,8 @@ export function JourneyCanvas() {
           </Link>
         </div>
 
-        {/* PAGE 13: MULTIPLIER (Right) */}
-        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right">
-          <h2 className="text-5xl md:text-8xl font-heading font-extrabold text-foreground tracking-tighter mb-4">
-            1 <span className="font-playfair italic text-neki-gold">→</span> 1000
-          </h2>
-          <p className="text-xl text-text-secondary font-light max-w-sm">One act inspires another. And another. And another.</p>
-        </div>
-
-        {/* PAGE 14: INDIA NETWORK (Center) */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center">
-          <h2 className="text-4xl md:text-6xl font-heading font-extrabold text-foreground tracking-tight mb-4 max-w-4xl">
-            When millions move together, <span className="font-playfair italic text-neki-gold">impossible</span> becomes routine.
-          </h2>
-        </div>
+        {/* PAGE 13: MULTIPLIER / NETWORK (Center) */}
+        <NetworkEffectSection />
 
         {/* PAGE 15: FINAL (Center) */}
         <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center pointer-events-auto">

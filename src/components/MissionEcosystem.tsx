@@ -8,6 +8,13 @@ import {
   Snowflake, GraduationCap, Home, Gift, Sprout, Accessibility, 
   Stethoscope, Backpack, Lightbulb, Hexagon
 } from "lucide-react";
+import { useMouseMagnet } from "../hooks/useMouseMagnet";
+
+function MagnetWrapper({ children, options }: { children: React.ReactNode, options?: any }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useMouseMagnet(ref, options);
+  return <div ref={ref} className="h-full w-full flex items-center justify-center">{children}</div>;
+}
 
 const MISSIONS = [
   // Layer 1: Centerpiece
@@ -189,17 +196,21 @@ export function MissionEcosystem() {
             >
             {isMain ? (
               // MAIN FEATURED CARD
-              <div className="bg-white/90 backdrop-blur-xl border border-neki-gold/30 p-8 rounded-3xl text-center w-72 shadow-2xl shadow-neki-gold/20 hover:shadow-neki-gold/40 transition-shadow">
-                <Hexagon strokeWidth={1} className="w-12 h-12 text-neki-gold mx-auto mb-4" />
-                <h3 className="text-2xl font-heading font-bold text-foreground mb-3">{mission.title}</h3>
-                <div className="bg-surface text-neki-gold py-1.5 px-4 rounded-full text-sm font-semibold tracking-wide border border-neki-gold/20 inline-block">{mission.status}</div>
-              </div>
+              <MagnetWrapper options={{ maxRotation: 5, maxTranslation: 8 }}>
+                <div className="bg-white/90 backdrop-blur-xl border border-neki-gold/30 p-8 rounded-3xl text-center w-72 shadow-2xl shadow-neki-gold/20 hover:shadow-neki-gold/40 transition-shadow">
+                  <Hexagon strokeWidth={1} className="w-12 h-12 text-neki-gold mx-auto mb-4" />
+                  <h3 className="text-2xl font-heading font-bold text-foreground mb-3">{mission.title}</h3>
+                  <div className="bg-surface text-neki-gold py-1.5 px-4 rounded-full text-sm font-semibold tracking-wide border border-neki-gold/20 inline-block">{mission.status}</div>
+                </div>
+              </MagnetWrapper>
             ) : (
               // STANDARD MISSION CARDS
-              <div className="bg-white/70 backdrop-blur-md border border-black/5 p-4 rounded-xl text-center w-48 shadow-lg shadow-black/5 hover:bg-white/95 hover:shadow-xl transition-all">
-                <h3 className="text-sm font-bold text-foreground mb-1">{mission.title}</h3>
-                <div className="text-text-muted text-xs">{mission.location}</div>
-              </div>
+              <MagnetWrapper options={{ maxRotation: 3, maxTranslation: 4 }}>
+                <div className="bg-white/70 backdrop-blur-md border border-black/5 p-4 rounded-xl text-center w-48 shadow-lg shadow-black/5 hover:bg-white/95 hover:shadow-xl transition-all">
+                  <h3 className="text-sm font-bold text-foreground mb-1">{mission.title}</h3>
+                  <div className="text-text-muted text-xs">{mission.location}</div>
+                </div>
+              </MagnetWrapper>
             )}
             </motion.div>
           </motion.div>

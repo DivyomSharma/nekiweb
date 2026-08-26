@@ -145,6 +145,8 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   const targetColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
 
   const [isMobile, setIsMobile] = useState(false);
+  const frameRef = useRef(0);
+  
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -155,8 +157,12 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   useFrame((state, delta) => {
     if (!meshRef.current) return;
 
+    frameRef.current++;
+    // Throttle calculation on mobile/low-end to run at 30 FPS instead of 60 FPS
+    if (isMobile && frameRef.current % 2 !== 0) return;
+
     const p = progressRef.current;
-    const lerpFactor = 2.5 * delta;
+    const lerpFactor = 2.5 * delta * (isMobile ? 2.0 : 1.0); // Adjust lerp factor to compensate for skipped frames
 
     // Current section (0 to 15)
     const sectionIndex = Math.min(Math.floor(p * 16), 15);
@@ -252,7 +258,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   return (
     <>
       <AmbientBackground progressRef={progressRef} />
-      <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]} receiveShadow castShadow>
+      <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]}>
         <sphereGeometry args={[0.015, 8, 8]} />
         {isMobile ? (
           <meshStandardMaterial 

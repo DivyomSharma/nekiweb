@@ -52,7 +52,11 @@ export function JourneyCanvas() {
       
       {/* 3D CANVAS - FIXED TO BACKGROUND */}
       <div className="fixed inset-0 z-0 pointer-events-none">
-        <Canvas camera={{ position: [0, 0, 10], fov: 45 }} gl={{ antialias: false, alpha: false }}>
+        <Canvas 
+          camera={{ position: [0, 0, 10], fov: 45 }} 
+          gl={{ antialias: false, alpha: false, powerPreference: "high-performance" }}
+          dpr={isLowEnd ? 0.85 : [1, 1.5]}
+        >
           <color attach="background" args={["#FAF9F7"]} />
           <ambientLight intensity={1.2} />
           <directionalLight position={[10, 10, 10]} intensity={2} />
@@ -68,7 +72,7 @@ export function JourneyCanvas() {
       </div>
 
       {/* DOM OVERLAYS - NATIVELY SCROLLING */}
-      <div className="relative z-10 w-full pointer-events-none">
+      <div className="relative z-10 w-full pointer-events-none" style={{ transform: "translate3d(0,0,0)", willChange: "transform" }}>
         
         {/* PAGE 0: HERO (Split Layout) */}
         <HeroSection />

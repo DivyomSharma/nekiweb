@@ -60,11 +60,9 @@ export function ButterflyMesh({ progress }: { progress: number }) {
   const group = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
     if (!group.current) return;
-    const t = clock.getElapsedTime();
-    const flap = Math.sin(t * 3) * 0.3;
-    group.current.children[0].rotation.y = flap; // Left wing
-    group.current.children[1].rotation.y = -flap; // Right wing
-    group.current.position.y = Math.sin(t * 2) * 0.2;
+    // Gentle floating: slow up-down drift, no wing spinning
+    const t = clock.getElapsedTime() * 0.1;
+    group.current.position.y = Math.sin(t) * 0.05;
   });
 
   return (
@@ -103,7 +101,9 @@ export function BowlMesh() {
   const group = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
     if (group.current) {
-      group.current.rotation.y = clock.getElapsedTime() * 0.2;
+      // Gentle floating: slow Y drift, no spinning
+      const t = clock.getElapsedTime() * 0.05;
+      group.current.position.y = Math.sin(t) * 0.1;
     }
   });
   return (
@@ -121,8 +121,9 @@ export function BookMesh() {
   const group = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
     if (group.current) {
-      group.current.rotation.y = Math.sin(clock.getElapsedTime()) * 0.1;
-      group.current.position.y = Math.sin(clock.getElapsedTime() * 1.5) * 0.1;
+      // Gentle floating: very slow Y drift, no spinning
+      const t = clock.getElapsedTime() * 0.02;
+      group.current.position.y = Math.sin(t * 1.5) * 0.05;
     }
   });
   return (
@@ -179,7 +180,11 @@ export function HeartMesh() {
 export function CogwheelMesh() {
   const group = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
-    if (group.current) group.current.rotation.z = clock.getElapsedTime() * 0.5;
+    if (group.current) {
+      // Gentle floating: very slow Z drift, no spinning
+      const t = clock.getElapsedTime() * 0.02;
+      group.current.rotation.z = Math.sin(t) * 0.01;
+    }
   });
   return (
     <group ref={group}>
@@ -202,16 +207,32 @@ export function TwoNodesMesh() {
 }
 
 export function ShieldMesh() {
+  const group = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (group.current) {
+      // Gentle floating: slow Y drift
+      const t = clock.getElapsedTime() * 0.05;
+      group.current.position.y = Math.sin(t) * 0.05;
+    }
+  });
   return (
-    <group>
+    <group ref={group}>
       <Cylinder args={[1.2, 0, 2, 4]} rotation={[Math.PI / 4, 0, 0]} material={materials.glassGold} />
     </group>
   );
 }
 
 export function CameraMesh() {
+  const group = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (group.current) {
+      // Gentle floating: slow position drift
+      const t = clock.getElapsedTime() * 0.05;
+      group.current.position.y = Math.sin(t) * 0.1;
+    }
+  });
   return (
-    <group>
+    <group ref={group}>
       <Box args={[3, 2, 0.1]} material={materials.glassWhite} />
       <Sphere args={[0.5]} position={[0, 0, 0.1]} material={materials.glassGold} />
     </group>
@@ -219,8 +240,16 @@ export function CameraMesh() {
 }
 
 export function NekiLogoMesh() {
+  const group = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (group.current) {
+      // Gentle floating: slow Z drift
+      const t = clock.getElapsedTime() * 0.05;
+      group.current.position.z = Math.sin(t) * 0.05;
+    }
+  });
   return (
-    <group>
+    <group ref={group}>
       {/* Abstract N made of glass cylinders */}
       <Cylinder args={[0.2, 0.2, 3]} position={[-1, 0, 0]} material={materials.glassGold} />
       <Cylinder args={[0.2, 0.2, 3.6]} position={[0, 0, 0]} rotation={[0, 0, -Math.PI / 6]} material={materials.glassGold} />
@@ -232,7 +261,11 @@ export function NekiLogoMesh() {
 export function NetworkMesh() {
   const group = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
-    if (group.current) group.current.rotation.y = clock.getElapsedTime() * 0.1;
+    if (group.current) {
+      // Gentle floating: very slow Z drift only
+      const t = clock.getElapsedTime() * 0.02;
+      group.current.position.z = Math.sin(t) * 0.02;
+    }
   });
   return (
     <group ref={group}>
@@ -246,7 +279,11 @@ export function NetworkMesh() {
 export function MissionEcoMesh() {
   const group = useRef<THREE.Group>(null);
   useFrame(({ clock }) => {
-    if (group.current) group.current.rotation.z = clock.getElapsedTime() * 0.2;
+    if (group.current) {
+      // Gentle floating: very slow Z drift
+      const t = clock.getElapsedTime() * 0.02;
+      group.current.position.z = Math.sin(t) * 0.02;
+    }
   });
   return (
     <group ref={group}>
@@ -259,8 +296,16 @@ export function MissionEcoMesh() {
 }
 
 export function TrackingMesh() {
+  const group = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (group.current) {
+      // Gentle floating: slow Y drift
+      const t = clock.getElapsedTime() * 0.05;
+      group.current.position.y = Math.sin(t) * 0.02;
+    }
+  });
   return (
-    <group>
+    <group ref={group}>
       <Box args={[0.5, 0.5, 0.5]} position={[0, 0.5, 0]} material={materials.glassWhite} />
     </group>
   );
@@ -278,8 +323,16 @@ export function MultiplierMesh() {
 }
 
 export function IndiaNetworkMesh() {
+  const group = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (group.current) {
+      // Gentle floating: slow Z drift
+      const t = clock.getElapsedTime() * 0.02;
+      group.current.position.z = Math.sin(t) * 0.02;
+    }
+  });
   return (
-    <group>
+    <group ref={group}>
       {Array.from({ length: 50 }).map((_, i) => (
         <Sphere key={i} args={[0.1]} position={[(Math.random()-0.5)*6, (Math.random()-0.5)*6, 0]} material={materials.glassGold} />
       ))}

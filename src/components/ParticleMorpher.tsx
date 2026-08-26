@@ -254,17 +254,27 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
       <AmbientBackground progressRef={progressRef} />
       <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]} receiveShadow castShadow>
         <sphereGeometry args={[0.015, 8, 8]} />
-        <meshPhysicalMaterial 
-          color="#FFFFFF" 
-          metalness={0.1} 
-          roughness={0.15} 
-          transmission={0.9} 
-          ior={1.5}
-          thickness={0.5}
-          transparent={true}
-          opacity={1}
-          envMapIntensity={1.5}
-        />
+        {isMobile ? (
+          <meshStandardMaterial 
+            color="#FFFFFF" 
+            metalness={0.2} 
+            roughness={0.3} 
+            transparent={true}
+            opacity={0.9}
+          />
+        ) : (
+          <meshPhysicalMaterial 
+            color="#FFFFFF" 
+            metalness={0.1} 
+            roughness={0.15} 
+            transmission={0.9} 
+            ior={1.5}
+            thickness={0.5}
+            transparent={true}
+            opacity={1}
+            envMapIntensity={1.5}
+          />
+        )}
       </instancedMesh>
     </>
   );

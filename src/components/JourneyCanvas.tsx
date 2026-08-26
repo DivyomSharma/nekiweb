@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { ParticleMorpher } from "./ParticleMorpher";
@@ -13,6 +13,7 @@ import { TrackingSection } from "./sections/TrackingSection";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 
 export function JourneyCanvas() {
+  const [isLowEnd, setIsLowEnd] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(0);
   
@@ -26,10 +27,15 @@ export function JourneyCanvas() {
   });
 
   useEffect(() => {
+    const mobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const hasManyTouchPoints = navigator.maxTouchPoints > 1;
+    const isSmallScreen = window.innerWidth < 1024;
+    setIsLowEnd(mobileUA || hasManyTouchPoints || isSmallScreen);
+
     const lenis = new Lenis({
-      lerp: 0.1,
+      lerp: mobileUA ? 0.25 : 0.1,
       wheelMultiplier: 1,
-      smoothWheel: true,
+      smoothWheel: !mobileUA, // Let mobile use optimized native physics
     });
 
     function raf(time: number) {
@@ -53,9 +59,11 @@ export function JourneyCanvas() {
           
           <ParticleMorpher progressRef={progressRef} />
           
-          <EffectComposer>
-            <Bloom luminanceThreshold={0.8} mipmapBlur intensity={0.5} radius={0.4} />
-          </EffectComposer>
+          {!isLowEnd && (
+            <EffectComposer>
+              <Bloom luminanceThreshold={0.8} mipmapBlur intensity={0.5} radius={0.4} />
+            </EffectComposer>
+          )}
         </Canvas>
       </div>
 

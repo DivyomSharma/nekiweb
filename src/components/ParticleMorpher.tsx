@@ -190,7 +190,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     // state.pointer gives normalized mouse coordinates (-1 to 1)
     // 5 degrees is ~0.087 radians
     const targetRotX = (state.pointer.y * 0.087);
-    const targetRotY = (state.pointer.x * 0.087) + (state.clock.elapsedTime * 0.05); // subtle drift + mouse
+    const targetRotY = (state.pointer.x * 0.087); // only mouse tracking, no continuous spin
     
     meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, -targetRotX, lerpFactor);
     meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, lerpFactor);

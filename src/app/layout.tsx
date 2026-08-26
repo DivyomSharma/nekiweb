@@ -25,6 +25,8 @@ export const metadata: Metadata = {
   description: "NEKI makes helping people as fast, trusted, and actionable as modern commerce.",
 };
 
+import { WaitlistButton } from "@/components/WaitlistButton";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,14 +38,7 @@ export default function RootLayout({
       className={`${inter.variable} ${poppins.variable} ${playfair.variable} h-full antialiased bg-background text-foreground`}
     >
       <body className="min-h-full flex flex-col font-sans selection:bg-neki-orange selection:text-white relative">
-        <a 
-          href="https://forms.gle/NU1WrPnAcR5AyWdz5" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="fixed top-6 right-6 z-50 bg-foreground text-background px-6 py-3 rounded-full font-medium text-sm shadow-xl hover:bg-gray-800 transition-all hover:scale-105"
-        >
-          Join <span className="text-neki-gold font-playfair italic font-bold">Neki</span> Waitlist
-        </a>
+        <WaitlistButton />
         <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>

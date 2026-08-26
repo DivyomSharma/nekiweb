@@ -39,8 +39,8 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-white/60">
               <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Twitter</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Instagram</a></li>
+              <li><a href="https://www.linkedin.com/company/nekiforindia" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">LinkedIn</a></li>
+              <li><a href="https://www.instagram.com/nekiforindia" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a></li>
             </ul>
           </div>
         </div>

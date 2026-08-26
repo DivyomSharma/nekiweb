@@ -120,13 +120,53 @@ export function WaitlistButton() {
 
   return (
     <>
-      {/* Trigger Button */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed top-6 right-6 z-50 bg-foreground text-background px-6 py-3 rounded-full font-medium text-sm shadow-xl hover:bg-gray-800 transition-all hover:scale-105 pointer-events-auto"
-      >
-        Join <span className="text-neki-gold font-playfair italic font-bold">Neki</span> Waitlist
-      </button>
+      {/* Top Navigation Group */}
+      <div className="fixed top-0 left-0 right-0 h-16 px-6 bg-[#FAF9F7]/80 backdrop-blur-md border-b border-black/5 flex items-center justify-between z-50 pointer-events-auto lg:fixed lg:top-6 lg:right-6 lg:left-auto lg:h-auto lg:w-auto lg:bg-transparent lg:backdrop-blur-none lg:border-none lg:px-0 lg:py-0 lg:justify-end lg:gap-2.5">
+        
+        {/* Logo (Only visible on mobile/tablet header) */}
+        <div className="lg:hidden flex items-center gap-2">
+          <span className="font-heading font-extrabold text-foreground tracking-tight text-lg">NEKI</span>
+        </div>
+
+        {/* Buttons Group (Float on desktop, align right on mobile) */}
+        <div className="flex items-center gap-2 lg:gap-2.5">
+          {/* LinkedIn Button */}
+          <a
+            href="https://www.linkedin.com/company/nekiforindia"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-background border border-black/5 text-foreground hover:bg-black/5 p-2 md:p-3 rounded-full shadow-lg lg:shadow-xl transition-all hover:scale-105 flex items-center justify-center"
+            aria-label="LinkedIn"
+          >
+            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+          </a>
+
+          {/* Instagram Button */}
+          <a
+            href="https://www.instagram.com/nekiforindia"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-background border border-black/5 text-foreground hover:bg-black/5 p-2 md:p-3 rounded-full shadow-lg lg:shadow-xl transition-all hover:scale-105 flex items-center justify-center"
+            aria-label="Instagram"
+          >
+            <svg className="w-4 h-4 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+          </a>
+
+          {/* Trigger Button */}
+          <button
+            onClick={() => setIsOpen(true)}
+            className="bg-foreground text-background px-4 py-2.5 md:px-6 md:py-3 rounded-full font-medium text-xs md:text-sm shadow-xl hover:bg-gray-800 transition-all hover:scale-105"
+          >
+            Join <span className="text-neki-gold font-playfair italic font-bold">Neki</span> Waitlist
+          </button>
+        </div>
+      </div>
 
       {/* Hidden Iframe for CORS-less background Google Forms Submission */}
       <iframe

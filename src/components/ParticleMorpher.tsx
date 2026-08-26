@@ -145,47 +145,51 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
   const targetColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
 
   const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
   const frameRef = useRef(0);
   
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   useFrame((state, delta) => {
     if (!meshRef.current) return;
 
     frameRef.current++;
-    // Throttle calculation on mobile/low-end to run at 30 FPS instead of 60 FPS
-    if (isMobile && frameRef.current % 2 !== 0) return;
+    // Throttle calculation on mobile/tablet to run at 30 FPS instead of 60 FPS
+    if ((isMobile || isTablet) && frameRef.current % 2 !== 0) return;
 
     const p = progressRef.current;
-    const lerpFactor = 2.5 * delta * (isMobile ? 2.0 : 1.0); // Adjust lerp factor to compensate for skipped frames
+    const lerpFactor = 2.5 * delta * ((isMobile || isTablet) ? 2.0 : 1.0); // Adjust lerp factor to compensate for skipped frames
 
     // Current section (0 to 15)
     const sectionIndex = Math.min(Math.floor(p * 16), 15);
     const targetShape = shapes[sectionIndex];
 
     // Hide particles completely in Section 9 for the clean DOM Mission Ecosystem
-    const baseScale = isMobile ? 0.5 : 1;
+    const baseScale = (isMobile || isTablet) ? 0.4 : 1;
     const targetScale = sectionIndex === 9 ? 0.001 : baseScale;
     meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), lerpFactor * 2.0);
 
     // Base color for the section
     targetColor.set(SECTION_COLORS[sectionIndex]);
 
-    // --- POSITION: push to the opposite side of text ---
-    // On mobile, center the shapes or give them a much smaller offset so they don't overflow
-    const targetX = isMobile ? SECTION_X_OFFSET[sectionIndex] * 0.3 : SECTION_X_OFFSET[sectionIndex];
+    // --- POSITION ---
+    // On mobile and tablet, center the shapes horizontally to prevent side overlaps
+    const targetX = (isMobile || isTablet) ? 0 : SECTION_X_OFFSET[sectionIndex];
     meshRef.current.position.x = THREE.MathUtils.lerp(
       meshRef.current.position.x, targetX, lerpFactor
     );
 
-    // --- GENTLE FLOATING ---
-    // On mobile, push it up slightly so it doesn't sit exactly behind the dense text
-    const baseOffsetY = isMobile ? 1.0 : 0;
+    // --- GENTLE FLOATING & OFFSET ---
+    // Push the shapes downwards significantly on smaller viewports so they stay below text
+    const baseOffsetY = (isMobile || isTablet) ? -2.2 : 0;
     meshRef.current.position.y = THREE.MathUtils.lerp(
       meshRef.current.position.y,
       baseOffsetY + Math.sin(state.clock.elapsedTime * 0.8) * 0.12,
@@ -260,13 +264,13 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
       <AmbientBackground progressRef={progressRef} />
       <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]}>
         <sphereGeometry args={[0.015, 8, 8]} />
-        {isMobile ? (
+        {isMobile || isTablet ? (
           <meshStandardMaterial 
             color="#FFFFFF" 
             metalness={0.2} 
             roughness={0.3} 
             transparent={true}
-            opacity={0.9}
+            opacity={0.15} // Watermark mode opacity
           />
         ) : (
           <meshPhysicalMaterial 

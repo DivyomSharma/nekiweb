@@ -13,6 +13,8 @@ import { TrackingSection } from "./sections/TrackingSection";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 
 export function JourneyCanvas() {
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
   const [isLowEnd, setIsLowEnd] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef(0);
@@ -27,6 +29,13 @@ export function JourneyCanvas() {
   });
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
     const mobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const hasManyTouchPoints = navigator.maxTouchPoints > 1;
     const isSmallScreen = window.innerWidth < 1024;
@@ -44,32 +53,37 @@ export function JourneyCanvas() {
     }
 
     requestAnimationFrame(raf);
-    return () => lenis.destroy();
+    return () => {
+      lenis.destroy();
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   return (
     <section ref={containerRef} className="relative w-full bg-background" style={{ height: "1600vh" }}>
       
-      {/* 3D CANVAS - FIXED TO BACKGROUND */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        <Canvas 
-          camera={{ position: [0, 0, 10], fov: 45 }} 
-          gl={{ antialias: false, alpha: false, powerPreference: "high-performance" }}
-          dpr={isLowEnd ? 0.85 : [1, 1.5]}
-        >
-          <color attach="background" args={["#FAF9F7"]} />
-          <ambientLight intensity={1.2} />
-          <directionalLight position={[10, 10, 10]} intensity={2} />
-          
-          <ParticleMorpher progressRef={progressRef} />
-          
-          {!isLowEnd && (
-            <EffectComposer>
-              <Bloom luminanceThreshold={0.8} mipmapBlur intensity={0.5} radius={0.4} />
-            </EffectComposer>
-          )}
-        </Canvas>
-      </div>
+      {/* 3D CANVAS - FIXED TO BACKGROUND (Hidden on mobile) */}
+      {!isMobile && (
+        <div className="fixed inset-0 z-0 pointer-events-none">
+          <Canvas 
+            camera={{ position: [0, 0, 10], fov: 45 }} 
+            gl={{ antialias: false, alpha: false, powerPreference: "high-performance" }}
+            dpr={isTablet ? 0.85 : [1, 1.5]}
+          >
+            <color attach="background" args={["#FAF9F7"]} />
+            <ambientLight intensity={1.2} />
+            <directionalLight position={[10, 10, 10]} intensity={2} />
+            
+            <ParticleMorpher progressRef={progressRef} />
+            
+            {!isTablet && !isLowEnd && (
+              <EffectComposer>
+                <Bloom luminanceThreshold={0.8} mipmapBlur intensity={0.5} radius={0.4} />
+              </EffectComposer>
+            )}
+          </Canvas>
+        </div>
+      )}
 
       {/* DOM OVERLAYS - NATIVELY SCROLLING */}
       <div className="relative z-10 w-full pointer-events-none" style={{ transform: "translate3d(0,0,0)", willChange: "transform" }}>

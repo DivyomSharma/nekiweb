@@ -615,71 +615,7 @@ function WaitlistFormContent() {
                     <ChevronLeft className="w-4 h-4" /> Back
                   </button>
                   <button
-                    type="button" onClick={() => setStep(5)}
-                    className="w-2/3 bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5"
-                  >
-                    Continue <ChevronRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 5: founding VISION */}
-            {step === 5 && (
-              <div className="space-y-6">
-                <div>
-                  <h1 className="text-4xl font-heading font-extrabold tracking-tight mb-3">Your Vision.</h1>
-                  <p className="text-sm text-text-secondary">Shaping the future of the coordinate network.</p>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                    <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold mb-1">
-                      What frustrates you most about helping people today? *
-                    </label>
-                    <textarea
-                      required name="entry.1197797153" value={frustrations}
-                      onChange={(e) => setFrustrations(e.target.value)} placeholder="e.g. lack of visibility on donation outputs..."
-                      className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20 resize-none h-16"
-                    />
-                  </div>
-
-                  <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                    <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold mb-1">
-                      First mission you'd start or support if NEKI launched tomorrow? *
-                    </label>
-                    <textarea
-                      required name="entry.1188271775" value={firstMission}
-                      onChange={(e) => setFirstMission(e.target.value)} placeholder="e.g. library setups, Stray food drive..."
-                      className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20 resize-none h-16"
-                    />
-                  </div>
-
-                  <div className="relative border-b border-black/10 transition-colors py-2">
-                    <CustomSelect
-                      name="entry.1667554094"
-                      value={foundingPreference}
-                      onChange={(val) => setFoundingPreference(val)}
-                      options={[
-                        "Yes, I'd love early access",
-                        "Yes, I'd like to test the platform",
-                        "Yes, I'd like to volunteer early",
-                        "Just keep me updated"
-                      ]}
-                      label="Founding community preference *"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex gap-3 pt-2">
-                  <button
-                    type="button" onClick={() => setStep(4)}
-                    className="w-1/3 border border-black/10 text-foreground py-4 rounded-full font-medium text-sm hover:bg-black/5 transition-colors flex items-center justify-center gap-1"
-                  >
-                    <ChevronLeft className="w-4 h-4" /> Back
-                  </button>
-                  <button
-                    type="submit" disabled={submitting || !frustrations || !firstMission}
+                    type="submit" disabled={submitting}
                     className="w-2/3 bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
                   >
                     {submitting ? "Submitting..." : "Submit Application"}

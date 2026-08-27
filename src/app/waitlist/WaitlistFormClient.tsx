@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import anime from "animejs";
 import { ArrowLeft, Check, Copy, Share2, ChevronRight, ChevronLeft } from "lucide-react";
+import { CustomSelect } from "@/components/ui/CustomSelect";
 
 function WaitlistFormContent() {
   const searchParams = useSearchParams();
@@ -250,15 +251,13 @@ function WaitlistFormContent() {
                   <p className="text-sm text-text-secondary">I would like to join NEKI as:</p>
                 </div>
 
-                <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                  <select
-                    name="entry.222711120" value={role} onChange={(e) => setRole(e.target.value)}
-                    className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm cursor-pointer"
-                  >
-                    {roleOptions.map((opt) => (
-                      <option key={opt} value={opt} className="bg-background text-foreground">{opt}</option>
-                    ))}
-                  </select>
+                <div className="relative border-b border-black/10 transition-colors py-2">
+                  <CustomSelect
+                    name="entry.222711120"
+                    value={role}
+                    onChange={(val) => setRole(val)}
+                    options={roleOptions}
+                  />
                 </div>
 
                 <div className="flex gap-3 pt-2">
@@ -309,17 +308,14 @@ function WaitlistFormContent() {
                     ))}
                   </div>
 
-                  <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                    <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold mb-1">How much time can you contribute? *</label>
-                    <select
-                      name="entry.1134721925" value={timeCommitment} onChange={(e) => setTimeCommitment(e.target.value)}
-                      className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm cursor-pointer"
-                    >
-                      <option value="1–2 hrs/week" className="bg-background">1–2 hrs/week</option>
-                      <option value="3–5 hrs/week" className="bg-background">3–5 hrs/week</option>
-                      <option value="5–10 hrs/week" className="bg-background">5–10 hrs/week</option>
-                      <option value="10+ hrs/week" className="bg-background">10+ hrs/week</option>
-                    </select>
+                  <div className="relative border-b border-black/10 transition-colors py-2">
+                    <CustomSelect
+                      name="entry.1134721925"
+                      value={timeCommitment}
+                      onChange={(val) => setTimeCommitment(val)}
+                      options={["1–2 hrs/week", "3–5 hrs/week", "5–10 hrs/week", "10+ hrs/week"]}
+                      label="How much time can you contribute? *"
+                    />
                   </div>
                 </div>
 
@@ -368,16 +364,14 @@ function WaitlistFormContent() {
                     />
                   </div>
 
-                  <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                    <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold mb-1">Organization Type *</label>
-                    <select
-                      name="entry.308378145" value={orgType} onChange={(e) => setOrgType(e.target.value)}
-                      className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm cursor-pointer"
-                    >
-                      {["NGO", "School", "College", "Corporate", "Shelter", "Hospital", "Community Group", "Other"].map((t) => (
-                        <option key={t} value={t} className="bg-background">{t}</option>
-                      ))}
-                    </select>
+                  <div className="relative border-b border-black/10 transition-colors py-2">
+                    <CustomSelect
+                      name="entry.308378145"
+                      value={orgType}
+                      onChange={(val) => setOrgType(val)}
+                      options={["NGO", "School", "College", "Corporate", "Shelter", "Hospital", "Community Group", "Other"]}
+                      label="Organization Type *"
+                    />
                   </div>
 
                   <div>
@@ -452,17 +446,14 @@ function WaitlistFormContent() {
                     ))}
                   </div>
 
-                  <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                    <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold mb-1">How often would you like to contribute? *</label>
-                    <select
-                      name="entry.297171350" value={contributionFrequency} onChange={(e) => setContributionFrequency(e.target.value)}
-                      className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm cursor-pointer"
-                    >
-                      <option value="Weekly" className="bg-background">Weekly</option>
-                      <option value="Monthly" className="bg-background">Monthly</option>
-                      <option value="Occasionally" className="bg-background">Occasionally</option>
-                      <option value="Only for urgent missions" className="bg-background">Only for urgent missions</option>
-                    </select>
+                  <div className="relative border-b border-black/10 transition-colors py-2">
+                    <CustomSelect
+                      name="entry.297171350"
+                      value={contributionFrequency}
+                      onChange={(val) => setContributionFrequency(val)}
+                      options={["Weekly", "Monthly", "Occasionally", "Only for urgent missions"]}
+                      label="How often would you like to contribute? *"
+                    />
                   </div>
 
                   <div>
@@ -664,19 +655,19 @@ function WaitlistFormContent() {
                     />
                   </div>
 
-                  <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                    <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold mb-1">
-                      Founding community preference *
-                    </label>
-                    <select
-                      name="entry.1667554094" value={foundingPreference} onChange={(e) => setFoundingPreference(e.target.value)}
-                      className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm cursor-pointer"
-                    >
-                      <option value="Yes, I'd love early access" className="bg-background">Yes, I'd love early access</option>
-                      <option value="Yes, I'd like to test the platform" className="bg-background">Yes, I'd like to test the platform</option>
-                      <option value="Yes, I'd like to volunteer early" className="bg-background">Yes, I'd like to volunteer early</option>
-                      <option value="Just keep me updated" className="bg-background">Just keep me updated</option>
-                    </select>
+                  <div className="relative border-b border-black/10 transition-colors py-2">
+                    <CustomSelect
+                      name="entry.1667554094"
+                      value={foundingPreference}
+                      onChange={(val) => setFoundingPreference(val)}
+                      options={[
+                        "Yes, I'd love early access",
+                        "Yes, I'd like to test the platform",
+                        "Yes, I'd like to volunteer early",
+                        "Just keep me updated"
+                      ]}
+                      label="Founding community preference *"
+                    />
                   </div>
                 </div>
 

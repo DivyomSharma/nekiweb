@@ -48,7 +48,10 @@ export function CustomSelect({ name, value, onChange, options, label }: CustomSe
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute top-[100%] left-0 w-full bg-background border border-black/10 rounded-xl shadow-xl z-50 mt-1 max-h-60 overflow-y-auto overflow-x-hidden selection:bg-transparent py-1">
+        <div 
+          data-lenis-prevent
+          className="absolute top-[100%] left-0 w-full bg-background border border-black/10 rounded-xl shadow-xl z-50 mt-1 max-h-60 overflow-y-auto overflow-x-hidden selection:bg-transparent py-1"
+        >
           {options.map((option) => {
             const isSelected = option === value;
             return (

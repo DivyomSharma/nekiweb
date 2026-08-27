@@ -4,8 +4,24 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    // Convert the JSON payload to URLSearchParams (x-www-form-urlencoded)
+    // 1. Fetch the Google Form viewform to get a fresh session and fbzx token
+    const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSd0eHHv-8yy8Zu5WEaeFPpxXO9_TUnK9LK3hRmniKz-1r02_w/viewform";
+    const getResponse = await fetch(googleFormUrl, {
+      cache: "no-store"
+    });
+    const htmlText = await getResponse.text();
+
+    const fbzxMatch = htmlText.match(/name="fbzx" value="([^"]+)"/);
+    const fbzx = fbzxMatch ? fbzxMatch[1] : "";
+
+    // 2. Prepare the payload as x-www-form-urlencoded
     const formData = new URLSearchParams();
+    formData.append("fvv", "1");
+    formData.append("pageHistory", "0");
+    if (fbzx) {
+      formData.append("fbzx", fbzx);
+    }
+
     for (const [key, value] of Object.entries(body)) {
       if (Array.isArray(value)) {
         value.forEach((val) => formData.append(key, val));
@@ -14,21 +30,23 @@ export async function POST(request: Request) {
       }
     }
 
-    const googleFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSd0eHHv-8yy8Zu5WEaeFPpxXO9_TUnK9LK3hRmniKz-1r02_w/formResponse";
+    const postUrl = "https://docs.google.com/forms/d/e/1FAIpQLSd0eHHv-8yy8Zu5WEaeFPpxXO9_TUnK9LK3hRmniKz-1r02_w/formResponse";
 
-    const response = await fetch(googleFormUrl, {
+    const response = await fetch(postUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
       },
       body: formData.toString(),
     });
 
-    // Google Forms formResponse returns 200 OK even on successful submission redirect
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error("Google Forms submission failed:", response.status, errText);
-      return NextResponse.json({ success: false, error: "Failed to submit to Google Forms backend" }, { status: 500 });
+    const responseText = await response.text();
+    const isRecorded = responseText.toLowerCase().includes("recorded");
+    
+    if (!response.ok || !isRecorded) {
+      console.error("Google Forms submission failed. Status:", response.status);
+      return NextResponse.json({ success: false, error: "Validation failure on Google Forms" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });

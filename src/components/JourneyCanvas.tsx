@@ -10,7 +10,7 @@ import Lenis from "lenis";
 import Link from "next/link";
 import { HeroSection } from "./sections/HeroSection";
 import { TrackingSection } from "./sections/TrackingSection";
-import { useScroll, useMotionValueEvent } from "framer-motion";
+import { useScroll, useMotionValueEvent, motion } from "framer-motion";
 
 export function JourneyCanvas() {
   const [isMobile, setIsMobile] = useState(false);
@@ -53,6 +53,21 @@ export function JourneyCanvas() {
     }
 
     requestAnimationFrame(raf);
+
+    // Restore scroll position
+    const savedScroll = sessionStorage.getItem("homepage-scroll");
+    if (savedScroll) {
+      const scrollY = parseInt(savedScroll, 10);
+      setTimeout(() => {
+        lenis.scrollTo(scrollY, { immediate: true });
+      }, 100);
+    }
+
+    // Save scroll position on scroll
+    lenis.on("scroll", (e: any) => {
+      sessionStorage.setItem("homepage-scroll", Math.round(e.scroll).toString());
+    });
+
     return () => {
       lenis.destroy();
       window.removeEventListener("resize", handleResize);
@@ -106,51 +121,111 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 2: FOOD (Right) */}
-        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold text-neki-green tracking-tight mb-4">
-            A meal can <span className="font-playfair italic">change a day.</span>
-          </h2>
-          <p className="text-lg text-text-secondary font-light">Food. Community kitchens. Animal shelters.</p>
+        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right pointer-events-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-heading font-bold text-neki-green tracking-tight mb-4">
+              A meal can <span className="font-playfair italic">change a day.</span>
+            </h2>
+            <p className="text-lg text-text-secondary font-light mb-6">Food. Community kitchens. Animal shelters.</p>
+            <Link href="/food" className="group inline-flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors">
+              Explore <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
+          </motion.div>
         </div>
 
         {/* PAGE 3: BOOKS (Left) */}
-        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%]">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold text-neki-gold tracking-tight mb-4 max-w-xl">
-            Knowledge travels farther <span className="font-playfair italic">than books.</span>
-          </h2>
-          <p className="text-lg text-text-secondary font-light">Education. Learning. Opportunity.</p>
+        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%] pointer-events-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-heading font-bold text-neki-gold tracking-tight mb-4 max-w-xl">
+              Knowledge travels farther <span className="font-playfair italic">than books.</span>
+            </h2>
+            <p className="text-lg text-text-secondary font-light mb-6">Education. Learning. Opportunity.</p>
+            <Link href="/education" className="group inline-flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors">
+              Explore <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
+          </motion.div>
         </div>
 
         {/* PAGE 4: MEDICAL (Right) */}
-        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold text-red-400 tracking-tight mb-4 max-w-xl">
-            Care should never be <span className="font-playfair italic">out of reach.</span>
-          </h2>
-          <p className="text-lg text-text-secondary font-light">Healthcare. Medicine. Relief.</p>
+        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right pointer-events-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-heading font-bold text-red-400 tracking-tight mb-4 max-w-xl">
+              Care should never be <span className="font-playfair italic">out of reach.</span>
+            </h2>
+            <p className="text-lg text-text-secondary font-light mb-6">Healthcare. Medicine. Relief.</p>
+            <Link href="/care" className="group inline-flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors">
+              Explore <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
+          </motion.div>
         </div>
 
         {/* PAGE 5: TIME (Left) */}
-        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%]">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold text-blue-400 tracking-tight mb-4 max-w-2xl">
-            Some contributions can't be <span className="font-playfair italic">measured in money.</span>
-          </h2>
-          <p className="text-lg text-text-secondary font-light">Time. Presence. Effort.</p>
+        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%] pointer-events-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-heading font-bold text-blue-400 tracking-tight mb-4 max-w-2xl">
+              Some contributions can't be <span className="font-playfair italic">measured in money.</span>
+            </h2>
+            <p className="text-lg text-text-secondary font-light mb-6">Time. Presence. Effort.</p>
+            <Link href="/contribution" className="group inline-flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors">
+              Explore <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
+          </motion.div>
         </div>
 
         {/* PAGE 6: SKILLS (Right) */}
-        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold text-purple-400 tracking-tight mb-4 max-w-xl">
-            Expertise can be a <span className="font-playfair italic">form of service.</span>
-          </h2>
-          <p className="text-lg text-text-secondary font-light">Teaching. Mentoring. Building. Healing.</p>
+        <div className="h-screen w-full flex flex-col items-end justify-center p-6 md:pr-[15%] text-right pointer-events-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-heading font-bold text-purple-400 tracking-tight mb-4 max-w-xl">
+              Expertise can be a <span className="font-playfair italic">form of service.</span>
+            </h2>
+            <p className="text-lg text-text-secondary font-light mb-6">Teaching. Mentoring. Building. Healing.</p>
+            <Link href="/skills" className="group inline-flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors">
+              Explore <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
+          </motion.div>
         </div>
 
-        {/* PAGE 7: NETWORK EFFECT (Left) */}
-        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%]">
-          <h2 className="text-4xl md:text-6xl font-heading font-bold text-foreground tracking-tight mb-6 max-w-2xl">
-            Goodness scales through <span className="text-neki-gold font-playfair italic">connection.</span>
-          </h2>
-          <p className="text-lg text-text-secondary font-light">The strongest force is people, connected.</p>
+        {/* PAGE 7: CONNECTION (Left) */}
+        <div className="h-screen w-full flex flex-col items-start justify-center p-6 md:pl-[15%] pointer-events-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <h2 className="text-4xl md:text-6xl font-heading font-bold text-foreground tracking-tight mb-6 max-w-2xl">
+              Goodness scales through <span className="text-neki-gold font-playfair italic">connection.</span>
+            </h2>
+            <p className="text-lg text-text-secondary font-light mb-6">The strongest force is people, connected.</p>
+            <Link href="/connection" className="group inline-flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors">
+              Explore <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
+          </motion.div>
         </div>
 
         {/* PAGE 8: NEKI NETWORK (Right) */}

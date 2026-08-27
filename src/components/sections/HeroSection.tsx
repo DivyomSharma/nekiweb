@@ -110,12 +110,17 @@ export function HeroSection() {
           <PremiumButton variant="secondary">Explore Missions</PremiumButton>
         </div>
         
-        <button 
-          ref={footerRef}
-          className="mt-6 text-sm text-text-muted hover:text-foreground font-medium transition-colors pointer-events-auto underline underline-offset-4 opacity-0"
+        <div 
+          ref={footerRef as any}
+          className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold uppercase tracking-wider text-text-muted opacity-0 pointer-events-auto"
         >
-          For NGOs, institutions and communities →
-        </button>
+          <Link href="/organizations" className="hover:text-foreground transition-colors underline underline-offset-4">
+            For NGOs & Colleges →
+          </Link>
+          <Link href="/corporate" className="hover:text-foreground transition-colors underline underline-offset-4">
+            For Corporate & CSR →
+          </Link>
+        </div>
       </div>
       
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-xs font-bold tracking-widest text-text-muted uppercase">

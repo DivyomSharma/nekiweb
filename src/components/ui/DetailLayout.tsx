@@ -9,7 +9,7 @@ interface DetailLayoutProps {
   children: React.ReactNode;
   title: string;
   subtitle: string;
-  shapeName: "logo" | "phone" | "book" | "shield" | "camera" | "network" | "path";
+  shapeName: "logo" | "phone" | "book" | "shield" | "camera" | "network" | "path" | "bowl" | "cross" | "heart" | "gear";
   shapeColor?: string;
 }
 
@@ -20,6 +20,10 @@ export function DetailLayout({
   shapeName,
   shapeColor,
 }: DetailLayoutProps) {
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <main className="min-h-screen bg-background text-foreground relative selection:bg-neki-gold/30 selection:text-foreground">
       

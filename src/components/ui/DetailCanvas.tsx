@@ -12,9 +12,13 @@ import {
   getCameraFramePositions,
   getNetworkPositions,
   getTrackingPositions,
+  getBowlPositions,
+  getCrossPositions,
+  getHeartPositions,
+  getGearPositions,
 } from "@/lib/shapes";
 
-type ShapeName = "logo" | "phone" | "book" | "shield" | "camera" | "network" | "path";
+type ShapeName = "logo" | "phone" | "book" | "shield" | "camera" | "network" | "path" | "bowl" | "cross" | "heart" | "gear";
 
 interface DetailCanvasProps {
   shapeName: ShapeName;
@@ -29,6 +33,10 @@ const SHAPE_COLOR_MAP: Record<ShapeName, string> = {
   camera: "#D4AF6A",
   network: "#D4AF6A",
   path: "#D4AF6A",
+  bowl: "#10B981",
+  cross: "#F87171",
+  heart: "#60A5FA",
+  gear: "#C084FC",
 };
 
 function SingleShapeMesh({ shapeName, color }: { shapeName: ShapeName; color: string }) {
@@ -60,6 +68,14 @@ function SingleShapeMesh({ shapeName, color }: { shapeName: ShapeName; color: st
         return getNetworkPositions(PARTICLE_COUNT, 0.6);
       case "path":
         return getTrackingPositions(PARTICLE_COUNT, 0.7);
+      case "bowl":
+        return getBowlPositions(PARTICLE_COUNT, 1.2);
+      case "cross":
+        return getCrossPositions(PARTICLE_COUNT, 1.2);
+      case "heart":
+        return getHeartPositions(PARTICLE_COUNT, 1.2);
+      case "gear":
+        return getGearPositions(PARTICLE_COUNT, 1.2);
       default:
         return getHeroLogoPositions(PARTICLE_COUNT, 2.0);
     }

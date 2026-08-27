@@ -101,7 +101,7 @@ function SingleShapeMesh({ shapeName, color }: { shapeName: ShapeName; color: st
 
     // Mouse interactive rotation (Max 5 degrees)
     const targetRotX = state.pointer.y * 0.087;
-    const targetRotY = state.pointer.x * 0.087 + state.clock.elapsedTime * 0.04; // Gentle slow rotation
+    const targetRotY = state.pointer.x * 0.087; // only mouse tracking, no continuous spin
 
     meshRef.current.rotation.x = THREE.MathUtils.lerp(meshRef.current.rotation.x, -targetRotX, lerpFactor);
     meshRef.current.rotation.y = THREE.MathUtils.lerp(meshRef.current.rotation.y, targetRotY, lerpFactor);

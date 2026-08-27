@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, Suspense } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import anime from "animejs";
@@ -14,7 +14,6 @@ function WaitlistFormContent() {
   const [step, setStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // --- FORM STATES ---
   // Step 1: General Info
@@ -43,11 +42,11 @@ function WaitlistFormContent() {
 
   // Step 4: Product / Feedback
   const [impactImportance, setImpactImportance] = useState("10"); // Scale 1-10
+  const [foundingPreference, setFoundingPreference] = useState("Yes, I'd love early access");
   const [featureGPS, setFeatureGPS] = useState("Very Valuable");
   const [featureProfiles, setFeatureProfiles] = useState("Very Valuable");
   const [featureLedger, setFeatureLedger] = useState("Very Valuable");
   const [featureP2P, setFeatureP2P] = useState("Very Valuable");
-  const [foundingPreference, setFoundingPreference] = useState("Yes, I'd love early access");
 
   // Success Sharing
   const [copied, setCopied] = useState(false);
@@ -99,22 +98,6 @@ function WaitlistFormContent() {
     }
   };
 
-  const handleIframeLoad = () => {
-    if (submitting) {
-      setSubmitting(false);
-      setIsSubmitted(true);
-      setTimeout(() => {
-        anime({
-          targets: ".success-icon",
-          scale: [0.5, 1.2, 1],
-          opacity: [0, 1],
-          duration: 600,
-          easing: "easeOutElastic(1, .6)",
-        });
-      }, 100);
-    }
-  };
-
   const determineNextStep = () => {
     if (step === 2) {
       if (isVolunteerRole) return 21; // Step 2A (Volunteer options)
@@ -141,16 +124,69 @@ function WaitlistFormContent() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    const payload = {
+      "entry.660105051": name,
+      "entry.1133362056": email,
+      "entry.849609389": phone || "N/A",
+      "entry.285819162": city,
+      "entry.222711120": role,
+      "entry.1451990690": isVolunteerRole ? (volunteerInterests.length > 0 ? volunteerInterests : ["N/A"]) : ["N/A"],
+      "entry.1134721925": isVolunteerRole ? timeCommitment : "N/A",
+      "entry.1535691708": isOrgRole ? orgName : "N/A",
+      "entry.1799090949": isOrgRole ? orgWebsite : "https://neki.io",
+      "entry.308378145": isOrgRole ? orgType : "Other",
+      "entry.489114980": isOrgRole ? (orgInterests.length > 0 ? orgInterests : ["N/A"]) : ["N/A"],
+      "entry.368946662": contributionPreferences.length > 0 ? contributionPreferences : ["Time"],
+      "entry.297171350": contributionFrequency,
+      "entry.553781524": selectedCauses.length > 0 ? selectedCauses : ["Community Development"],
+      "entry.227345805": impactImportance,
+      "entry.1667554094": foundingPreference,
+      "entry.324658014": featureGPS,
+      "entry.159809934": featureProfiles,
+      "entry.1634275683": featureLedger,
+      "entry.1412803646": featureP2P,
+      "entry.1197797153": "N/A",
+      "entry.1188271775": "N/A",
+    };
+
+    try {
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setIsSubmitted(true);
+        setTimeout(() => {
+          anime({
+            targets: ".success-icon",
+            scale: [0.5, 1.2, 1],
+            opacity: [0, 1],
+            duration: 600,
+            easing: "easeOutElastic(1, .6)",
+          });
+        }, 100);
+      } else {
+        alert("Submission failed. Please try again.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Submission failed. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="w-full md:w-[60%] min-h-screen relative z-10 p-6 md:p-12 lg:p-24 flex flex-col justify-between">
-      <iframe
-        ref={iframeRef}
-        name="waitlist_iframe"
-        id="waitlist_iframe"
-        style={{ display: "none" }}
-        onLoad={handleIframeLoad}
-      />
-
       <div className="max-w-xl w-full mx-auto md:mx-0">
         
         {/* Back button */}
@@ -171,35 +207,7 @@ function WaitlistFormContent() {
         </nav>
 
         {!isSubmitted ? (
-          <form
-            action="https://docs.google.com/forms/d/e/1FAIpQLSd0eHHv-8yy8Zu5WEaeFPpxXO9_TUnK9LK3hRmniKz-1r02_w/formResponse"
-            method="POST"
-            target="waitlist_iframe"
-            onSubmit={() => setSubmitting(true)}
-            className="space-y-8"
-          >
-            {/* --- BACKEND FALLBACK HIDDEN FIELD INJECTIONS --- */}
-            {/* Step 5 questions removed from UI - Google Forms requires values */}
-            <input type="hidden" name="entry.1197797153" value="N/A" />
-            <input type="hidden" name="entry.1188271775" value="N/A" />
-
-            {/* Conditional Role Fallbacks if role is not active */}
-            {!isVolunteerRole && (
-              <>
-                <input type="hidden" name="entry.1451990690" value="N/A" />
-                <input type="hidden" name="entry.1134721925" value="N/A" />
-              </>
-            )}
-
-            {!isOrgRole && (
-              <>
-                <input type="hidden" name="entry.1535691708" value="N/A" />
-                <input type="hidden" name="entry.1799090949" value="https://neki.io" />
-                <input type="hidden" name="entry.308378145" value="Other" />
-                <input type="hidden" name="entry.489114980" value="N/A" />
-              </>
-            )}
-
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* STEP 1: GENERAL INFO */}
             <div className={step === 1 ? "space-y-6" : "hidden"}>
               <div>
@@ -215,7 +223,7 @@ function WaitlistFormContent() {
                 <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
                   <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Full Name *</label>
                   <input
-                    type="text" name="entry.660105051" value={name}
+                    type="text" value={name}
                     onChange={(e) => setName(e.target.value)} placeholder="Rahul Sharma"
                     className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
                   />
@@ -224,7 +232,7 @@ function WaitlistFormContent() {
                 <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
                   <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Email Address *</label>
                   <input
-                    type="email" name="entry.1133362056" value={email}
+                    type="email" value={email}
                     onChange={(e) => setEmail(e.target.value)} placeholder="rahul@example.com"
                     className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
                   />
@@ -233,7 +241,7 @@ function WaitlistFormContent() {
                 <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
                   <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Phone Number</label>
                   <input
-                    type="tel" name="entry.849609389" value={phone}
+                    type="tel" value={phone}
                     onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210"
                     className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
                   />
@@ -242,7 +250,7 @@ function WaitlistFormContent() {
                 <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
                   <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">City, State *</label>
                   <input
-                    type="text" name="entry.285819162" value={city}
+                    type="text" value={city}
                     onChange={(e) => setCity(e.target.value)} placeholder="New Delhi, Delhi"
                     className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
                   />
@@ -267,7 +275,7 @@ function WaitlistFormContent() {
 
               <div className="relative border-b border-black/10 transition-colors py-2">
                 <CustomSelect
-                  name="entry.222711120"
+                  name="role"
                   value={role}
                   onChange={(val) => setRole(val)}
                   options={roleOptions}
@@ -315,15 +323,11 @@ function WaitlistFormContent() {
                       );
                     })}
                   </div>
-                  {/* Render parameters conditionally by name only when role is active */}
-                  {isVolunteerRole && volunteerInterests.map(opt => (
-                    <input key={opt} type="hidden" name="entry.1451990690" value={opt} />
-                  ))}
                 </div>
 
                 <div className="relative border-b border-black/10 transition-colors py-2">
                   <CustomSelect
-                    name={isVolunteerRole ? "entry.1134721925" : "inactive_timeCommitment"}
+                    name="timeCommitment"
                     value={timeCommitment}
                     onChange={(val) => setTimeCommitment(val)}
                     options={["1–2 hrs/week", "3–5 hrs/week", "5–10 hrs/week", "10+ hrs/week"]}
@@ -360,9 +364,7 @@ function WaitlistFormContent() {
                 <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
                   <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Organization Name *</label>
                   <input
-                    type="text" 
-                    name={isOrgRole ? "entry.1535691708" : "inactive_orgName"} 
-                    value={orgName}
+                    type="text" value={orgName}
                     onChange={(e) => setOrgName(e.target.value)} placeholder="ABC Foundation"
                     className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
                   />
@@ -371,9 +373,7 @@ function WaitlistFormContent() {
                 <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
                   <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Website / Social Link *</label>
                   <input
-                    type="url" 
-                    name={isOrgRole ? "entry.1799090949" : "inactive_orgWebsite"} 
-                    value={orgWebsite}
+                    type="url" value={orgWebsite}
                     onChange={(e) => setOrgWebsite(e.target.value)} placeholder="https://abc.org"
                     className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
                   />
@@ -381,7 +381,7 @@ function WaitlistFormContent() {
 
                 <div className="relative border-b border-black/10 transition-colors py-2">
                   <CustomSelect
-                    name={isOrgRole ? "entry.308378145" : "inactive_orgType"}
+                    name="orgType"
                     value={orgType}
                     onChange={(val) => setOrgType(val)}
                     options={["NGO", "School", "College", "Corporate", "Shelter", "Hospital", "Community Group", "Other"]}
@@ -406,9 +406,6 @@ function WaitlistFormContent() {
                       );
                     })}
                   </div>
-                  {isOrgRole && orgInterests.map(opt => (
-                    <input key={opt} type="hidden" name="entry.489114980" value={opt} />
-                  ))}
                 </div>
               </div>
 
@@ -454,19 +451,11 @@ function WaitlistFormContent() {
                       );
                     })}
                   </div>
-                  {/* Contribution types serialization fallback */}
-                  {contributionPreferences.length > 0 ? (
-                    contributionPreferences.map(opt => (
-                      <input key={opt} type="hidden" name="entry.368946662" value={opt} />
-                    ))
-                  ) : (
-                    <input type="hidden" name="entry.368946662" value="Time" />
-                  )}
                 </div>
 
                 <div className="relative border-b border-black/10 transition-colors py-2">
                   <CustomSelect
-                    name="entry.297171350"
+                    name="contributionFrequency"
                     value={contributionFrequency}
                     onChange={(val) => setContributionFrequency(val)}
                     options={["Weekly", "Monthly", "Occasionally", "Only for urgent missions"]}
@@ -491,13 +480,6 @@ function WaitlistFormContent() {
                       );
                     })}
                   </div>
-                  {selectedCauses.length > 0 ? (
-                    selectedCauses.map(opt => (
-                      <input key={opt} type="hidden" name="entry.553781524" value={opt} />
-                    ))
-                  ) : (
-                    <input type="hidden" name="entry.553781524" value="Community Development" />
-                  )}
                 </div>
               </div>
 
@@ -543,13 +525,12 @@ function WaitlistFormContent() {
                       </button>
                     ))}
                   </div>
-                  <input type="hidden" name="entry.227345805" value={impactImportance} />
                 </div>
 
                 {/* Founding Community Preference */}
                 <div className="relative border-b border-black/10 transition-colors py-2">
                   <CustomSelect
-                    name="entry.1667554094"
+                    name="foundingPreference"
                     value={foundingPreference}
                     onChange={(val) => setFoundingPreference(val)}
                     options={[
@@ -583,7 +564,6 @@ function WaitlistFormContent() {
                         </button>
                       ))}
                     </div>
-                    <input type="hidden" name="entry.324658014" value={featureGPS} />
                   </div>
 
                   {/* Row 2: Verified profiles */}
@@ -601,7 +581,6 @@ function WaitlistFormContent() {
                         </button>
                       ))}
                     </div>
-                    <input type="hidden" name="entry.159809934" value={featureProfiles} />
                   </div>
 
                   {/* Row 3: Digital ledger */}
@@ -619,7 +598,6 @@ function WaitlistFormContent() {
                         </button>
                       ))}
                     </div>
-                    <input type="hidden" name="entry.1634275683" value={featureLedger} />
                   </div>
 
                   {/* Row 4: P2P Volunteer tools */}
@@ -637,7 +615,6 @@ function WaitlistFormContent() {
                         </button>
                       ))}
                     </div>
-                    <input type="hidden" name="entry.1412803646" value={featureP2P} />
                   </div>
 
                 </div>

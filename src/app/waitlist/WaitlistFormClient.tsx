@@ -4,83 +4,31 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import anime from "animejs";
-import { ArrowLeft, Check, Copy, Share2, ChevronRight, ChevronLeft } from "lucide-react";
-import { CustomSelect } from "@/components/ui/CustomSelect";
+import { ArrowLeft, Check, Copy, Share2 } from "lucide-react";
 
 function WaitlistFormContent() {
   const searchParams = useSearchParams();
   const referredBy = searchParams.get("ref");
 
-  const [step, setStep] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // --- FORM STATES ---
-  // Step 1: General Info
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
-
-  // Step 2: Role
-  const [role, setRole] = useState("Contributor");
-
-  // Step 2A: Volunteer specific
-  const [volunteerInterests, setVolunteerInterests] = useState<string[]>([]);
-  const [timeCommitment, setTimeCommitment] = useState("1–2 hrs/week");
-
-  // Step 2B: Organization specific
-  const [orgName, setOrgName] = useState("");
-  const [orgWebsite, setOrgWebsite] = useState("");
-  const [orgType, setOrgType] = useState("NGO");
-  const [orgInterests, setOrgInterests] = useState<string[]>([]);
-
-  // Step 3: Contribution
-  const [contributionPreferences, setContributionPreferences] = useState<string[]>([]);
-  const [contributionFrequency, setContributionFrequency] = useState("Occasionally");
-  const [selectedCauses, setSelectedCauses] = useState<string[]>([]);
-
-  // Step 4: Product / Feedback
-  const [impactImportance, setImpactImportance] = useState("10"); // Scale 1-10
-  const [foundingPreference, setFoundingPreference] = useState("Yes, I'd love early access");
-  const [featureGPS, setFeatureGPS] = useState("Very Valuable");
-  const [featureProfiles, setFeatureProfiles] = useState("Very Valuable");
-  const [featureLedger, setFeatureLedger] = useState("Very Valuable");
-  const [featureP2P, setFeatureP2P] = useState("Very Valuable");
+  const [role, setRole] = useState("Individual");
 
   // Success Sharing
   const [copied, setCopied] = useState(false);
   const [refUrl, setRefUrl] = useState("");
 
   const roleOptions = [
-    "Contributor", "Volunteer", "NGO / Non-Profit", "School", "College",
-    "Corporate / CSR Team", "Community Group", "Shelter / Gaushala",
-    "Hospital / Medical Organization", "Other"
+    { id: "Individual", label: "I want to Contribute", desc: "Donate items, money, resources, or your time.", icon: "❤️" },
+    { id: "Community / Organisation", label: "I'm an NGO / Org", desc: "Register your group and connect with contributors.", icon: "🏢" },
+    { id: "Corporate / Institution", label: "I'm a Corporate", desc: "Turn your surplus into meaningful CSR impact.", icon: "🤝" }
   ];
-
-  const causesOptions = [
-    "Food & Hunger", "Animal Welfare", "Education", "Healthcare",
-    "Blood Donation", "Environmental Causes", "Women Empowerment",
-    "Skill Development", "Elderly Care", "Disaster Relief",
-    "Community Development", "Water Access", "Mental Health", "Child Welfare"
-  ];
-
-  const contributionTypeOptions = [
-    "Money", "Food", "Clothes", "Books", "Medicine", "Skills", "Time", "Resources", "Sponsorship"
-  ];
-
-  const volunteerInterestOptions = [
-    "Mission Execution", "Food Distribution", "Education", "Healthcare Support",
-    "Animal Welfare", "Community Events", "Disaster Relief", "Skill-Based Volunteering"
-  ];
-
-  const orgInterestOptions = [
-    "Creating Missions", "Receiving Support", "Volunteer Coordination",
-    "CSR Programs", "Campus Initiatives", "Community Campaigns"
-  ];
-
-  const isOrgRole = ["NGO / Non-Profit", "School", "College", "Corporate / CSR Team", "Shelter / Gaushala", "Hospital / Medical Organization"].includes(role);
-  const isVolunteerRole = role === "Volunteer";
 
   useEffect(() => {
     if (isSubmitted) {
@@ -89,34 +37,6 @@ function WaitlistFormContent() {
       setRefUrl(`${origin}/waitlist?ref=${code}`);
     }
   }, [isSubmitted, name]);
-
-  const toggleSelection = (list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, item: string) => {
-    if (list.includes(item)) {
-      setList(list.filter(i => i !== item));
-    } else {
-      setList([...list, item]);
-    }
-  };
-
-  const determineNextStep = () => {
-    if (step === 2) {
-      if (isVolunteerRole) return 21; // Step 2A (Volunteer options)
-      if (isOrgRole) return 22; // Step 2B (Org options)
-      return 3;
-    }
-    if (step === 21 || step === 22) return 3;
-    return step + 1;
-  };
-
-  const determinePrevStep = () => {
-    if (step === 3) {
-      if (isVolunteerRole) return 21;
-      if (isOrgRole) return 22;
-      return 2;
-    }
-    if (step === 21 || step === 22) return 2;
-    return step - 1;
-  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(refUrl);
@@ -133,25 +53,7 @@ function WaitlistFormContent() {
       "entry.1133362056": email,
       "entry.849609389": phone || "N/A",
       "entry.285819162": city,
-      "entry.222711120": role,
-      "entry.553781524": selectedCauses.length > 0 ? selectedCauses : ["Community Development"],
-      "entry.368946662": contributionPreferences.length > 0 ? contributionPreferences : ["Time"],
-      "entry.297171350": contributionFrequency,
-      // For single-page forms, send valid default options instead of "N/A" strings to satisfy field validations
-      "entry.1134721925": isVolunteerRole ? timeCommitment : "1–2 hrs/week",
-      "entry.1451990690": isVolunteerRole ? (volunteerInterests.length > 0 ? volunteerInterests : ["Mission Execution"]) : ["Mission Execution"],
-      "entry.1535691708": isOrgRole ? orgName : "N/A",
-      "entry.1799090949": isOrgRole ? orgWebsite : "https://neki.io",
-      "entry.308378145": isOrgRole ? orgType : "Other",
-      "entry.489114980": isOrgRole ? (orgInterests.length > 0 ? orgInterests : ["Creating Missions"]) : ["Creating Missions"],
-      "entry.227345805": impactImportance,
-      "entry.1667554094": foundingPreference,
-      "entry.324658014": featureGPS,
-      "entry.159809934": featureProfiles,
-      "entry.1634275683": featureLedger,
-      "entry.1412803646": featureP2P,
-      "entry.1197797153": "N/A",
-      "entry.1188271775": "N/A",
+      "entry.222711120": role
     };
 
     try {
@@ -191,7 +93,7 @@ function WaitlistFormContent() {
       <div className="max-w-xl w-full mx-auto md:mx-0">
         
         {/* Back button */}
-        <nav className="mb-12 flex items-center justify-between">
+        <nav className="mb-10 flex items-center justify-between">
           <Link 
             href="/" 
             className="inline-flex items-center text-xs font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors group"
@@ -209,433 +111,95 @@ function WaitlistFormContent() {
 
         {!isSubmitted ? (
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* STEP 1: GENERAL INFO */}
-            <div className={step === 1 ? "space-y-6" : "hidden"}>
-              <div>
-                <h1 className="text-4xl font-heading font-extrabold tracking-tight mb-3">
-                  Join the <span className="font-playfair italic text-neki-gold">Waitlist.</span>
-                </h1>
-                <p className="text-sm text-text-secondary">
-                  Apply for early access to the infrastructure for social impact.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Full Name *</label>
-                  <input
-                    type="text" value={name}
-                    onChange={(e) => setName(e.target.value)} placeholder="Rahul Sharma"
-                    className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
-                  />
-                </div>
-
-                <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Email Address *</label>
-                  <input
-                    type="email" value={email}
-                    onChange={(e) => setEmail(e.target.value)} placeholder="rahul@example.com"
-                    className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
-                  />
-                </div>
-
-                <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Phone Number</label>
-                  <input
-                    type="tel" value={phone}
-                    onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210"
-                    className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
-                  />
-                </div>
-
-                <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">City, State *</label>
-                  <input
-                    type="text" value={city}
-                    onChange={(e) => setCity(e.target.value)} placeholder="New Delhi, Delhi"
-                    className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="button" disabled={!name || !email || !city}
-                onClick={() => setStep(2)}
-                className="w-full bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
-              >
-                Continue <ChevronRight className="w-4 h-4" />
-              </button>
+            <div>
+              <h1 className="text-4xl font-heading font-extrabold tracking-tight mb-2">
+                Join the <span className="font-playfair italic text-neki-gold">Waitlist.</span>
+              </h1>
+              <p className="text-sm text-text-secondary">
+                Apply for early access to the infrastructure for social impact.
+              </p>
             </div>
 
-            {/* STEP 2: ROLE SELECT */}
-            <div className={step === 2 ? "space-y-6" : "hidden"}>
-              <div>
-                <h1 className="text-4xl font-heading font-extrabold tracking-tight mb-3">Your Role.</h1>
-                <p className="text-sm text-text-secondary">I would like to join NEKI as:</p>
+            {/* Segmented / Card-based Role Selection */}
+            <div className="space-y-3">
+              <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">
+                How would you like to be a part of Neki? *
+              </label>
+              
+              <div className="flex flex-col gap-3">
+                {roleOptions.map((opt) => {
+                  const isSelected = role === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => setRole(opt.id)}
+                      className={`w-full text-left p-4 rounded-2xl border transition-all flex items-start gap-4 ${
+                        isSelected 
+                          ? "bg-neki-gold/5 border-neki-gold/60 shadow-sm" 
+                          : "border-black/5 hover:border-black/15 bg-background"
+                      }`}
+                    >
+                      <span className="text-2xl mt-0.5 select-none">{opt.icon}</span>
+                      <div className="space-y-1">
+                        <p className={`text-sm font-bold ${isSelected ? "text-neki-gold" : "text-foreground"}`}>
+                          {opt.label}
+                        </p>
+                        <p className="text-xs text-text-secondary leading-normal">
+                          {opt.desc}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
+            </div>
 
-              <div className="relative border-b border-black/10 transition-colors py-2">
-                <CustomSelect
-                  name="role"
-                  value={role}
-                  onChange={(val) => setRole(val)}
-                  options={roleOptions}
+            {/* Input fields */}
+            <div className="space-y-4 pt-2">
+              <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
+                <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Full Name *</label>
+                <input
+                  type="text" required value={name}
+                  onChange={(e) => setName(e.target.value)} placeholder="Rahul Sharma"
+                  className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
                 />
               </div>
 
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button" onClick={() => setStep(determinePrevStep())}
-                  className="w-1/3 border border-black/10 text-foreground py-4 rounded-full font-medium text-sm hover:bg-black/5 transition-colors flex items-center justify-center gap-1"
-                >
-                  <ChevronLeft className="w-4 h-4" /> Back
-                </button>
-                <button
-                  type="button" onClick={() => setStep(determineNextStep())}
-                  className="w-2/3 bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5"
-                >
-                  Continue <ChevronRight className="w-4 h-4" />
-                </button>
+              <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
+                <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Email Address *</label>
+                <input
+                  type="email" required value={email}
+                  onChange={(e) => setEmail(e.target.value)} placeholder="rahul@example.com"
+                  className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
+                />
+              </div>
+
+              <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
+                <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Phone Number</label>
+                <input
+                  type="tel" value={phone}
+                  onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210"
+                  className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
+                />
+              </div>
+
+              <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
+                <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">City, State *</label>
+                <input
+                  type="text" required value={city}
+                  onChange={(e) => setCity(e.target.value)} placeholder="New Delhi, Delhi"
+                  className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
+                />
               </div>
             </div>
 
-            {/* STEP 2A: VOLUNTEER DETAILS (Conditional) */}
-            <div className={step === 21 ? "space-y-6" : "hidden"}>
-              <div>
-                <h1 className="text-4xl font-heading font-extrabold tracking-tight mb-3">Volunteer Profile.</h1>
-                <p className="text-sm text-text-secondary">Tell us about your volunteering interests.</p>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold mb-3">Volunteer Interests *</label>
-                  <div className="flex flex-wrap gap-2">
-                    {volunteerInterestOptions.map((opt) => {
-                      const isSel = volunteerInterests.includes(opt);
-                      return (
-                        <button
-                          type="button" key={opt} onClick={() => toggleSelection(volunteerInterests, setVolunteerInterests, opt)}
-                          className={`px-3 py-1.5 rounded-full text-xs border transition-all ${
-                            isSel ? "bg-neki-gold/15 border-neki-gold text-neki-gold" : "border-black/10 hover:border-black/25 text-foreground"
-                          }`}
-                        >
-                          {opt}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="relative border-b border-black/10 transition-colors py-2">
-                  <CustomSelect
-                    name="timeCommitment"
-                    value={timeCommitment}
-                    onChange={(val) => setTimeCommitment(val)}
-                    options={["1–2 hrs/week", "3–5 hrs/week", "5–10 hrs/week", "10+ hrs/week"]}
-                    label="How much time can you contribute? *"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button" onClick={() => setStep(2)}
-                  className="w-1/3 border border-black/10 text-foreground py-4 rounded-full font-medium text-sm hover:bg-black/5 transition-colors flex items-center justify-center gap-1"
-                >
-                  <ChevronLeft className="w-4 h-4" /> Back
-                </button>
-                <button
-                  type="button" disabled={isVolunteerRole && volunteerInterests.length === 0}
-                  onClick={() => setStep(3)}
-                  className="w-2/3 bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
-                >
-                  Continue <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* STEP 2B: ORG DETAILS (Conditional) */}
-            <div className={step === 22 ? "space-y-6" : "hidden"}>
-              <div>
-                <h1 className="text-4xl font-heading font-extrabold tracking-tight mb-3">Organization Profile.</h1>
-                <p className="text-sm text-text-secondary">Information for verified partners.</p>
-              </div>
-
-              <div className="space-y-4">
-                <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Organization Name *</label>
-                  <input
-                    type="text" value={orgName}
-                    onChange={(e) => setOrgName(e.target.value)} placeholder="ABC Foundation"
-                    className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
-                  />
-                </div>
-
-                <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Website / Social Link *</label>
-                  <input
-                    type="url" value={orgWebsite}
-                    onChange={(e) => setOrgWebsite(e.target.value)} placeholder="https://abc.org"
-                    className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
-                  />
-                </div>
-
-                <div className="relative border-b border-black/10 transition-colors py-2">
-                  <CustomSelect
-                    name="orgType"
-                    value={orgType}
-                    onChange={(val) => setOrgType(val)}
-                    options={["NGO", "School", "College", "Corporate", "Shelter", "Hospital", "Community Group", "Other"]}
-                    label="Organization Type *"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold mb-3">Interested In *</label>
-                  <div className="flex flex-wrap gap-2">
-                    {orgInterestOptions.map((opt) => {
-                      const isSel = orgInterests.includes(opt);
-                      return (
-                        <button
-                          type="button" key={opt} onClick={() => toggleSelection(orgInterests, setOrgInterests, opt)}
-                          className={`px-3 py-1.5 rounded-full text-xs border transition-all ${
-                            isSel ? "bg-neki-gold/15 border-neki-gold text-neki-gold" : "border-black/10 hover:border-black/25 text-foreground"
-                          }`}
-                        >
-                          {opt}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button" onClick={() => setStep(2)}
-                  className="w-1/3 border border-black/10 text-foreground py-4 rounded-full font-medium text-sm hover:bg-black/5 transition-colors flex items-center justify-center gap-1"
-                >
-                  <ChevronLeft className="w-4 h-4" /> Back
-                </button>
-                <button
-                  type="button" disabled={isOrgRole && (!orgName || !orgWebsite || orgInterests.length === 0)}
-                  onClick={() => setStep(3)}
-                  className="w-2/3 bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
-                >
-                  Continue <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* STEP 3: CONTRIBUTION PREFERENCES */}
-            <div className={step === 3 ? "space-y-6" : "hidden"}>
-              <div>
-                <h1 className="text-4xl font-heading font-extrabold tracking-tight mb-3">Contributions.</h1>
-                <p className="text-sm text-text-secondary">How you prefer to interact and help.</p>
-              </div>
-
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold mb-3">How would you prefer to contribute? *</label>
-                  <div className="flex flex-wrap gap-2">
-                    {contributionTypeOptions.map((opt) => {
-                      const isSel = contributionPreferences.includes(opt);
-                      return (
-                        <button
-                          type="button" key={opt} onClick={() => toggleSelection(contributionPreferences, setContributionPreferences, opt)}
-                          className={`px-3 py-1.5 rounded-full text-xs border transition-all ${
-                            isSel ? "bg-neki-gold/15 border-neki-gold text-neki-gold" : "border-black/10 hover:border-black/25 text-foreground"
-                          }`}
-                        >
-                          {opt}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="relative border-b border-black/10 transition-colors py-2">
-                  <CustomSelect
-                    name="contributionFrequency"
-                    value={contributionFrequency}
-                    onChange={(val) => setContributionFrequency(val)}
-                    options={["Weekly", "Monthly", "Occasionally", "Only for urgent missions"]}
-                    label="How often would you like to contribute? *"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold mb-3">Causes that matter most to you? *</label>
-                  <div className="flex flex-wrap gap-2">
-                    {causesOptions.map((opt) => {
-                      const isSel = selectedCauses.includes(opt);
-                      return (
-                        <button
-                          type="button" key={opt} onClick={() => toggleSelection(selectedCauses, setSelectedCauses, opt)}
-                          className={`px-3 py-1.5 rounded-full text-xs border transition-all ${
-                            isSel ? "bg-neki-gold/15 border-neki-gold text-neki-gold" : "border-black/10 hover:border-black/25 text-foreground"
-                          }`}
-                        >
-                          {opt}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button" onClick={() => setStep(determinePrevStep())}
-                  className="w-1/3 border border-black/10 text-foreground py-4 rounded-full font-medium text-sm hover:bg-black/5 transition-colors flex items-center justify-center gap-1"
-                >
-                  <ChevronLeft className="w-4 h-4" /> Back
-                </button>
-                <button
-                  type="button" disabled={contributionPreferences.length === 0 || selectedCauses.length === 0}
-                  onClick={() => setStep(4)}
-                  className="w-2/3 bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
-                >
-                  Continue <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-
-            {/* STEP 4: PRODUCT PREFERENCES (Grid rows) */}
-            <div className={step === 4 ? "space-y-6" : "hidden"}>
-              <div>
-                <h1 className="text-4xl font-heading font-extrabold tracking-tight mb-3">Impact & Product.</h1>
-                <p className="text-sm text-text-secondary">Evaluating features and trackability weight.</p>
-              </div>
-
-              <div className="space-y-6">
-                {/* Importance Scale */}
-                <div>
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold mb-2">
-                    Importance of tracking impact (1-10) *
-                  </label>
-                  <div className="flex justify-between items-center gap-1">
-                    {["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"].map((num) => (
-                      <button
-                        type="button" key={num} onClick={() => setImpactImportance(num)}
-                        className={`w-8 h-8 rounded-full border text-xs font-semibold flex items-center justify-center transition-all ${
-                          impactImportance === num ? "bg-neki-gold border-neki-gold text-background shadow-md" : "border-black/5 hover:border-black/25 text-foreground"
-                        }`}
-                      >
-                        {num}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Founding Community Preference */}
-                <div className="relative border-b border-black/10 transition-colors py-2">
-                  <CustomSelect
-                    name="foundingPreference"
-                    value={foundingPreference}
-                    onChange={(val) => setFoundingPreference(val)}
-                    options={[
-                      "Yes, I'd love early access",
-                      "Yes, I'd like to test the platform",
-                      "Yes, I'd like to volunteer early",
-                      "Just keep me updated"
-                    ]}
-                    label="Would you like to be part of the NEKI founding community? *"
-                  />
-                </div>
-
-                {/* Feature Value Grid */}
-                <div className="space-y-4 pt-2">
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">
-                    Valuable Platform Features
-                  </label>
-                  
-                  {/* Row 1: GPS tracking */}
-                  <div className="border border-black/5 rounded-xl p-3.5 space-y-2.5 bg-background">
-                    <p className="text-xs font-bold">Real-time mission tracking (GPS/photos)</p>
-                    <div className="flex gap-2">
-                      {["Very Valuable", "Neutral", "Less Valuable"].map((v) => (
-                        <button
-                          type="button" key={v} onClick={() => setFeatureGPS(v)}
-                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${
-                            featureGPS === v ? "bg-foreground text-background" : "bg-surface border border-black/5 text-text-secondary hover:text-foreground"
-                          }`}
-                        >
-                          {v}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Row 2: Verified profiles */}
-                  <div className="border border-black/5 rounded-xl p-3.5 space-y-2.5 bg-background">
-                    <p className="text-xs font-bold">Verified contributor & recipient profiles</p>
-                    <div className="flex gap-2">
-                      {["Very Valuable", "Neutral", "Less Valuable"].map((v) => (
-                        <button
-                          type="button" key={v} onClick={() => setFeatureProfiles(v)}
-                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${
-                            featureProfiles === v ? "bg-foreground text-background" : "bg-surface border border-black/5 text-text-secondary hover:text-foreground"
-                          }`}
-                        >
-                          {v}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Row 3: Digital ledger */}
-                  <div className="border border-black/5 rounded-xl p-3.5 space-y-2.5 bg-background">
-                    <p className="text-xs font-bold">Digital ledger of all contributions</p>
-                    <div className="flex gap-2">
-                      {["Very Valuable", "Neutral", "Less Valuable"].map((v) => (
-                        <button
-                          type="button" key={v} onClick={() => setFeatureLedger(v)}
-                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${
-                            featureLedger === v ? "bg-foreground text-background" : "bg-surface border border-black/5 text-text-secondary hover:text-foreground"
-                          }`}
-                        >
-                          {v}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Row 4: P2P Volunteer tools */}
-                  <div className="border border-black/5 rounded-xl p-3.5 space-y-2.5 bg-background">
-                    <p className="text-xs font-bold">Peer-to-peer volunteer coordination</p>
-                    <div className="flex gap-2">
-                      {["Very Valuable", "Neutral", "Less Valuable"].map((v) => (
-                        <button
-                          type="button" key={v} onClick={() => setFeatureP2P(v)}
-                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition-all ${
-                            featureP2P === v ? "bg-foreground text-background" : "bg-surface border border-black/5 text-text-secondary hover:text-foreground"
-                          }`}
-                        >
-                          {v}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button" onClick={() => setStep(3)}
-                  className="w-1/3 border border-black/10 text-foreground py-4 rounded-full font-medium text-sm hover:bg-black/5 transition-colors flex items-center justify-center gap-1"
-                >
-                  <ChevronLeft className="w-4 h-4" /> Back
-                </button>
-                <button
-                  type="submit" disabled={submitting}
-                  className="w-2/3 bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
-                >
-                  {submitting ? "Submitting..." : "Submit Application"}
-                </button>
-              </div>
-            </div>
+            <button
+              type="submit" disabled={submitting || !name || !email || !city}
+              className="w-full bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
+            >
+              {submitting ? "Joining..." : "Join Waitlist"}
+            </button>
           </form>
         ) : (
           // Success screen with referral sharing

@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import anime from "animejs";
 import { X, Check } from "lucide-react";
+import Link from "next/link";
 
 export function WaitlistButton() {
   const [isOpen, setIsOpen] = useState(false);
@@ -158,13 +159,13 @@ export function WaitlistButton() {
             </svg>
           </a>
 
-          {/* Trigger Button */}
-          <button
-            onClick={() => setIsOpen(true)}
+          {/* Trigger Link */}
+          <Link
+            href="/waitlist"
             className="bg-foreground text-background px-4 py-2.5 md:px-6 md:py-3 rounded-full font-medium text-xs md:text-sm shadow-xl hover:bg-gray-800 transition-all hover:scale-105"
           >
             Join <span className="text-neki-gold font-playfair italic font-bold">Neki</span> Waitlist
-          </button>
+          </Link>
         </div>
       </div>
 

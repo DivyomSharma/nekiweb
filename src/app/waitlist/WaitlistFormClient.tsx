@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import anime from "animejs";
-import { ArrowLeft, Check, Copy, Link as LinkIcon } from "lucide-react";
+import { ArrowLeft, Check, Copy, Link as LinkIcon, Download } from "lucide-react";
 
 function WaitlistFormContent() {
   const searchParams = useSearchParams();
@@ -51,18 +51,15 @@ function WaitlistFormContent() {
     container.innerHTML = "";
     const colors = ["#C5A880", "#1A1A1A", "#8FA996", "#E8D8C8"];
 
-    // Spawn 80 confetti particles
     for (let i = 0; i < 80; i++) {
       const p = document.createElement("div");
       p.className = "absolute w-2 h-2 rounded-sm opacity-0 pointer-events-none";
       p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-      
-      // Position at bottom of the card on mobile, or center of the window
       p.style.left = `${10 + Math.random() * 80}%`;
       p.style.top = "40%";
       container.appendChild(p);
 
-      const angle = -Math.PI / 2 + (Math.random() - 0.5) * (Math.PI / 2); // Shoot upwards
+      const angle = -Math.PI / 2 + (Math.random() - 0.5) * (Math.PI / 2);
       const velocity = 100 + Math.random() * 200;
       const x = Math.cos(angle) * velocity;
       const y = Math.sin(angle) * velocity;
@@ -79,6 +76,106 @@ function WaitlistFormContent() {
         complete: () => p.remove()
       });
     }
+  };
+
+  const downloadPassImage = () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 800;
+    canvas.height = 500;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // 1. Background Fill
+    ctx.fillStyle = "#FAF9F7";
+    ctx.fillRect(0, 0, 800, 500);
+
+    // 2. Gold Border
+    ctx.strokeStyle = "#C5A880";
+    ctx.lineWidth = 6;
+    ctx.strokeRect(20, 20, 760, 460);
+
+    // Watermark circle
+    ctx.strokeStyle = "rgba(197, 168, 128, 0.07)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(700, 420, 160, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // 3. Neki Branding Logo
+    ctx.fillStyle = "#C5A880";
+    ctx.font = "italic bold 42px Georgia, serif";
+    ctx.fillText("Neki", 60, 95);
+
+    // 4. Pass Badge (Top Right)
+    ctx.fillStyle = "rgba(197, 168, 128, 0.12)";
+    const badgeX = 540;
+    const badgeY = 60;
+    const badgeW = 200;
+    const badgeH = 44;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(badgeX, badgeY, badgeW, badgeH, 22) : ctx.rect(badgeX, badgeY, badgeW, badgeH);
+    ctx.fill();
+
+    ctx.fillStyle = "#C5A880";
+    ctx.font = "bold 13px system-ui, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("WAITLIST PASS", badgeX + badgeW / 2, badgeY + 27);
+
+    // Reset align
+    ctx.textAlign = "left";
+
+    // 5. Member Name Section
+    ctx.fillStyle = "#888888";
+    ctx.font = "bold 12px system-ui, sans-serif";
+    ctx.fillText("MEMBER NAME", 60, 195);
+
+    ctx.fillStyle = "#1A1A1A";
+    ctx.font = "extrabold 36px system-ui, sans-serif";
+    ctx.fillText(name, 60, 245);
+
+    // 6. Designation Section
+    ctx.fillStyle = "#888888";
+    ctx.font = "bold 12px system-ui, sans-serif";
+    ctx.fillText("DESIGNATION / ROLE", 60, 315);
+
+    ctx.fillStyle = "#1A1A1A";
+    ctx.font = "bold 18px system-ui, sans-serif";
+    ctx.fillText(role.toUpperCase(), 60, 350);
+
+    // 7. Divider Line
+    ctx.strokeStyle = "rgba(0,0,0,0.06)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(60, 395);
+    ctx.lineTo(740, 395);
+    ctx.stroke();
+
+    // 8. Entry Status (Bottom Left)
+    ctx.fillStyle = "#888888";
+    ctx.font = "bold 11px system-ui, sans-serif";
+    ctx.fillText("ENTRY STATUS", 60, 430);
+
+    ctx.fillStyle = "#10B981";
+    ctx.font = "bold 14px system-ui, sans-serif";
+    ctx.fillText("✓ VERIFIED ENTRY", 60, 455);
+
+    // 9. Date Joined (Bottom Right)
+    ctx.fillStyle = "#888888";
+    ctx.font = "bold 11px system-ui, sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText("DATE JOINED", 740, 430);
+
+    ctx.fillStyle = "#555555";
+    ctx.font = "14px monospace";
+    const dateStr = new Date().toLocaleDateString("en-US", { month: "short", year: "numeric", day: "2-digit" });
+    ctx.fillText(dateStr, 740, 455);
+
+    // Trigger local download
+    const dataUrl = canvas.toDataURL("image/png");
+    const downloadLink = document.createElement("a");
+    downloadLink.download = `neki_pass_${name.toLowerCase().replace(/\s+/g, "_")}.png`;
+    downloadLink.href = dataUrl;
+    downloadLink.click();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -240,8 +337,8 @@ function WaitlistFormContent() {
             </button>
           </form>
         ) : (
-          // Success screen with referral sharing (Visual Joyfulness Layout)
-          <div className="flex flex-col items-center justify-center text-center py-6 space-y-6 md:items-start md:text-left">
+          // Success screen (Visual Shareable Greeting Pass Card)
+          <div className="flex flex-col items-center justify-center text-center py-4 space-y-6 md:items-start md:text-left">
             <div className="success-icon w-12 h-12 bg-neki-green/10 text-neki-green rounded-full flex items-center justify-center scale-50 opacity-0 relative mb-2">
               <Check className="w-5 h-5" />
             </div>
@@ -257,6 +354,54 @@ function WaitlistFormContent() {
                 Thank you for stepping forward. You've just joined the network shaping the coordinate layer for social impact.
               </p>
             </div>
+
+            {/* Shareable Neki Pass Greeting Card Component */}
+            <div className="w-full max-w-sm bg-gradient-to-br from-[#FAF9F7] to-[#FAF9F7]/95 border-2 border-neki-gold/30 rounded-3xl p-6 shadow-xl relative overflow-hidden text-left border-double">
+              <div className="absolute -right-10 -bottom-10 w-32 h-32 rounded-full border border-neki-gold/10 pointer-events-none" />
+              
+              <div className="flex justify-between items-center mb-6">
+                <span className="text-neki-gold font-playfair italic font-bold text-xl">Neki</span>
+                <span className="bg-neki-gold/10 border border-neki-gold/20 text-neki-gold text-[9px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full">
+                  Waitlist Pass
+                </span>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <span className="text-[9px] uppercase tracking-widest text-text-muted font-bold block mb-1">MEMBER NAME</span>
+                  <h4 className="text-xl font-heading font-extrabold text-foreground tracking-tight">{name}</h4>
+                </div>
+
+                <div>
+                  <span className="text-[9px] uppercase tracking-widest text-text-muted font-bold block mb-1">DESIGNATION / ROLE</span>
+                  <p className="text-xs text-text-secondary font-semibold uppercase tracking-wider">{role}</p>
+                </div>
+
+                <div className="border-t border-black/5 pt-4 flex justify-between items-center">
+                  <div>
+                    <span className="text-[9px] uppercase tracking-widest text-text-muted font-bold block mb-0.5">STATUS</span>
+                    <span className="text-neki-green text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-neki-green animate-pulse" /> Verified Entry
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[9px] uppercase tracking-widest text-text-muted font-bold block mb-0.5">DATE JOINED</span>
+                    <span className="text-text-secondary text-[10px] font-mono">
+                      {new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric', day: '2-digit' })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons: Download Pass Card */}
+            <button
+              onClick={downloadPassImage}
+              className="w-full max-w-sm border border-neki-gold/30 hover:bg-neki-gold/5 text-foreground py-3 rounded-full font-semibold text-xs tracking-wider uppercase transition-colors flex items-center justify-center gap-2 shadow-sm"
+            >
+              <Download className="w-4 h-4 text-neki-gold" />
+              Download Waitlist Pass Image
+            </button>
 
             {/* Referral Link Copy Box */}
             <div className="w-full bg-[#FAF9F7]/60 border border-black/5 p-4 rounded-2xl flex items-center justify-between gap-3 shadow-sm">

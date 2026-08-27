@@ -182,14 +182,14 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
 
     // --- POSITION ---
     // On mobile and tablet, center the shapes horizontally to prevent side overlaps
-    const targetX = (isMobile || isTablet) ? 0 : SECTION_X_OFFSET[sectionIndex];
+    const mobileOffsetScale = (isMobile || isTablet) ? 0.3 : 1.0;
+    const targetX = SECTION_X_OFFSET[sectionIndex] * mobileOffsetScale;
     meshRef.current.position.x = THREE.MathUtils.lerp(
       meshRef.current.position.x, targetX, lerpFactor
     );
 
     // --- GENTLE FLOATING & OFFSET ---
-    // Push the shapes downwards significantly on smaller viewports so they stay below text
-    const baseOffsetY = (isMobile || isTablet) ? -2.2 : 0;
+    const baseOffsetY = 0;
     meshRef.current.position.y = THREE.MathUtils.lerp(
       meshRef.current.position.y,
       baseOffsetY + Math.sin(state.clock.elapsedTime * 0.8) * 0.12,
@@ -197,8 +197,6 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     );
 
     // --- MOUSE TRACKING & SLOW DRIFT ---
-    // state.pointer gives normalized mouse coordinates (-1 to 1)
-    // 5 degrees is ~0.087 radians
     const targetRotX = (state.pointer.y * 0.087);
     const targetRotY = (state.pointer.x * 0.087); // only mouse tracking, no continuous spin
     

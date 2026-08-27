@@ -80,39 +80,39 @@ export function HeroSection() {
   }, []);
 
   return (
-    <div ref={containerRef} className="h-screen w-full flex flex-col justify-center p-6 md:pl-[10%] text-left relative">
+    <div ref={containerRef} className="h-screen w-full flex flex-col justify-center p-6 md:pl-[10%] text-left relative max-w-[65%] md:max-w-none">
       <div className="max-w-xl z-10 pointer-events-none">
         <h1 
           ref={headlineRef} 
-          className="text-6xl md:text-8xl font-heading font-extrabold text-foreground tracking-tight mb-4 opacity-0"
+          className="text-4xl xs:text-5xl md:text-8xl font-heading font-extrabold text-foreground tracking-tight mb-4 opacity-0"
         >
           Humanity, <br/><span className="text-neki-gold font-playfair italic">Delivered.</span>
         </h1>
         
         <p 
           ref={subheadRef}
-          className="text-xl md:text-2xl text-text-secondary font-medium mb-6 opacity-0"
+          className="text-base xs:text-lg md:text-2xl text-text-secondary font-medium mb-4 md:mb-6 opacity-0"
         >
           The future of helping is visible.
         </p>
         
         <p 
           ref={descRef}
-          className="text-lg text-text-muted mb-12 font-light opacity-0"
+          className="text-sm xs:text-base md:text-lg text-text-muted mb-8 md:mb-12 font-light opacity-0"
         >
           Track every contribution.<br/>
           Verify every mission.<br/>
           See every impact.
         </p>
         
-        <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-4 pointer-events-auto items-center opacity-0">
+        <div ref={buttonsRef} className="flex flex-col sm:flex-row gap-3 pointer-events-auto items-start opacity-0">
           <PremiumButton variant="primary">Start a Mission</PremiumButton>
           <PremiumButton variant="secondary">Explore Missions</PremiumButton>
         </div>
         
         <div 
           ref={footerRef as any}
-          className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold uppercase tracking-wider text-text-muted opacity-0 pointer-events-auto"
+          className="mt-6 flex flex-wrap gap-x-4 gap-y-2 text-[10px] md:text-xs font-semibold uppercase tracking-wider text-text-muted opacity-0 pointer-events-auto"
         >
           <Link href="/organizations" className="hover:text-foreground transition-colors underline underline-offset-4">
             For NGOs & Colleges →
@@ -123,7 +123,7 @@ export function HeroSection() {
         </div>
       </div>
       
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-xs font-bold tracking-widest text-text-muted uppercase">
+      <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 text-[9px] md:text-xs font-bold tracking-widest text-text-muted uppercase pointer-events-none whitespace-nowrap">
         Scroll to follow the journey
       </div>
     </div>

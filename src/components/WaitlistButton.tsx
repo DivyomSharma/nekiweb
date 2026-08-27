@@ -126,7 +126,7 @@ export function WaitlistButton() {
         
         {/* Logo (Only visible on mobile/tablet header) */}
         <div className="lg:hidden flex items-center gap-2">
-          <span className="font-heading font-extrabold text-foreground tracking-tight text-lg">NEKI</span>
+          <span className="text-neki-gold font-playfair italic font-bold text-lg tracking-tight">Neki</span>
         </div>
 
         {/* Buttons Group (Float on desktop, align right on mobile) */}

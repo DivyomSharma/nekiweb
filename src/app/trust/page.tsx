@@ -1,43 +1,55 @@
-import Link from "next/link";
-import { ArrowLeft, ShieldCheck } from "lucide-react";
+import { DetailLayout } from "@/components/ui/DetailLayout";
 
 export default function TrustPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground p-6 md:p-12 lg:p-24 selection:bg-neki-gold/30 selection:text-foreground">
-      <nav className="mb-20">
-        <Link href="/" className="inline-flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors group">
-          <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-          Back to Journey
-        </Link>
-      </nav>
-
-      <article className="max-w-3xl">
-        <h1 className="text-5xl md:text-7xl font-heading font-extrabold tracking-tight mb-8">
-          How Trust <span className="font-playfair italic text-neki-green">Works.</span>
-        </h1>
-        <p className="text-xl md:text-2xl font-light text-text-secondary leading-relaxed mb-12">
-          Trust begins where uncertainty ends. Explore our verification and proof systems.
+    <DetailLayout
+      title="How Trust Works"
+      subtitle="Trust is built where uncertainty ends. Explore the layered verification infrastructure of the NEKI Trust Layer."
+      shapeName="shield"
+    >
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">The NEKI Trust Layer</h2>
+        <p>
+          Traditional philanthropy asks you to write a check and trust blindly. We believe trust shouldn't be assumed—it should be designed into the infrastructure.
         </p>
+        <p>
+          NEKI operates a three-part coordination protocol that ensures complete accountability from the moment you make a choice to the final delivery of impact.
+        </p>
+      </section>
 
-        <div className="prose prose-lg prose-neutral prose-headings:font-heading prose-headings:font-bold max-w-none space-y-8">
-          <ShieldCheck className="w-16 h-16 text-neki-green mb-8" strokeWidth={1.5} />
-          
-          <section>
-            <h2 className="text-3xl">Verification & Accountability</h2>
-            <p>Every participant in the NEKI network goes through rigorous verification. We don't just rely on goodwill; we build systems that enforce accountability at every step.</p>
-          </section>
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">1. Organization Verification</h2>
+        <p>
+          Not just anyone can publish a mission. Every NGO, school, shelter, and community partner goes through a rigorous onboarding process:
+        </p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li><strong>Entity Verification:</strong> Verification of registrations, trust deeds, and statutory IDs.</li>
+          <li><strong>Tax Eligibility checks:</strong> Status checks on active 12A / 80G tax exemptions where applicable.</li>
+          <li><strong>Fulfillment Vetting:</strong> Background audits on past projects, ground operations, and local credibility.</li>
+        </ul>
+      </section>
 
-          <section>
-            <h2 className="text-3xl">Proof Systems & Audit Trails</h2>
-            <p>Cryptographic audit trails and immutable records ensure that when we say something is delivered, it is mathematically proven to be delivered.</p>
-          </section>
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">2. Contribution Recording</h2>
+        <p>
+          Every contribution—whether money, time, skills, or physical goods—is cataloged under a unique NEKI ID.
+        </p>
+        <p>
+          This record creates an unalterable trail. We document who contributed, which volunteer picked it up, who coordinated the transport, and which verified organization accepted the final delivery.
+        </p>
+      </section>
 
-          <section>
-            <h2 className="text-3xl">NGO Trust</h2>
-            <p>We work with vetted NGOs to ensure that the final mile delivery is handled by professionals who understand the ground realities.</p>
-          </section>
-        </div>
-      </article>
-    </main>
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">3. Verified Impact Records</h2>
+        <p>
+          The final mile is never left to assumption. Every completed mission is locked with:
+        </p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li><strong>Geotagged & Timestamped Photo Proof:</strong> Photos taken directly at execution.</li>
+          <li><strong>Digital Receipt Acknowledgement:</strong> Standard signed slips from local beneficiaries or local community representatives.</li>
+          <li><strong>Outcome Audits:</strong> Independent post-mission verification to evaluate long-term success.</li>
+        </ul>
+      </section>
+    </DetailLayout>
   );
 }

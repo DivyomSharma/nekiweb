@@ -1,41 +1,44 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { DetailLayout } from "@/components/ui/DetailLayout";
 
 export default function WhyNekiPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground p-6 md:p-12 lg:p-24 selection:bg-neki-gold/30 selection:text-foreground">
-      <nav className="mb-20">
-        <Link href="/" className="inline-flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors group">
-          <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-          Back to Journey
-        </Link>
-      </nav>
-
-      <article className="max-w-3xl">
-        <h1 className="text-5xl md:text-7xl font-heading font-extrabold tracking-tight mb-8">
-          Why NEKI <span className="font-playfair italic text-text-muted">Exists.</span>
-        </h1>
-        <p className="text-xl md:text-2xl font-light text-text-secondary leading-relaxed mb-12">
-          Good intentions deserve better infrastructure. This is the origin story of why we had to build something new.
+    <DetailLayout
+      title="Why NEKI Exists"
+      subtitle="Good intentions deserve better infrastructure. Rebuilding the invisible chain between intention and outcome."
+      shapeName="phone"
+    >
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">The Invisible Chain of Giving</h2>
+        <p>
+          People still want to help. In fact, human empathy is at an all-time high. But many of us have developed a psychological stopping point: <i>"I've made my donation. I've done my part."</i>
         </p>
+        <p>
+          We do this because what happens after payment is completely invisible. We don't know where the contribution went, who handled it, whether it reached the intended destination, or if the mission was actually completed.
+        </p>
+      </section>
 
-        <div className="prose prose-lg prose-neutral prose-headings:font-heading prose-headings:font-bold max-w-none space-y-8">
-          <section>
-            <h2 className="text-3xl">The Trust Problem</h2>
-            <p>For decades, people have donated with hope, but without sight. The chain of giving has been broken by intermediaries, lack of visibility, and an unfortunate history of misuse.</p>
-          </section>
-          
-          <section>
-            <h2 className="text-3xl">Why People Stopped Trusting</h2>
-            <p>People do not stop helping because they stop caring. They stop helping because they stop seeing where their help goes. When the impact is invisible, the intention fades.</p>
-          </section>
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">The Trust Deficit</h2>
+        <p>
+          People don't stop helping because they stop caring. They stop helping because they stop seeing where help goes.
+        </p>
+        <p>
+          Traditional platforms treat donations as a simple transactional checkout. They solve payment but fail at visibility. NEKI treats helping as a live, trackable loop—bringing clarity where uncertainty used to reside.
+        </p>
+      </section>
 
-          <section>
-            <h2 className="text-3xl">Why Infrastructure Matters</h2>
-            <p>We realized that to restore trust, we didn't need better marketing—we needed better infrastructure. A transparent, undeniable ledger of goodwill where every contribution is tracked, verified, and proven.</p>
-          </section>
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">Our Core Philosophy</h2>
+        <p>
+          We are not building another place to pitch charities. We are building the coordination and trust infrastructure that connects human goodness with verified, real-world impact.
+        </p>
+        <div className="bg-surface border border-black/5 p-6 rounded-2xl space-y-2 mt-4">
+          <h4 className="font-semibold text-neki-gold">The Flywheel Loop:</h4>
+          <p className="text-sm">
+            Intention ➔ Contribution ➔ Mission ➔ Coordination ➔ Execution ➔ Live Tracking ➔ Verified Proof ➔ Visible Impact ➔ Inspiration.
+          </p>
         </div>
-      </article>
-    </main>
+      </section>
+    </DetailLayout>
   );
 }

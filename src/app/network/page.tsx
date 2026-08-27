@@ -1,41 +1,65 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { DetailLayout } from "@/components/ui/DetailLayout";
 
 export default function NetworkPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground p-6 md:p-12 lg:p-24 selection:bg-neki-gold/30 selection:text-foreground">
-      <nav className="mb-20">
-        <Link href="/" className="inline-flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors group">
-          <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-          Back to Journey
-        </Link>
-      </nav>
-
-      <article className="max-w-3xl">
-        <h1 className="text-5xl md:text-7xl font-heading font-extrabold tracking-tight mb-8">
-          How The <span className="font-playfair italic text-neki-gold">Network Works.</span>
-        </h1>
-        <p className="text-xl md:text-2xl font-light text-text-secondary leading-relaxed mb-12">
-          Humanity works better as a network. Discover how NEKI connects everyone to scale goodness.
+    <DetailLayout
+      title="How The Network Works"
+      subtitle="Humanity works better as a network. NEKI connects resources, execution, and tracking into a single, cohesive infrastructure."
+      shapeName="network"
+    >
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">The Interconnected Flywheel</h2>
+        <p>
+          NEKI does not act as a gatekeeper or a simple donation collector. Instead, it serves as a decentralized coordination network where each participant strengthens the system.
         </p>
+        <p>
+          As more volunteers, NGOs, and corporations join the network, the speed, transparency, and impact verification of every mission increases exponentially.
+        </p>
+      </section>
 
-        <div className="prose prose-lg prose-neutral prose-headings:font-heading prose-headings:font-bold max-w-none space-y-8">
-          <section>
-            <h2 className="text-3xl">The Ecosystem</h2>
-            <p>NEKI is not just an application; it is a living ecosystem connecting contributors, volunteers, NGOs, institutions, and local communities into a single cohesive network.</p>
-          </section>
-          
-          <section>
-            <h2 className="text-3xl">Contributors & Volunteers</h2>
-            <p>Anyone can start a mission. Anyone can volunteer. The network matches needs with resources instantly, bridging the gap between intention and action.</p>
-          </section>
+      <section className="space-y-6">
+        <h2 className="text-2xl font-bold font-heading">The Four Core Nodes</h2>
+        
+        <div className="space-y-4">
+          <div className="border-l-2 border-neki-gold pl-4 space-y-1">
+            <h4 className="font-bold text-foreground">1. Individuals (The Intention Node)</h4>
+            <p className="text-xs text-text-secondary">
+              Provide the raw fuel: money, physical goods, time, or professional skills. Anyone can launch or fund a mission.
+            </p>
+          </div>
 
-          <section>
-            <h2 className="text-3xl">Institutions & NGOs</h2>
-            <p>Verified organizations leverage the network to broadcast their missions, gather resources, and prove their impact on a global stage, backed by undeniable transparency.</p>
-          </section>
+          <div className="border-l-2 border-neki-gold pl-4 space-y-1">
+            <h4 className="font-bold text-foreground">2. Organizations (The Execution Node)</h4>
+            <p className="text-xs text-text-secondary">
+              Vetted NGOs, gaushalas, schools, and hospitals that create structured missions, request specific resources, and execute the final-mile work on the ground.
+            </p>
+          </div>
+
+          <div className="border-l-2 border-neki-gold pl-4 space-y-1">
+            <h4 className="font-bold text-foreground">3. Volunteers (The Logistics Node)</h4>
+            <p className="text-xs text-text-secondary">
+              The physical bridge. Volunteers pick up goods, coordinate transport, teach classes, set up medical camps, and verify deliveries.
+            </p>
+          </div>
+
+          <div className="border-l-2 border-neki-gold pl-4 space-y-1">
+            <h4 className="font-bold text-foreground">4. Enterprises & Institutions (The Resource Node)</h4>
+            <p className="text-xs text-text-secondary">
+              Colleges running service-learning campaigns, schools organizing local drives, and corporations sponsoring campaigns, deploying employees, or routing corporate surplus.
+            </p>
+          </div>
         </div>
-      </article>
-    </main>
+      </section>
+
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">Coordinated Impact Flow</h2>
+        <p>
+          When an institution donates surplus laptops, NEKI automatically matches it with schools in need, coordinates pickup with local logistics volunteers, tracks delivery en route, and logs verified photo proof. 
+        </p>
+        <p>
+          No item gets lost. No intention gets wasted. The network ensures that every resource flows precisely where it creates maximum impact.
+        </p>
+      </section>
+    </DetailLayout>
   );
 }

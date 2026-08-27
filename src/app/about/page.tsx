@@ -1,41 +1,41 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { DetailLayout } from "@/components/ui/DetailLayout";
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground p-6 md:p-12 lg:p-24 selection:bg-neki-gold/30 selection:text-foreground">
-      <nav className="mb-20">
-        <Link href="/" className="inline-flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors group">
-          <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-          Back to Journey
-        </Link>
-      </nav>
-
-      <article className="max-w-3xl">
-        <h1 className="text-5xl md:text-7xl font-heading font-extrabold tracking-tight mb-8">
-          About <span className="font-playfair italic text-neki-gold">NEKI.</span>
-        </h1>
-        <p className="text-xl md:text-2xl font-light text-text-secondary leading-relaxed mb-12">
-          Humanity, Delivered. Our manifesto, vision, and the long-term dream.
+    <DetailLayout
+      title="About NEKI"
+      subtitle="Neki = an act of goodness. We are building the coordinate rails and transparency layer for global kindness."
+      shapeName="logo"
+    >
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">Our Origin & Meaning</h2>
+        <p>
+          Derived from the word meaning <i>"an act of goodness or kindness,"</i> NEKI was born out of a simple observation: human goodness is abundant, but the infrastructure surrounding it is severely fragmented.
         </p>
+        <p>
+          We realized that while modern commerce has engineered seamless pipelines to deliver food, rides, and goods in minutes, social impact still relies on methods from the previous century. We set out to change that.
+        </p>
+      </section>
 
-        <div className="prose prose-lg prose-neutral prose-headings:font-heading prose-headings:font-bold max-w-none space-y-8">
-          <section>
-            <h2 className="text-3xl">Our Manifesto</h2>
-            <p>We believe that goodness is abundant, but the infrastructure to support it is broken. We are building the rails for global kindness.</p>
-          </section>
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">Our Mission</h2>
+        <p>
+          Our mission is to make helping people as fast, trusted, and repeatable as modern commerce. 
+        </p>
+        <p>
+          By creating the **coordination layer for social impact**, we bridge the gap between intent and outcome. We empower individuals, mobilize volunteers, enable verified NGOs, and connect corporate resources to solve real-world problems transparently.
+        </p>
+      </section>
 
-          <section>
-            <h2 className="text-3xl">The Vision</h2>
-            <p>A world where every act of goodwill is seamlessly executed, completely transparent, and compounding in its impact.</p>
-          </section>
-
-          <section>
-            <h2 className="text-3xl">The Long-term Dream</h2>
-            <p>To make the impossible routine. When millions move together with perfect coordination and trust, we can solve problems that currently seem insurmountable.</p>
-          </section>
-        </div>
-      </article>
-    </main>
+      <section className="space-y-4">
+        <h2 className="text-2xl font-bold font-heading">The Long-Term Vision</h2>
+        <p>
+          We envision a future where social good is not an occasional transaction, but a seamless, everyday economy of participation. 
+        </p>
+        <p>
+          Through our verified impact tracking, live ledgers, and coordination nodes, we turn vague intentions into undeniable outcomes. When millions can move together with perfect trust, what once seemed impossible becomes routine.
+        </p>
+      </section>
+    </DetailLayout>
   );
 }

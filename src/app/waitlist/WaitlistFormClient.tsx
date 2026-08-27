@@ -79,6 +79,9 @@ function WaitlistFormContent() {
     "CSR Programs", "Campus Initiatives", "Community Campaigns"
   ];
 
+  const isOrgRole = ["NGO / Non-Profit", "School", "College", "Corporate / CSR Team", "Shelter / Gaushala", "Hospital / Medical Organization"].includes(role);
+  const isVolunteerRole = role === "Volunteer";
+
   useEffect(() => {
     if (isSubmitted) {
       const origin = typeof window !== "undefined" ? window.location.origin : "https://neki.io";
@@ -113,11 +116,9 @@ function WaitlistFormContent() {
 
   const determineNextStep = () => {
     if (step === 2) {
-      if (role === "Volunteer") return 21; // Step 2A (Volunteer options)
-      if (["NGO / Non-Profit", "School", "College", "Corporate / CSR Team", "Shelter / Gaushala", "Hospital / Medical Organization"].includes(role)) {
-        return 22; // Step 2B (Org options)
-      }
-      return 3; // Contributor or Other skip directly to Step 3
+      if (isVolunteerRole) return 21; // Step 2A (Volunteer options)
+      if (isOrgRole) return 22; // Step 2B (Org options)
+      return 3;
     }
     if (step === 21 || step === 22) return 3;
     return step + 1;
@@ -125,10 +126,8 @@ function WaitlistFormContent() {
 
   const determinePrevStep = () => {
     if (step === 3) {
-      if (role === "Volunteer") return 21;
-      if (["NGO / Non-Profit", "School", "College", "Corporate / CSR Team", "Shelter / Gaushala", "Hospital / Medical Organization"].includes(role)) {
-        return 22;
-      }
+      if (isVolunteerRole) return 21;
+      if (isOrgRole) return 22;
       return 2;
     }
     if (step === 21 || step === 22) return 2;
@@ -178,6 +177,29 @@ function WaitlistFormContent() {
             onSubmit={() => setSubmitting(true)}
             className="space-y-8"
           >
+            {/* --- BACKEND FALLBACK HIDDEN FIELD INJECTIONS --- */}
+            {/* Step 5 questions removed from UI - Google Forms requires values */}
+            <input type="hidden" name="entry.1197797153" value="N/A" />
+            <input type="hidden" name="entry.1188271775" value="N/A" />
+            <input type="hidden" name="entry.1667554094" value="Yes, I'd love early access" />
+
+            {/* Conditional Role Fallbacks if role is not active */}
+            {!isVolunteerRole && (
+              <>
+                <input type="hidden" name="entry.1451990690" value="N/A" />
+                <input type="hidden" name="entry.1134721925" value="N/A" />
+              </>
+            )}
+
+            {!isOrgRole && (
+              <>
+                <input type="hidden" name="entry.1535691708" value="N/A" />
+                <input type="hidden" name="entry.1799090949" value="https://neki.io" />
+                <input type="hidden" name="entry.308378145" value="Other" />
+                <input type="hidden" name="entry.489114980" value="N/A" />
+              </>
+            )}
+
             {/* STEP 1: GENERAL INFO */}
             <div className={step === 1 ? "space-y-6" : "hidden"}>
               <div>
@@ -293,15 +315,15 @@ function WaitlistFormContent() {
                       );
                     })}
                   </div>
-                  {/* Keep inputs active in DOM even if step is hidden */}
-                  {volunteerInterests.map(opt => (
+                  {/* Render parameters conditionally by name only when role is active */}
+                  {isVolunteerRole && volunteerInterests.map(opt => (
                     <input key={opt} type="hidden" name="entry.1451990690" value={opt} />
                   ))}
                 </div>
 
                 <div className="relative border-b border-black/10 transition-colors py-2">
                   <CustomSelect
-                    name="entry.1134721925"
+                    name={isVolunteerRole ? "entry.1134721925" : "inactive_timeCommitment"}
                     value={timeCommitment}
                     onChange={(val) => setTimeCommitment(val)}
                     options={["1–2 hrs/week", "3–5 hrs/week", "5–10 hrs/week", "10+ hrs/week"]}
@@ -318,7 +340,7 @@ function WaitlistFormContent() {
                   <ChevronLeft className="w-4 h-4" /> Back
                 </button>
                 <button
-                  type="button" disabled={volunteerInterests.length === 0}
+                  type="button" disabled={isVolunteerRole && volunteerInterests.length === 0}
                   onClick={() => setStep(3)}
                   className="w-2/3 bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
                 >
@@ -338,7 +360,9 @@ function WaitlistFormContent() {
                 <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
                   <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Organization Name *</label>
                   <input
-                    type="text" name="entry.1535691708" value={orgName}
+                    type="text" 
+                    name={isOrgRole ? "entry.1535691708" : "inactive_orgName"} 
+                    value={orgName}
                     onChange={(e) => setOrgName(e.target.value)} placeholder="ABC Foundation"
                     className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
                   />
@@ -347,7 +371,9 @@ function WaitlistFormContent() {
                 <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
                   <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Website / Social Link *</label>
                   <input
-                    type="url" name="entry.1799090949" value={orgWebsite}
+                    type="url" 
+                    name={isOrgRole ? "entry.1799090949" : "inactive_orgWebsite"} 
+                    value={orgWebsite}
                     onChange={(e) => setOrgWebsite(e.target.value)} placeholder="https://abc.org"
                     className="w-full bg-transparent outline-none border-none text-foreground py-1 text-sm placeholder-black/20"
                   />
@@ -355,7 +381,7 @@ function WaitlistFormContent() {
 
                 <div className="relative border-b border-black/10 transition-colors py-2">
                   <CustomSelect
-                    name="entry.308378145"
+                    name={isOrgRole ? "entry.308378145" : "inactive_orgType"}
                     value={orgType}
                     onChange={(val) => setOrgType(val)}
                     options={["NGO", "School", "College", "Corporate", "Shelter", "Hospital", "Community Group", "Other"]}
@@ -380,7 +406,7 @@ function WaitlistFormContent() {
                       );
                     })}
                   </div>
-                  {orgInterests.map(opt => (
+                  {isOrgRole && orgInterests.map(opt => (
                     <input key={opt} type="hidden" name="entry.489114980" value={opt} />
                   ))}
                 </div>
@@ -394,7 +420,7 @@ function WaitlistFormContent() {
                   <ChevronLeft className="w-4 h-4" /> Back
                 </button>
                 <button
-                  type="button" disabled={!orgName || !orgWebsite || orgInterests.length === 0}
+                  type="button" disabled={isOrgRole && (!orgName || !orgWebsite || orgInterests.length === 0)}
                   onClick={() => setStep(3)}
                   className="w-2/3 bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
                 >
@@ -428,9 +454,14 @@ function WaitlistFormContent() {
                       );
                     })}
                   </div>
-                  {contributionPreferences.map(opt => (
-                    <input key={opt} type="hidden" name="entry.368946662" value={opt} />
-                  ))}
+                  {/* Contribution types serialization fallback */}
+                  {contributionPreferences.length > 0 ? (
+                    contributionPreferences.map(opt => (
+                      <input key={opt} type="hidden" name="entry.368946662" value={opt} />
+                    ))
+                  ) : (
+                    <input type="hidden" name="entry.368946662" value="Time" />
+                  )}
                 </div>
 
                 <div className="relative border-b border-black/10 transition-colors py-2">
@@ -460,9 +491,13 @@ function WaitlistFormContent() {
                       );
                     })}
                   </div>
-                  {selectedCauses.map(opt => (
-                    <input key={opt} type="hidden" name="entry.553781524" value={opt} />
-                  ))}
+                  {selectedCauses.length > 0 ? (
+                    selectedCauses.map(opt => (
+                      <input key={opt} type="hidden" name="entry.553781524" value={opt} />
+                    ))
+                  ) : (
+                    <input type="hidden" name="entry.553781524" value="Community Development" />
+                  )}
                 </div>
               </div>
 

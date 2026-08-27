@@ -47,6 +47,7 @@ function WaitlistFormContent() {
   const [featureProfiles, setFeatureProfiles] = useState("Very Valuable");
   const [featureLedger, setFeatureLedger] = useState("Very Valuable");
   const [featureP2P, setFeatureP2P] = useState("Very Valuable");
+  const [foundingPreference, setFoundingPreference] = useState("Yes, I'd love early access");
 
   // Success Sharing
   const [copied, setCopied] = useState(false);
@@ -181,7 +182,6 @@ function WaitlistFormContent() {
             {/* Step 5 questions removed from UI - Google Forms requires values */}
             <input type="hidden" name="entry.1197797153" value="N/A" />
             <input type="hidden" name="entry.1188271775" value="N/A" />
-            <input type="hidden" name="entry.1667554094" value="Yes, I'd love early access" />
 
             {/* Conditional Role Fallbacks if role is not active */}
             {!isVolunteerRole && (
@@ -231,7 +231,7 @@ function WaitlistFormContent() {
                 </div>
 
                 <div className="relative border-b border-black/10 focus-within:border-neki-gold transition-colors py-2">
-                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Phone Number *</label>
+                  <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">Phone Number</label>
                   <input
                     type="tel" name="entry.849609389" value={phone}
                     onChange={(e) => setPhone(e.target.value)} placeholder="+91 98765 43210"
@@ -250,7 +250,7 @@ function WaitlistFormContent() {
               </div>
 
               <button
-                type="button" disabled={!name || !email || !phone || !city}
+                type="button" disabled={!name || !email || !city}
                 onClick={() => setStep(2)}
                 className="w-full bg-foreground text-background py-4 rounded-full font-medium text-sm hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5"
               >
@@ -544,6 +544,22 @@ function WaitlistFormContent() {
                     ))}
                   </div>
                   <input type="hidden" name="entry.227345805" value={impactImportance} />
+                </div>
+
+                {/* Founding Community Preference */}
+                <div className="relative border-b border-black/10 transition-colors py-2">
+                  <CustomSelect
+                    name="entry.1667554094"
+                    value={foundingPreference}
+                    onChange={(val) => setFoundingPreference(val)}
+                    options={[
+                      "Yes, I'd love early access",
+                      "Yes, I'd like to test the platform",
+                      "Yes, I'd like to volunteer early",
+                      "Just keep me updated"
+                    ]}
+                    label="Would you like to be part of the NEKI founding community? *"
+                  />
                 </div>
 
                 {/* Feature Value Grid */}

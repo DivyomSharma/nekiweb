@@ -25,9 +25,9 @@ function WaitlistFormContent() {
   const [refUrl, setRefUrl] = useState("");
 
   const roleOptions = [
-    { id: "Individual", label: "I want to Contribute", desc: "Donate items, money, resources, or your time.", icon: "❤️" },
-    { id: "Community / Organisation", label: "I'm an NGO / Org", desc: "Register your group and connect with contributors.", icon: "🏢" },
-    { id: "Corporate / Institution", label: "I'm a Corporate", desc: "Turn your surplus into meaningful CSR impact.", icon: "🤝" }
+    { id: "Individual", label: "Individual", desc: "Donate items, money, resources, or your time." },
+    { id: "Community / Organisation", label: "Community / Organisation", desc: "Register your group and connect with contributors." },
+    { id: "Corporate / Institution", label: "Corporate / Institution", desc: "Turn your surplus into meaningful CSR impact." }
   ];
 
   useEffect(() => {
@@ -134,21 +134,18 @@ function WaitlistFormContent() {
                       key={opt.id}
                       type="button"
                       onClick={() => setRole(opt.id)}
-                      className={`w-full text-left p-4 rounded-2xl border transition-all flex items-start gap-4 ${
+                      className={`w-full text-left p-4 rounded-2xl border transition-all flex flex-col gap-1 ${
                         isSelected 
                           ? "bg-neki-gold/5 border-neki-gold/60 shadow-sm" 
                           : "border-black/5 hover:border-black/15 bg-background"
                       }`}
                     >
-                      <span className="text-2xl mt-0.5 select-none">{opt.icon}</span>
-                      <div className="space-y-1">
-                        <p className={`text-sm font-bold ${isSelected ? "text-neki-gold" : "text-foreground"}`}>
-                          {opt.label}
-                        </p>
-                        <p className="text-xs text-text-secondary leading-normal">
-                          {opt.desc}
-                        </p>
-                      </div>
+                      <p className={`text-sm font-bold ${isSelected ? "text-neki-gold" : "text-foreground"}`}>
+                        {opt.label}
+                      </p>
+                      <p className="text-xs text-text-secondary leading-normal">
+                        {opt.desc}
+                      </p>
                     </button>
                   );
                 })}

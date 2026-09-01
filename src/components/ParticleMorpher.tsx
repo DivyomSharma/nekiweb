@@ -140,7 +140,6 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
 
   const currentPositions = useMemo(() => new Float32Array(shapes[0]), [shapes]);
   const currentColors = useMemo(() => new Float32Array(PARTICLE_COUNT * 3), []);
-  const tempColor = useMemo(() => new THREE.Color(), []);
   const goldColor = useMemo(() => new THREE.Color("#D4AF6A"), []);
   const targetColor = useMemo(() => new THREE.Color(SECTION_COLORS[0]), []);
 
@@ -173,7 +172,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
     const targetShape = shapes[sectionIndex];
 
     // Hide particles completely in Section 9 for the clean DOM Mission Ecosystem
-    const baseScale = (isMobile || isTablet) ? 0.4 : 1;
+    const baseScale = (isMobile || isTablet) ? 0.75 : 1;
     const targetScale = sectionIndex === 9 ? 0.001 : baseScale;
     meshRef.current.scale.lerp(new THREE.Vector3(targetScale, targetScale, targetScale), lerpFactor * 2.0);
 
@@ -182,7 +181,7 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
 
     // --- POSITION ---
     // On mobile and tablet, center the shapes horizontally to prevent side overlaps
-    const mobileOffsetScale = (isMobile || isTablet) ? 0.3 : 1.0;
+    const mobileOffsetScale = (isMobile || isTablet) ? 0.5 : 1.0;
     const targetX = SECTION_X_OFFSET[sectionIndex] * mobileOffsetScale;
     meshRef.current.position.x = THREE.MathUtils.lerp(
       meshRef.current.position.x, targetX, lerpFactor
@@ -205,7 +204,8 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
 
     // --- MORPH POSITIONS & COLORS (InstancedMesh) ---
     const matrixArray = meshRef.current.instanceMatrix.array as Float32Array;
-    
+    const colorArray = meshRef.current.instanceColor?.array as Float32Array | undefined;
+
     for (let i = 0; i < PARTICLE_COUNT; i++) {
       // 1. Positions
       currentPositions[i * 3]     = THREE.MathUtils.lerp(currentPositions[i * 3],     targetShape[i * 3],     lerpFactor);
@@ -231,9 +231,12 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
       currentColors[i * 3]     = THREE.MathUtils.lerp(currentColors[i * 3],     tr, lerpFactor);
       currentColors[i * 3 + 1] = THREE.MathUtils.lerp(currentColors[i * 3 + 1], tg, lerpFactor);
       currentColors[i * 3 + 2] = THREE.MathUtils.lerp(currentColors[i * 3 + 2], tb, lerpFactor);
-      
-      tempColor.setRGB(currentColors[i * 3], currentColors[i * 3 + 1], currentColors[i * 3 + 2]);
-      meshRef.current.setColorAt(i, tempColor);
+
+      if (colorArray) {
+        colorArray[i * 3]     = currentColors[i * 3];
+        colorArray[i * 3 + 1] = currentColors[i * 3 + 1];
+        colorArray[i * 3 + 2] = currentColors[i * 3 + 2];
+      }
     }
     
     meshRef.current.instanceMatrix.needsUpdate = true;
@@ -263,12 +266,12 @@ export function ParticleMorpher({ progressRef }: { progressRef: React.MutableRef
       <instancedMesh ref={meshRef} args={[undefined, undefined, PARTICLE_COUNT]}>
         <sphereGeometry args={[0.015, 8, 8]} />
         {isMobile || isTablet ? (
-          <meshStandardMaterial 
-            color="#FFFFFF" 
-            metalness={0.2} 
-            roughness={0.3} 
+          <meshStandardMaterial
+            color="#FFFFFF"
+            metalness={0.2}
+            roughness={0.3}
             transparent={true}
-            opacity={0.15} // Watermark mode opacity
+            opacity={0.55}
           />
         ) : (
           <meshPhysicalMaterial 

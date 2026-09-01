@@ -35,12 +35,21 @@ export const metadata: Metadata = {
     siteName: "NEKI",
     locale: "en_IN",
     type: "website",
+    images: [
+      {
+        url: "/og-default.png",
+        width: 1200,
+        height: 1200,
+        alt: "NEKI – Humanity, Delivered.",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "NEKI | India's Live Network of Human Goodness",
     description: "Track every contribution, verify every mission, and see your impact live.",
     creator: "@nekiforindia",
+    images: ["/og-default.png"],
   },
   robots: {
     index: true,

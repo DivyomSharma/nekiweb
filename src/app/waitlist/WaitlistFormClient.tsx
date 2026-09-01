@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import anime from "animejs";
-import { ArrowLeft, Check, Copy, Link as LinkIcon, Download } from "lucide-react";
+import { ArrowLeft, Check, Copy, Link as LinkIcon, Download, Share2 } from "lucide-react";
 
 function WaitlistFormContent() {
   const searchParams = useSearchParams();
@@ -23,6 +23,7 @@ function WaitlistFormContent() {
   // Success Sharing
   const [copied, setCopied] = useState(false);
   const [refUrl, setRefUrl] = useState("");
+  const [sharingSupport, setSharingSupport] = useState(false);
 
   const roleOptions = [
     { id: "Individual", label: "Individual", desc: "Donate items, money, resources, or your time." },
@@ -35,6 +36,11 @@ function WaitlistFormContent() {
       const origin = typeof window !== "undefined" ? window.location.origin : "https://neki.io";
       const code = encodeURIComponent(name.trim() || "member");
       setRefUrl(`${origin}/waitlist?ref=${code}`);
+      
+      // Check if navigator supports file sharing
+      if (typeof navigator !== "undefined" && (navigator as any).share && (navigator as any).canShare) {
+        setSharingSupport(true);
+      }
     }
   }, [isSubmitted, name]);
 
@@ -78,12 +84,12 @@ function WaitlistFormContent() {
     }
   };
 
-  const downloadPassImage = () => {
+  const drawPassCanvas = (): HTMLCanvasElement => {
     const canvas = document.createElement("canvas");
     canvas.width = 800;
     canvas.height = 500;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) return canvas;
 
     // 1. Background Fill
     ctx.fillStyle = "#FAF9F7";
@@ -170,12 +176,42 @@ function WaitlistFormContent() {
     const dateStr = new Date().toLocaleDateString("en-US", { month: "short", year: "numeric", day: "2-digit" });
     ctx.fillText(dateStr, 740, 455);
 
-    // Trigger local download
+    return canvas;
+  };
+
+  const downloadPassImage = () => {
+    const canvas = drawPassCanvas();
     const dataUrl = canvas.toDataURL("image/png");
     const downloadLink = document.createElement("a");
     downloadLink.download = `neki_pass_${name.toLowerCase().replace(/\s+/g, "_")}.png`;
     downloadLink.href = dataUrl;
     downloadLink.click();
+  };
+
+  const handleSharePass = async () => {
+    const canvas = drawPassCanvas();
+    try {
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+      if (!blob) return;
+
+      const file = new File([blob], `neki_pass_${name.toLowerCase().replace(/\s+/g, "_")}.png`, { type: "image/png" });
+
+      if ((navigator as any).share && (navigator as any).canShare && (navigator as any).canShare({ files: [file] })) {
+        await (navigator as any).share({
+          files: [file],
+          title: "Neki Waitlist Pass",
+          text: `I just joined the waitlist for NEKI – building the coordination layer for social impact! Join me using my referral link:\n\n${refUrl}`
+        });
+      } else {
+        // Fallback for devices/browsers that don't support file sharing
+        downloadPassImage();
+        alert("Pass image downloaded! You can now upload it directly to your Story or status.");
+      }
+    } catch (err) {
+      console.error("Error sharing file pass:", err);
+      // Fallback
+      downloadPassImage();
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -394,14 +430,24 @@ function WaitlistFormContent() {
               </div>
             </div>
 
-            {/* Action Buttons: Download Pass Card */}
-            <button
-              onClick={downloadPassImage}
-              className="w-full max-w-sm border border-neki-gold/30 hover:bg-neki-gold/5 text-foreground py-3 rounded-full font-semibold text-xs tracking-wider uppercase transition-colors flex items-center justify-center gap-2 shadow-sm"
-            >
-              <Download className="w-4 h-4 text-neki-gold" />
-              Download Waitlist Pass Image
-            </button>
+            {/* Action Buttons: Native Share Card to Instagram Story / Apps */}
+            <div className="w-full max-w-sm flex flex-col gap-3">
+              <button
+                onClick={handleSharePass}
+                className="w-full bg-foreground text-background hover:bg-gray-800 py-3.5 rounded-full font-semibold text-xs tracking-wider uppercase transition-colors flex items-center justify-center gap-2 shadow-sm"
+              >
+                <Share2 className="w-4 h-4 text-neki-gold" />
+                Share Pass directly to Stories / Apps
+              </button>
+
+              <button
+                onClick={downloadPassImage}
+                className="w-full border border-neki-gold/30 hover:bg-neki-gold/5 text-foreground py-3 rounded-full font-semibold text-xs tracking-wider uppercase transition-colors flex items-center justify-center gap-2 shadow-sm"
+              >
+                <Download className="w-4 h-4 text-neki-gold" />
+                Download Pass Image
+              </button>
+            </div>
 
             {/* Referral Link Copy Box */}
             <div className="w-full bg-[#FAF9F7]/60 border border-black/5 p-4 rounded-2xl flex items-center justify-between gap-3 shadow-sm">
@@ -420,7 +466,7 @@ function WaitlistFormContent() {
 
             {/* Social Share Group */}
             <div className="w-full space-y-3">
-              <label className="block text-[9px] uppercase tracking-widest text-text-muted font-bold text-left w-full">Share to your network</label>
+              <label className="block text-[9px] uppercase tracking-widest text-text-muted font-bold text-left w-full">Share Link</label>
               
               <div className="grid grid-cols-2 gap-3 w-full">
                 <a

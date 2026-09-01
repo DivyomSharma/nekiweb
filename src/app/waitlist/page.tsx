@@ -11,11 +11,11 @@ export const metadata: Metadata = {
     url: "https://neki.io/waitlist",
     images: [
       {
-        url: "/logo.png",
-        width: 1200,
-        height: 630,
-        alt: "NEKI - Humanity, Delivered."
-      }
+        url: "/og-waitlist.jpg",
+        width: 1080,
+        height: 1080,
+        alt: "NEKI – We're now accepting waitlist signups.",
+      },
     ],
     type: "website",
   },
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "I joined the NEKI Waitlist",
     description: "Building the trust and coordination infrastructure for social impact.",
-    images: ["/logo.png"],
+    images: ["/og-waitlist.jpg"],
   }
 };
 

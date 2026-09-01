@@ -72,7 +72,7 @@ export function TrackingSection() {
   }, []);
 
   return (
-    <div ref={containerRef} className="h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
+    <div ref={containerRef} className="py-16 md:py-0 md:h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
       <h2 ref={headerRef} className="text-xl xs:text-2xl sm:text-3xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-4">
         Follow <span className="font-playfair italic">every step.</span>
       </h2>

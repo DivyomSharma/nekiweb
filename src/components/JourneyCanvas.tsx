@@ -75,7 +75,7 @@ export function JourneyCanvas() {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative w-full bg-background" style={{ height: "1600vh" }}>
+    <section ref={containerRef} className="relative w-full bg-background" style={isMobile ? undefined : { height: "1600vh" }}>
       
       {/* 3D CANVAS - FIXED TO BACKGROUND (desktop/tablet only; skipped on phones) */}
       {!isMobile && (
@@ -108,7 +108,7 @@ export function JourneyCanvas() {
         <HeroSection />
 
         {/* PAGE 1: PROBLEM (Left) */}
-        <div className="h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
+        <div className="py-16 md:py-0 md:h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
           <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-6 max-w-2xl">
             Good intentions deserve <br/><span className="font-playfair italic text-text-muted">better infrastructure.</span>
           </h2>
@@ -122,7 +122,7 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 2: FOOD (Right) */}
-        <div className="h-screen w-full flex flex-col items-end justify-center pr-6 pl-4 md:pr-[15%] pointer-events-auto ml-auto text-right">
+        <div className="py-16 md:py-0 md:h-screen w-full flex flex-col items-end justify-center pr-6 pl-4 md:pr-[15%] pointer-events-auto ml-auto text-right">
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -140,7 +140,7 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 3: BOOKS (Left) */}
-        <div className="h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
+        <div className="py-16 md:py-0 md:h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -158,7 +158,7 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 4: MEDICAL (Right) */}
-        <div className="h-screen w-full flex flex-col items-end justify-center pr-6 pl-4 md:pr-[15%] pointer-events-auto ml-auto text-right">
+        <div className="py-16 md:py-0 md:h-screen w-full flex flex-col items-end justify-center pr-6 pl-4 md:pr-[15%] pointer-events-auto ml-auto text-right">
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -176,7 +176,7 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 5: TIME (Left) */}
-        <div className="h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
+        <div className="py-16 md:py-0 md:h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -194,7 +194,7 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 6: SKILLS (Right) */}
-        <div className="h-screen w-full flex flex-col items-end justify-center pr-6 pl-4 md:pr-[15%] pointer-events-auto ml-auto text-right">
+        <div className="py-16 md:py-0 md:h-screen w-full flex flex-col items-end justify-center pr-6 pl-4 md:pr-[15%] pointer-events-auto ml-auto text-right">
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -212,7 +212,7 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 7: CONNECTION (Left) */}
-        <div className="h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
+        <div className="py-16 md:py-0 md:h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
           <motion.div
             initial={{ opacity: 0, y: 25 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -230,7 +230,7 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 8: NEKI NETWORK (Right) */}
-        <div className="h-screen w-full flex flex-col items-end justify-center pr-6 pl-4 md:pr-[15%] pointer-events-auto ml-auto text-right">
+        <div className="py-16 md:py-0 md:h-screen w-full flex flex-col items-end justify-center pr-6 pl-4 md:pr-[15%] pointer-events-auto ml-auto text-right">
           <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-5xl font-heading font-extrabold text-foreground tracking-tight mb-8 max-w-2xl">
             Humanity works better as a <span className="font-playfair italic text-neki-gold">network.</span>
           </h2>
@@ -240,7 +240,7 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 9: MISSION CREATION (Center / Scattered Cards) */}
-        <div className="h-screen w-full relative overflow-hidden pointer-events-none">
+        <div className="md:h-screen w-full relative overflow-hidden pointer-events-none">
           <MissionEcosystem />
         </div>
 
@@ -248,7 +248,7 @@ export function JourneyCanvas() {
         <TrackingSection />
 
         {/* PAGE 11: TRUST (Right) */}
-        <div className="h-screen w-full flex flex-col items-end justify-center pr-6 pl-4 md:pr-[15%] pointer-events-auto ml-auto text-right">
+        <div className="py-16 md:py-0 md:h-screen w-full flex flex-col items-end justify-center pr-6 pl-4 md:pr-[15%] pointer-events-auto ml-auto text-right">
           <ShieldCheck className="w-8 h-8 md:w-12 md:h-12 text-neki-green mb-4 md:mb-6" strokeWidth={1.5} />
           <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-8 max-w-xl">
             Trust begins where <span className="font-playfair italic text-neki-green">uncertainty ends.</span>
@@ -259,7 +259,7 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 12: PROOF OF IMPACT (Left) */}
-        <div className="h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
+        <div className="py-16 md:py-0 md:h-screen w-full flex flex-col items-start justify-center pl-6 pr-4 md:pl-[15%] pointer-events-auto text-left">
           <ImageIcon className="w-8 h-8 md:w-12 md:h-12 text-neki-gold mb-4 md:mb-6" strokeWidth={1.5} />
           <h2 className="text-xl xs:text-2xl sm:text-3xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-6 max-w-xl">
             Impact should be seen. <br/><span className="text-text-muted font-playfair italic">Not assumed.</span>
@@ -273,14 +273,14 @@ export function JourneyCanvas() {
         </div>
 
         {/* PAGE 13: MULTIPLIER / NETWORK (Center) */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center pointer-events-auto">
+        <div className="py-20 md:py-0 md:h-screen w-full flex flex-col items-center justify-center p-6 text-center pointer-events-auto">
           <h2 className="text-xl xs:text-3xl md:text-6xl font-heading font-extrabold text-foreground tracking-tight mb-4 max-w-4xl px-2">
             When millions move together, <br/><span className="font-playfair italic text-neki-gold">impossible</span> becomes routine.
           </h2>
         </div>
 
         {/* PAGE 15: FINAL (Center) */}
-        <div className="h-screen w-full flex flex-col items-center justify-center p-6 text-center pointer-events-auto">
+        <div className="py-20 md:py-0 md:h-screen w-full flex flex-col items-center justify-center p-6 text-center pointer-events-auto">
           <h1 className="text-3xl xs:text-4xl md:text-7xl font-heading font-extrabold text-foreground tracking-tight mb-6">
             Humanity, <br/><span className="text-neki-gold font-playfair italic">Delivered.</span>
           </h1>

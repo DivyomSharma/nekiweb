@@ -105,16 +105,7 @@ export function MissionEcosystem() {
     };
   }, []);
 
-  const scaleX = isMobile ? 0.52 : 1;
-  const scaleY = isMobile ? 0.58 : 1;
-
-  const getScaledPos = (pos: { x: number; y: number }) => {
-    return {
-      x: 50 + (pos.x - 50) * scaleX,
-      // Push slightly lower on mobile to stay clear of header text
-      y: (isMobile ? 55 : 52) + (pos.y - 52) * scaleY
-    };
-  };
+  const getScaledPos = (pos: { x: number; y: number }) => pos;
 
   const isConnectionActive = (from: string, to: string) => {
     if (!hoveredId) return false;
@@ -134,18 +125,55 @@ export function MissionEcosystem() {
     return 0.1;
   };
 
-  return (
-    <div ref={containerRef} className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto">
-      
-      {/* Subheadline & Text (Scaled for mobile screens) */}
-      <div className="absolute top-[12%] md:top-[20%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-50 pointer-events-auto w-full px-6 flex flex-col items-center">
-        <h2 className="text-2xl md:text-5xl font-heading font-bold text-foreground tracking-tight mb-2 md:mb-4 drop-shadow-md pointer-events-none whitespace-normal max-w-sm md:max-w-none">
+  if (isMobile) {
+    // Static flow layout: the desktop scatter relies on absolute % positioning
+    // that only resolves cleanly against a tall viewport, so mobile gets its
+    // own stacked composition instead of a scaled-down version of it.
+    const featured = MISSIONS.find((m) => m.layer === 1)!;
+    const secondary = MISSIONS.filter((m) => m.layer === 2);
+
+    return (
+      <div className="w-full pointer-events-auto px-6 py-16 flex flex-col items-center text-center">
+        <h2 className="text-2xl font-heading font-bold text-foreground tracking-tight mb-2 whitespace-normal max-w-sm">
           Every mission starts with a <span className="font-playfair italic text-neki-gold">simple decision.</span>
         </h2>
-        <p className="text-xs md:text-lg text-text-secondary font-medium tracking-wide mb-4 md:mb-8 pointer-events-none">
+        <p className="text-xs text-text-secondary font-medium tracking-wide mb-8">
           Choose a cause. Start a mission. Create impact.
         </p>
-        <Link href="/missions" className="group flex items-center text-[10px] md:text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors">
+        <Link href="/missions" className="group flex items-center text-[10px] font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors mb-10">
+          Explore Missions <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+        </Link>
+
+        <div className="bg-white/90 backdrop-blur-xl border border-neki-gold/30 p-6 rounded-3xl text-center w-full max-w-xs shadow-2xl shadow-neki-gold/20 mb-6">
+          <Hexagon strokeWidth={1} className="w-9 h-9 text-neki-gold mx-auto mb-3" />
+          <h3 className="text-lg font-heading font-bold text-foreground mb-2">{featured.title}</h3>
+          <div className="bg-surface text-neki-gold py-1.5 px-4 rounded-full text-xs font-semibold tracking-wide border border-neki-gold/20 inline-block">{featured.status}</div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 w-full max-w-sm">
+          {secondary.map((mission) => (
+            <div key={mission.id} className="bg-white/70 backdrop-blur-md border border-black/5 p-3 rounded-xl text-center shadow-lg shadow-black/5">
+              <h3 className="text-[11px] font-bold text-foreground mb-1 line-clamp-1">{mission.title}</h3>
+              <div className="text-text-muted text-[9px] line-clamp-1">{mission.location}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 w-full h-full overflow-hidden pointer-events-auto">
+
+      {/* Subheadline & Text */}
+      <div className="absolute top-[20%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-50 pointer-events-auto w-full px-6 flex flex-col items-center">
+        <h2 className="text-5xl font-heading font-bold text-foreground tracking-tight mb-4 drop-shadow-md pointer-events-none">
+          Every mission starts with a <span className="font-playfair italic text-neki-gold">simple decision.</span>
+        </h2>
+        <p className="text-lg text-text-secondary font-medium tracking-wide mb-8 pointer-events-none">
+          Choose a cause. Start a mission. Create impact.
+        </p>
+        <Link href="/missions" className="group flex items-center text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors">
           Explore Missions <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
         </Link>
       </div>
@@ -156,11 +184,6 @@ export function MissionEcosystem() {
           const fromEl = [...MISSIONS, ...CAUSES].find(e => e.id === conn.from);
           const toEl = [...MISSIONS, ...CAUSES].find(e => e.id === conn.to);
           if (!fromEl || !toEl) return null;
-          
-          // Hide links on mobile for hidden layer 4 elements
-          const fromMission = MISSIONS.find(m => m.id === conn.from);
-          const toMission = MISSIONS.find(m => m.id === conn.to);
-          if (isMobile && ((fromMission && fromMission.layer === 4) || (toMission && toMission.layer === 4))) return null;
           
           const active = isConnectionActive(conn.from, conn.to);
           const fromPos = getScaledPos(fromEl.pos);
@@ -182,7 +205,6 @@ export function MissionEcosystem() {
 
       {/* RENDER MISSIONS */}
       {MISSIONS
-        .filter((m) => !isMobile || m.layer !== 4) // Filter out background clutter on mobile
         .map((mission) => {
           const isMain = mission.layer === 1;
           const depth = mission.layer === 4 ? 40 : (mission.layer === 2 ? 20 : 5);
@@ -246,7 +268,6 @@ export function MissionEcosystem() {
 
       {/* RENDER CAUSE OBJECTS (Premium Glass Badges) */}
       {CAUSES
-        .filter((_, i) => !isMobile || i % 2 === 0) // Filter out 50% of cause badges on mobile for layout breathing room
         .map((cause) => {
           const Icon = cause.icon;
           const depth = 30;

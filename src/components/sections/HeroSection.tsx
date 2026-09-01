@@ -80,7 +80,7 @@ export function HeroSection() {
   }, []);
 
   return (
-    <div ref={containerRef} className="h-screen w-full flex flex-col justify-center p-6 md:pl-[10%] text-left relative max-w-[65%] md:max-w-none">
+    <div ref={containerRef} className="h-screen w-full flex flex-col justify-center p-6 md:pl-[10%] text-left relative">
       <div className="max-w-xl z-10 pointer-events-none">
         <h1 
           ref={headlineRef} 

@@ -1,16 +1,17 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function NetworkPage() {
   return (
     <DetailLayout
       title="How The Network Works"
-      subtitle="Humanity works better as a network. NEKI connects resources, execution, and tracking into a single, cohesive infrastructure."
+      subtitle={<>Humanity works better as a network. <Neki /> connects resources, execution, and tracking into a single, cohesive infrastructure.</>}
       shapeName="network"
     >
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">The Interconnected Flywheel</h2>
         <p>
-          NEKI does not act as a gatekeeper or a simple donation collector. Instead, it serves as a decentralized coordination network where each participant strengthens the system.
+          <Neki /> does not act as a gatekeeper or a simple donation collector. Instead, it serves as a decentralized coordination network where each participant strengthens the system.
         </p>
         <p>
           As more volunteers, NGOs, and corporations join the network, the speed, transparency, and impact verification of every mission increases exponentially.
@@ -54,7 +55,7 @@ export default function NetworkPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">Coordinated Impact Flow</h2>
         <p>
-          When an institution donates surplus laptops, NEKI automatically matches it with schools in need, coordinates pickup with local logistics volunteers, tracks delivery en route, and logs verified photo proof. 
+          When an institution donates surplus laptops, <Neki /> automatically matches it with schools in need, coordinates pickup with local logistics volunteers, tracks delivery en route, and logs verified photo proof. 
         </p>
         <p>
           No item gets lost. No intention gets wasted. The network ensures that every resource flows precisely where it creates maximum impact.

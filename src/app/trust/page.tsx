@@ -1,19 +1,20 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function TrustPage() {
   return (
     <DetailLayout
       title="How Trust Works"
-      subtitle="Trust is built where uncertainty ends. Explore the layered verification infrastructure of the NEKI Trust Layer."
+      subtitle={<>Trust is built where uncertainty ends. Explore the layered verification infrastructure of the <Neki /> Trust Layer.</>}
       shapeName="shield"
     >
       <section className="space-y-4">
-        <h2 className="text-2xl font-bold font-heading">The NEKI Trust Layer</h2>
+        <h2 className="text-2xl font-bold font-heading">The <Neki /> Trust Layer</h2>
         <p>
           Traditional philanthropy asks you to write a check and trust blindly. We believe trust shouldn't be assumed—it should be designed into the infrastructure.
         </p>
         <p>
-          NEKI operates a three-part coordination protocol that ensures complete accountability from the moment you make a choice to the final delivery of impact.
+          <Neki /> operates a three-part coordination protocol that ensures complete accountability from the moment you make a choice to the final delivery of impact.
         </p>
       </section>
 
@@ -32,7 +33,7 @@ export default function TrustPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">2. Contribution Recording</h2>
         <p>
-          Every contribution—whether money, time, skills, or physical goods—is cataloged under a unique NEKI ID.
+          Every contribution—whether money, time, skills, or physical goods—is cataloged under a unique <Neki /> ID.
         </p>
         <p>
           This record creates an unalterable trail. We document who contributed, which volunteer picked it up, who coordinated the transport, and which verified organization accepted the final delivery.

@@ -22,17 +22,17 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://neki.io"),
-  title: "NEKI | India's Live Network of Human Goodness",
-  description: "NEKI makes helping people as fast, trusted, and actionable as modern commerce. Track every contribution, verify every mission, and see your impact live.",
+  title: "Neki | India's Live Network of Human Goodness",
+  description: "Neki makes helping people as fast, trusted, and actionable as modern commerce. Track every contribution, verify every mission, and see your impact live.",
   keywords: ["Neki", "Neki for India", "Human goodness network", "social good", "volunteering India", "transparent charity", "NGO coordination India", "verified impact tracking"],
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "NEKI | India's Live Network of Human Goodness",
+    title: "Neki | India's Live Network of Human Goodness",
     description: "Track every contribution, verify every mission, and see your impact live.",
     url: "https://neki.io",
-    siteName: "NEKI",
+    siteName: "Neki",
     locale: "en_IN",
     type: "website",
     images: [
@@ -40,13 +40,13 @@ export const metadata: Metadata = {
         url: "/og-default.png",
         width: 1200,
         height: 1200,
-        alt: "NEKI – Humanity, Delivered.",
+        alt: "Neki – Humanity, Delivered.",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "NEKI | India's Live Network of Human Goodness",
+    title: "Neki | India's Live Network of Human Goodness",
     description: "Track every contribution, verify every mission, and see your impact live.",
     creator: "@nekiforindia",
     images: ["/og-default.png"],
@@ -74,7 +74,7 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "NEKI",
+    "name": "Neki",
     "url": "https://neki.io",
     "logo": "https://neki.io/icon.png",
     "sameAs": [

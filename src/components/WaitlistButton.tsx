@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import anime from "animejs";
 import { X, Check } from "lucide-react";
 import Link from "next/link";
+import { Neki } from "./ui/Neki";
 
 export function WaitlistButton() {
   const [isOpen, setIsOpen] = useState(false);
@@ -210,7 +211,7 @@ export function WaitlistButton() {
                   <div className="space-y-6">
                     <div>
                       <h3 className="text-2xl font-bold tracking-tight mb-2">Be part of the movement.</h3>
-                      <p className="text-sm text-text-secondary">Fill in your details to join the Neki waitlist.</p>
+                      <p className="text-sm text-text-secondary">Fill in your details to join the <Neki /> waitlist.</p>
                     </div>
 
                     <div className="space-y-4">

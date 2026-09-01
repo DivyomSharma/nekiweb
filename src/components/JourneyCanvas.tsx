@@ -10,6 +10,7 @@ import Lenis from "lenis";
 import Link from "next/link";
 import { HeroSection } from "./sections/HeroSection";
 import { TrackingSection } from "./sections/TrackingSection";
+import { Neki } from "./ui/Neki";
 import { useScroll, useMotionValueEvent, motion } from "framer-motion";
 
 export function JourneyCanvas() {
@@ -117,7 +118,7 @@ export function JourneyCanvas() {
             They stop helping because they stop seeing where help goes.
           </p>
           <Link href="/why-neki" className="group flex items-center text-[10px] xs:text-xs md:text-sm font-bold tracking-widest uppercase text-text-secondary hover:text-foreground transition-colors">
-            Why NEKI Exists <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            Why <Neki className="mx-1" /> Exists <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
           </Link>
         </div>
 
@@ -288,8 +289,8 @@ export function JourneyCanvas() {
             Track every contribution. Verify every mission. See every impact.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/about" className="group flex items-center bg-foreground text-background px-8 py-4 rounded-full font-medium text-lg hover:bg-gray-800 transition-colors">
-              About NEKI <span className="ml-3 opacity-70 group-hover:translate-x-1 transition-transform">→</span>
+            <Link href="/about" className="group flex items-center bg-foreground text-background px-5 py-2.5 md:px-8 md:py-4 rounded-full font-medium text-sm md:text-lg hover:bg-gray-800 transition-colors">
+              About <Neki className="ml-1.5" /> <span className="ml-3 opacity-70 group-hover:translate-x-1 transition-transform">→</span>
             </Link>
           </div>
         </div>

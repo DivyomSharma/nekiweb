@@ -1,4 +1,5 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function CorporatePage() {
   return (
@@ -10,10 +11,10 @@ export default function CorporatePage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">Build Measurable Social Programs</h2>
         <p>
-          At NEKI, we don't ask you to simply send CSR donations. Instead, we help you connect your social targets with verified NGOs, volunteers, and measurable ground outcomes.
+          At <Neki />, we don't ask you to simply send CSR donations. Instead, we help you connect your social targets with verified NGOs, volunteers, and measurable ground outcomes.
         </p>
         <blockquote>
-          <strong>Statutory Compliance Standard:</strong> NEKI coordinates campaigns and provides tracking/reporting systems; all corporate contributions flow directly to qualified nonprofit implementing partners and verified 80G/12A organizations.
+          <strong>Statutory Compliance Standard:</strong> <Neki /> coordinates campaigns and provides tracking/reporting systems; all corporate contributions flow directly to qualified nonprofit implementing partners and verified 80G/12A organizations.
         </blockquote>
       </section>
 

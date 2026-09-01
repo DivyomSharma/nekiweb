@@ -1,4 +1,5 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function EducationPage() {
   return (
@@ -10,7 +11,7 @@ export default function EducationPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">Beyond Material Donations</h2>
         <p>
-          Education at NEKI is not just about shipping boxes of notebooks. It is about matching educational resources and capability directly with schools, libraries, and youth centers.
+          Education at <Neki /> is not just about shipping boxes of notebooks. It is about matching educational resources and capability directly with schools, libraries, and youth centers.
         </p>
         <p>
           We coordinate:

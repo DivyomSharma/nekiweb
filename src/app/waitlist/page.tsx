@@ -4,10 +4,10 @@ import { DetailCanvas } from "@/components/ui/DetailCanvas";
 import { WaitlistMarquee } from "@/components/WaitlistMarquee";
 
 export const metadata: Metadata = {
-  title: "Join the NEKI Waitlist",
-  description: "Apply for early access to NEKI, the live coordination network and trust layer for social impact in India.",
+  title: "Join the Neki Waitlist",
+  description: "Apply for early access to Neki, the live coordination network and trust layer for social impact in India.",
   openGraph: {
-    title: "I joined the NEKI Waitlist",
+    title: "I joined the Neki Waitlist",
     description: "Building the trust and coordination infrastructure for social impact. Discover how you can participate.",
     url: "https://neki.io/waitlist",
     images: [
@@ -15,14 +15,14 @@ export const metadata: Metadata = {
         url: "/og-waitlist.jpg",
         width: 1080,
         height: 1080,
-        alt: "NEKI – We're now accepting waitlist signups.",
+        alt: "Neki – We're now accepting waitlist signups.",
       },
     ],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "I joined the NEKI Waitlist",
+    title: "I joined the Neki Waitlist",
     description: "Building the trust and coordination infrastructure for social impact.",
     images: ["/og-waitlist.jpg"],
   }

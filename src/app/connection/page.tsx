@@ -1,4 +1,5 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function ConnectionPage() {
   return (
@@ -13,7 +14,7 @@ export default function ConnectionPage() {
           Single acts of kindness are powerful, but they operate in isolation. When resources, coordinators, ground execution partners, and tracking tools are scattered, impact remains low.
         </p>
         <p>
-          NEKI brings these nodes together. We coordinate:
+          <Neki /> brings these nodes together. We coordinate:
         </p>
         <div className="bg-surface border border-black/5 p-6 rounded-2xl space-y-2 my-4">
           <p className="text-sm">

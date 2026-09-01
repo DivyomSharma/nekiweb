@@ -1,4 +1,5 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function CarePage() {
   return (
@@ -10,10 +11,10 @@ export default function CarePage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">Coordinated Healthcare Access</h2>
         <p>
-          NEKI serves as the logistics and resource matching coordinator. We connect donors, local volunteers, and qualified medical professionals to set up mobile clinics, procure critical medicines, and host health programs.
+          <Neki /> serves as the logistics and resource matching coordinator. We connect donors, local volunteers, and qualified medical professionals to set up mobile clinics, procure critical medicines, and host health programs.
         </p>
         <blockquote>
-          <strong>Important Coordination Standard:</strong> NEKI manages the logistics and coordinates resource flows; all clinical care, diagnosis, and medical procedures are executed solely by licensed professionals and accredited healthcare organizations.
+          <strong>Important Coordination Standard:</strong> <Neki /> manages the logistics and coordinates resource flows; all clinical care, diagnosis, and medical procedures are executed solely by licensed professionals and accredited healthcare organizations.
         </blockquote>
       </section>
 
@@ -42,7 +43,7 @@ export default function CarePage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">Coordination Flow</h2>
         <p>
-          A community needs a health check camp. NEKI maps the request ➔ coordinates medical kit sponsorship from individuals ➔ recruits logistics volunteers ➔ maps shifts for local doctors ➔ executes the camp ➔ uploads verified reports.
+          A community needs a health check camp. <Neki /> maps the request ➔ coordinates medical kit sponsorship from individuals ➔ recruits logistics volunteers ➔ maps shifts for local doctors ➔ executes the camp ➔ uploads verified reports.
         </p>
       </section>
     </DetailLayout>

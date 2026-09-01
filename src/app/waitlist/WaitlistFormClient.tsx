@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import anime from "animejs";
 import { ArrowLeft, Check, Copy, Link as LinkIcon, Download, Share2 } from "lucide-react";
+import { Neki } from "@/components/ui/Neki";
 
 function WaitlistFormContent() {
   const searchParams = useSearchParams();
@@ -200,7 +201,7 @@ function WaitlistFormContent() {
         await (navigator as any).share({
           files: [file],
           title: "Neki Waitlist Pass",
-          text: `I just joined the waitlist for NEKI – building the coordination layer for social impact! Join me using my referral link:\n\n${refUrl}`
+          text: `I just joined the waitlist for Neki – building the coordination layer for social impact! Join me using my referral link:\n\n${refUrl}`
         });
       } else {
         // Fallback for devices/browsers that don't support file sharing
@@ -297,7 +298,7 @@ function WaitlistFormContent() {
             {/* Segmented / Card-based Role Selection */}
             <div className="space-y-3">
               <label className="block text-[10px] uppercase tracking-widest text-text-muted font-bold">
-                How would you like to be a part of Neki? *
+                How would you like to be a part of <Neki />? *
               </label>
               
               <div className="flex flex-col gap-3">
@@ -470,7 +471,7 @@ function WaitlistFormContent() {
               
               <div className="grid grid-cols-2 gap-3 w-full">
                 <a
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just joined the waitlist for NEKI – building the coordination layer for social impact! Join me using my referral link:\n\n${refUrl}`)}`}
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just joined the waitlist for Neki – building the coordination layer for social impact! Join me using my referral link:\n\n${refUrl}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-background border border-black/5 text-foreground hover:bg-black/5 px-6 py-3.5 rounded-full text-xs font-semibold flex items-center justify-center gap-2 shadow-sm transition-all"
@@ -481,7 +482,7 @@ function WaitlistFormContent() {
                   Share on X
                 </a>
                 <a
-                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`I just joined the waitlist for NEKI. Join me using my link: ${refUrl}`)}`}
+                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`I just joined the waitlist for Neki. Join me using my link: ${refUrl}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-background border border-black/5 text-foreground hover:bg-black/5 px-6 py-3.5 rounded-full text-xs font-semibold flex items-center justify-center gap-2 shadow-sm transition-all"
@@ -507,7 +508,7 @@ function WaitlistFormContent() {
 
       {/* Footer info */}
       <footer className="mt-20 pt-8 border-t border-black/5 text-xs text-text-muted">
-        © {new Date().getFullYear()} NEKI. Verified Trust & Impact Infrastructure.
+        © {new Date().getFullYear()} <Neki />. Verified Trust & Impact Infrastructure.
       </footer>
     </div>
   );

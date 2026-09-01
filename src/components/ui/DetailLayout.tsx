@@ -4,11 +4,12 @@ import React from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { DetailCanvas } from "./DetailCanvas";
+import { Neki } from "./Neki";
 
 interface DetailLayoutProps {
   children: React.ReactNode;
-  title: string;
-  subtitle: string;
+  title: React.ReactNode;
+  subtitle: React.ReactNode;
   shapeName: "logo" | "phone" | "book" | "shield" | "camera" | "network" | "path" | "bowl" | "cross" | "heart" | "gear";
   shapeColor?: string;
 }
@@ -64,7 +65,7 @@ export function DetailLayout({
 
         {/* Footer info */}
         <footer className="mt-20 pt-8 border-t border-black/5 text-xs text-text-muted">
-          © {new Date().getFullYear()} NEKI. Verified Trust & Impact Infrastructure.
+          © {new Date().getFullYear()} <Neki />. Verified Trust & Impact Infrastructure.
         </footer>
       </div>
     </main>

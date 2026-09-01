@@ -1,4 +1,5 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function FoodPage() {
   return (
@@ -10,7 +11,7 @@ export default function FoodPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">The Food Impact Ecosystem</h2>
         <p>
-          At NEKI, food coordination is more than a donation—it's a real-time matching network that connects resources directly with ground execution.
+          At <Neki />, food coordination is more than a donation—it's a real-time matching network that connects resources directly with ground execution.
         </p>
         <p>
           We coordinate:
@@ -47,7 +48,7 @@ export default function FoodPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">Locate Active Needs</h2>
         <p>
-          Have excess raw materials, dry rations, or cooked meals to share? Tell NEKI what you have, and our coordination algorithm will immediately route it to the nearest verified kitchen or shelter.
+          Have excess raw materials, dry rations, or cooked meals to share? Tell <Neki /> what you have, and our coordination algorithm will immediately route it to the nearest verified kitchen or shelter.
         </p>
       </section>
     </DetailLayout>

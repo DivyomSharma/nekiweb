@@ -1,4 +1,5 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function ContributionPage() {
   return (
@@ -10,7 +11,7 @@ export default function ContributionPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">Not Just a Donation Directory</h2>
         <p>
-          At NEKI, volunteering and physical participation are treated as core resource nodes. You don't have to contribute money to create real-world impact. Your physical presence, time, and logistics assistance are just as critical.
+          At <Neki />, volunteering and physical participation are treated as core resource nodes. You don't have to contribute money to create real-world impact. Your physical presence, time, and logistics assistance are just as critical.
         </p>
         <p>
           We translate these acts of goodwill into a structured, trackable participation record:
@@ -33,7 +34,7 @@ export default function ContributionPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading font-heading">Verified Impact Record</h2>
         <p>
-          Every hour you dedicate is locked on the NEKI platform. You build a public or private profile detailing your volunteer hours, completed drives, and verified ground projects. This becomes a tangible, certified history of your contributions to the community.
+          Every hour you dedicate is locked on the <Neki /> platform. You build a public or private profile detailing your volunteer hours, completed drives, and verified ground projects. This becomes a tangible, certified history of your contributions to the community.
         </p>
       </section>
     </DetailLayout>

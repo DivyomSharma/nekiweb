@@ -1,4 +1,5 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function SkillsPage() {
   return (
@@ -10,7 +11,7 @@ export default function SkillsPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">Matching Capability with Need</h2>
         <p>
-          You don't need a corporate surplus or capital to make a difference. Some of the most valuable resources are locked in the minds of professionals. NEKI matches capability with needs to help grassroot organizations scale up.
+          You don't need a corporate surplus or capital to make a difference. Some of the most valuable resources are locked in the minds of professionals. <Neki /> matches capability with needs to help grassroot organizations scale up.
         </p>
         <p>
           We coordinate skills across multiple areas:
@@ -38,7 +39,7 @@ export default function SkillsPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">The Skills Network Effect</h2>
         <p>
-          By coordinating skills, NEKI increases the execution capability of charities. A developer in Bangalore can build an portal for a kitchen in Noida, who can then feed 500 more children daily. Goodness multiplies when we share what we know.
+          By coordinating skills, <Neki /> increases the execution capability of charities. A developer in Bangalore can build an portal for a kitchen in Noida, who can then feed 500 more children daily. Goodness multiplies when we share what we know.
         </p>
       </section>
     </DetailLayout>

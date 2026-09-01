@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 import { Search, ShieldAlert, Sparkles } from "lucide-react";
 
 interface LedgerEntry {
@@ -80,7 +81,7 @@ export default function ImpactPage() {
   return (
     <DetailLayout
       title="Proof of Impact"
-      subtitle="Goodness should be seen, not assumed. Every completed mission is logged transparently on the public Neki Impact Ledger."
+      subtitle={<>Goodness should be seen, not assumed. Every completed mission is logged transparently on the public <Neki /> Impact Ledger.</>}
       shapeName="camera"
     >
       {/* Search & Filter Bar */}
@@ -171,7 +172,7 @@ export default function ImpactPage() {
       <section className="space-y-4 pt-6">
         <h2 className="text-2xl font-bold font-heading">Digital Memory of Goodwill</h2>
         <p>
-          The NEKI Impact Ledger operates as a secure digital ledger. It locks receipts, beneficiary documentation, and execution coordinates into a permanent record, allowing volunteers, NGOs, and CSR departments to check and audits their work in real-time.
+          The <Neki /> Impact Ledger operates as a secure digital ledger. It locks receipts, beneficiary documentation, and execution coordinates into a permanent record, allowing volunteers, NGOs, and CSR departments to check and audits their work in real-time.
         </p>
       </section>
     </DetailLayout>

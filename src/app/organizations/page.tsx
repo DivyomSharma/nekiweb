@@ -1,4 +1,5 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function OrganizationsPage() {
   return (
@@ -10,7 +11,7 @@ export default function OrganizationsPage() {
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">Empowering NGOs & Shelters</h2>
         <p>
-          NEKI serves as your tech, logistics, and trust partner. Grassroots organizations often spend too much time chasing donors and managing coordination. We streamline your operations so you can focus on execution.
+          <Neki /> serves as your tech, logistics, and trust partner. Grassroots organizations often spend too much time chasing donors and managing coordination. We streamline your operations so you can focus on execution.
         </p>
         <ul className="list-disc pl-5 space-y-1">
           <li><strong>Publish Needs:</strong> Create structured missions detailing specific resource, funding, or volunteer requirements.</li>
@@ -26,7 +27,7 @@ export default function OrganizationsPage() {
         </p>
         <ul className="list-disc pl-5 space-y-1">
           <li><strong>Service Learning:</strong> Organize campus drives, cleanups, or local teaching campaigns.</li>
-          <li><strong>Automated Hours & Certificates:</strong> NEKI logs verified hours automatically. No more manual logs or signed sheets.</li>
+          <li><strong>Automated Hours & Certificates:</strong> <Neki /> logs verified hours automatically. No more manual logs or signed sheets.</li>
         </ul>
       </section>
 

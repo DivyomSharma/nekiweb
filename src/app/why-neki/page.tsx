@@ -1,9 +1,10 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function WhyNekiPage() {
   return (
     <DetailLayout
-      title="Why NEKI Exists"
+      title={<>Why <Neki /> Exists</>}
       subtitle="Good intentions deserve better infrastructure. Rebuilding the invisible chain between intention and outcome."
       shapeName="phone"
     >
@@ -23,7 +24,7 @@ export default function WhyNekiPage() {
           People don't stop helping because they stop caring. They stop helping because they stop seeing where help goes.
         </p>
         <p>
-          Traditional platforms treat donations as a simple transactional checkout. They solve payment but fail at visibility. NEKI treats helping as a live, trackable loop—bringing clarity where uncertainty used to reside.
+          Traditional platforms treat donations as a simple transactional checkout. They solve payment but fail at visibility. <Neki /> treats helping as a live, trackable loop—bringing clarity where uncertainty used to reside.
         </p>
       </section>
 

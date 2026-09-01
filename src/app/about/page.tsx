@@ -1,16 +1,17 @@
 import { DetailLayout } from "@/components/ui/DetailLayout";
+import { Neki } from "@/components/ui/Neki";
 
 export default function AboutPage() {
   return (
     <DetailLayout
-      title="About NEKI"
-      subtitle="Neki = an act of goodness. We are building the coordinate rails and transparency layer for global kindness."
+      title={<>About <Neki /></>}
+      subtitle={<><Neki /> = an act of goodness. We are building the coordinate rails and transparency layer for global kindness.</>}
       shapeName="logo"
     >
       <section className="space-y-4">
         <h2 className="text-2xl font-bold font-heading">Our Origin & Meaning</h2>
         <p>
-          Derived from the word meaning <i>"an act of goodness or kindness,"</i> NEKI was born out of a simple observation: human goodness is abundant, but the infrastructure surrounding it is severely fragmented.
+          Derived from the word meaning <i>"an act of goodness or kindness,"</i> <Neki /> was born out of a simple observation: human goodness is abundant, but the infrastructure surrounding it is severely fragmented.
         </p>
         <p>
           We realized that while modern commerce has engineered seamless pipelines to deliver food, rides, and goods in minutes, social impact still relies on methods from the previous century. We set out to change that.

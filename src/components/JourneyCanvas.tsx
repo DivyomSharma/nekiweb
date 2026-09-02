@@ -6,7 +6,7 @@ import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { ParticleMorpher } from "./ParticleMorpher";
 import { MissionEcosystem } from "./MissionEcosystem";
 import { ShieldCheck, MapPin, Package, Image as ImageIcon } from "lucide-react";
-import Lenis from "lenis";
+import { useLenis } from "lenis/react";
 import Link from "next/link";
 import { HeroSection } from "./sections/HeroSection";
 import { TrackingSection } from "./sections/TrackingSection";
@@ -29,6 +29,8 @@ export function JourneyCanvas() {
     progressRef.current = latest;
   });
 
+  const lenis = useLenis();
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -42,38 +44,27 @@ export function JourneyCanvas() {
     const isSmallScreen = window.innerWidth < 1024;
     setIsLowEnd(mobileUA || hasManyTouchPoints || isSmallScreen);
 
-    const lenis = new Lenis({
-      lerp: mobileUA ? 0.25 : 0.1,
-      wheelMultiplier: 1,
-      smoothWheel: !mobileUA, // Let mobile use optimized native physics
-    });
-
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
-    // Restore scroll position
-    const savedScroll = sessionStorage.getItem("homepage-scroll");
-    if (savedScroll) {
-      const scrollY = parseInt(savedScroll, 10);
-      setTimeout(() => {
-        lenis.scrollTo(scrollY, { immediate: true });
-      }, 100);
-    }
-
-    // Save scroll position on scroll
-    lenis.on("scroll", (e: any) => {
-      sessionStorage.setItem("homepage-scroll", Math.round(e.scroll).toString());
-    });
-
     return () => {
-      lenis.destroy();
       window.removeEventListener("resize", handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    if (!lenis) return;
+
+    const savedScroll = sessionStorage.getItem("homepage-scroll");
+    if (savedScroll) {
+      const scrollY = parseInt(savedScroll, 10);
+      const timeout = setTimeout(() => {
+        lenis.scrollTo(scrollY, { immediate: true });
+      }, 100);
+      return () => clearTimeout(timeout);
+    }
+  }, [lenis]);
+
+  useLenis((instance) => {
+    sessionStorage.setItem("homepage-scroll", Math.round(instance.scroll).toString());
+  });
 
   return (
     <section ref={containerRef} className="relative w-full bg-background" style={isMobile ? undefined : { height: "1600vh" }}>
